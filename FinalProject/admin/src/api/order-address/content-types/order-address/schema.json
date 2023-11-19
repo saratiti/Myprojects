@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "order_addresses",
+  "info": {
+    "singularName": "order-address",
+    "pluralName": "order-addresses",
+    "displayName": "order_address",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "latitude": {
+      "type": "float"
+    },
+    "longitude": {
+      "type": "float"
+    },
+    "country": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "area": {
+      "type": "string"
+    },
+    "street": {
+      "type": "string"
+    },
+    "building_no": {
+      "type": "string"
+    },
+    "orders": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::order.order",
+      "mappedBy": "order_address"
+    }
+  }
+}

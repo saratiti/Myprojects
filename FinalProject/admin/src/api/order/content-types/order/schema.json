@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "singularName": "order",
+    "pluralName": "orders",
+    "displayName": "order",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "status_id": {
+      "type": "integer"
+    },
+    "total_price": {
+      "type": "decimal"
+    },
+    "payment_method": {
+      "type": "integer"
+    },
+    "sub_total": {
+      "type": "decimal"
+    },
+    "tax_amount": {
+      "type": "decimal"
+    },
+    "user_role": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::user-role.user-role",
+      "inversedBy": "orders"
+    },
+    "order_address": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::order-address.order-address",
+      "inversedBy": "orders"
+    }
+  }
+}
