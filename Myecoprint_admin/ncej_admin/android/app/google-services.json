@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "356984037284",
+    "project_id": "myecoprinted-c6f72",
+    "storage_bucket": "myecoprinted-c6f72.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356984037284:android:c53d6d0c848762fe32ab31",
+        "android_client_info": {
+          "package_name": "com.etarsd.myecoprint.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3QW3Lfy5TWh3WVM1FIzfIJI8w9UjF9sQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

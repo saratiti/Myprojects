@@ -1,0 +1,83 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/material.dart';
+import 'package:ncej_admin/core/app_export.dart';
+import 'package:ncej_admin/view/screen/splash_screen/splash_screen_two.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 5), () {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const SplashScreenTwo()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+         
+    return  SafeArea(
+      child: Scaffold(
+        backgroundColor: appTheme.lightGreen500,
+        body: SizedBox(
+          width: mediaQueryData.size.width,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(top: 116.v),
+            child: SizedBox(
+              height: 702.v,
+              width: double.maxFinite,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomImageView(
+                    svgPath: ImageConstant.imgFingerprintWhiteA700,
+                    height: 200.v,
+                    width: 289.h,
+                    alignment: Alignment.topCenter,
+                    margin: EdgeInsets.only(top: 171.v),
+                  ),
+                  Opacity(
+                    opacity: 0.03,
+                    child: CustomImageView(
+                      imagePath: ImageConstant.imgGroup70252,
+                      height: 702.v,
+                      width: 393.h,
+                      alignment: Alignment.center,
+                      color: Colors.amber,
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: Container(
+                      width: 702.v,
+                      height: 702.v,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: fs.Svg(
+                            ImageConstant.imgGroup11,
+                            
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
