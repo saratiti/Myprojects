@@ -79,49 +79,28 @@ exports.deletePoint = async (req, res) => {
 
 
 exports.collectDaily = async (req, res) => {
-  const userId = req.body.user_id;
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
   const dailyPoints = 50;
-
   try {
-
-    const user = await User.findOne({ where: { user_id: userId } });
-
-    if (!user) {
-      const newUser = await User.create({
-        user_id: userId,
-        total_points: dailyPoints,
-      });
-
-      return res.status(200).json({ message: 'New user created' });
-    }
-
-    const now = new Date();
-    const today = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
-    const existingPoint1 = await Point.findOne({
-      where: {
-        user_id: userId,
-        last_daily_point: {
-          [Sequelize.Op.gte]: today,
-        },
-      },
-    });
-
-    if (existingPoint1) {
-      return res.status(400).json({ error: 'Points already collected today' });
-    }
-
-    // Retrieve the existing point data
-    const existingPoint = await Point.findOne({ where: { user_id: userId } });
+    const existingPoint = await Point.findOne();
 
     if (existingPoint) {
-      // Update the existing point data
+      const now = new Date();
+      const today = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+
+      if (existingPoint.last_daily_point >= today) {
+        return res.status(400).json({ error: 'Points already collected today' });
+      }
       existingPoint.total_points += dailyPoints;
       existingPoint.last_daily_point = new Date();
       await existingPoint.save();
     } else {
-      // Create a new point record
+     
       await Point.create({
-        user_id: userId,
+        user_id: user.id,
         store_id: 4,
         reasonBarcode_id: 1,
         total_points: dailyPoints,
@@ -129,7 +108,9 @@ exports.collectDaily = async (req, res) => {
       });
     }
 
-    return res.status(200).json({ message: 'Points collected successfully' });
+
+return res.status(200).json({ message: 'Points collected successfully', dailyPoints: dailyPoints });
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal server error' });

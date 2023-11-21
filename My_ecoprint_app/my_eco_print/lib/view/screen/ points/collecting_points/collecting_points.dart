@@ -1,9 +1,10 @@
 
-// ignore_for_file: overridden_fields, use_key_in_widget_constructors
+// ignore_for_file: overridden_fields, use_key_in_widget_constructors, use_build_context_synchronously
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:my_eco_print/controller/point_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 
@@ -179,9 +180,13 @@ class RewardsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        _showPopDialog(context);
+      onTap: () async {
+        int dailyPoints = await _collectDailyPoints();
+         print("Daily Points: $dailyPoints");
+          _showPopDialog(context,dailyPoints);
+        
       }, 
+      
       child:
       
        RawChip(
@@ -215,8 +220,22 @@ class RewardsList extends StatelessWidget {
       ),
     );
   }
+Future<int> _collectDailyPoints() async {
+  try {
+    PointController pointController = PointController();
+    int dailyPoints = await pointController.collectDailyPoints();
+    return dailyPoints;
+  } catch (e) {
+    print("Error collecting daily points: $e");
+    return 0;
+  }
+}
 
-void _showPopDialog(BuildContext context) {
+void _showPopDialog(BuildContext context, int dailyPoints) {
+  String messageText = dailyPoints > 0
+      ? "msg37".tr 
+      : "msg36".tr;
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -241,16 +260,17 @@ void _showPopDialog(BuildContext context) {
                   onTapImgCloseone(context);
                 },
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 24.v, right: 59.h),
-                  child: Text(
-                    "lbl37".tr,
-                    style: theme.textTheme.displaySmall,
-                  ),
-                ),
-              ),
+             Align(
+  alignment: Alignment.centerRight,
+  child: Padding(
+    padding: EdgeInsets.only(top: 24.v, right: 59.h),
+    child: Text(
+      dailyPoints > 0 ? "lbl37".tr : "msg_36".tr,
+      style: theme.textTheme.displaySmall,
+    ),
+  ),
+),
+
               SizedBox(height: 46.v),
               Align(
                 alignment: Alignment.center,
@@ -260,13 +280,14 @@ void _showPopDialog(BuildContext context) {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "msg37".tr,
+                          text: messageText,
                           style: theme.textTheme.titleMedium,
                         ),
-                        TextSpan(
-                          text: "lbl_50".tr,
-                          style: CustomTextStyles.titleMediumLightgreen500,
-                        ),
+                        if (dailyPoints > 0)
+                          TextSpan(
+                            text: " $dailyPoints",
+                            style: CustomTextStyles.titleMediumLightgreen500,
+                          ),
                       ],
                     ),
                     textAlign: TextAlign.center,
@@ -279,7 +300,8 @@ void _showPopDialog(BuildContext context) {
       );
     },
   );
-}}
+}
+}
  void onTapImgCloseone(BuildContext context) {
     Navigator.pop(context);
   }

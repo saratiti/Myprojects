@@ -28,11 +28,24 @@ Future<dynamic> getRequest(String path) async {
   return resposneFunction(response);
 }
 
-  Future<dynamic> postRequest(String path, Map body) async {
-    Uri uriFunction = Uri.http(DOMAIN, path);
-    http.Response resposne = await http.post(uriFunction, body: body);
-    return resposneFunction(resposne);
-  }
+Future<dynamic> postRequest(String path, Map body) async {
+  Uri uriFunction = Uri.http(DOMAIN, path);
+
+  // Assuming you have a function to get the authentication token
+  var token = await getToken();
+
+  http.Response response = await http.post(
+    uriFunction,
+    body: body,
+    headers: {
+  
+      'Authorization': 'Bearer $token', 
+    },
+  );
+
+  return resposneFunction(response);
+}
+
 Future<dynamic> putRequest(String path, Map body) async {
     Uri uriFunction = Uri.http(DOMAIN, path);
     var token = await getToken();
@@ -99,7 +112,7 @@ Future<dynamic> postDio(String path, Map body) async {
       token = await getToken();
       headers = {"Authorization": "Bearer $token"};
 
-      // Retry the request
+     
       Response response = await dio.post(
         'http://$DOMAIN$path',
         data: body,

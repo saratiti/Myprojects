@@ -4,7 +4,7 @@ const Offer = require('../models/Offer');
 const { Op } = require('sequelize');
 const Store = require('../models/store');
 const Company = require('../models/company');
-const Jimp = require('jimp'); // You need to install the Jimp library
+const Jimp = require('jimp');
 const QRCode = require('qrcode');
 const fs = require('fs');
 const jsQR = require('jsqr');
@@ -12,10 +12,10 @@ const path = require('path');
 
 exports.createOffer = async (req, res) => {
   try {
-    const { ...offerData } = req.body; // Remove the barcode field
+    const { ...offerData } = req.body; 
     const offer = await Offer.create(offerData);
 
-    // Construct the QR code data with the desired field values
+   
     const qrCodeData = `offer_id: ${offer.offer_id}\n` +
       `offer_name_arabic: ${offer.offer_name_arabic}\n` +
       `offer_name_english: ${offer.offer_name_english}\n` +
@@ -53,16 +53,29 @@ exports.readAndRetrieveQRCodeImage = async (qrCodeImagePath) => {
   try {
     const qrCodeImage = await Jimp.read(qrCodeImagePath);
 
-    // Convert the image to a buffer
+  
     const qrCodeImageBuffer = await qrCodeImage.getBufferAsync(Jimp.MIME_PNG);
 
-    return qrCodeImageBuffer; // Return the image buffer
+    return qrCodeImageBuffer;
   } catch (error) {
     console.error(`Error retrieving QR Code image from ${qrCodeImagePath}: ${error.message}`);
     return null;
   }
 };
+exports.readAndRetrieveQRCodeImagesMultiple = async (qrCodeImagePaths) => {
+  try {
+    const qrCodeImages = await Promise.all(qrCodeImagePaths.map(async (qrCodeImagePath) => {
+      const qrCodeImage = await Jimp.read(qrCodeImagePath);
+      const qrCodeImageBuffer = await qrCodeImage.getBufferAsync(Jimp.MIME_PNG);
+      return qrCodeImageBuffer;
+    }));
 
+    return qrCodeImages;
+  } catch (error) {
+    console.error(`Error retrieving QR Code images: ${error.message}`);
+    return null;
+  }
+};
 exports.getAllQRCodeImages = (qrCodeDirectory) => {
   const files = fs.readdirSync(qrCodeDirectory);
   const qrCodeDataCollection = [];

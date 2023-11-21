@@ -14,44 +14,38 @@ router.get('/store',offerController.getStoresByOffer);
 const sharp = require('sharp');
 
 
-const qrCodeDirectory = 'public/qrcodes';
 
-router.get('/qrcodes/list', async (req, res) => {
-    try {
-      const offers = await Offer.findAll();
-  
-      if (!offers || offers.length === 0) {
-        return res.status(404).json({ error: 'No offers found' });
-      }
-  
-      const imagePaths = [];
-  
-      for (const offer of offers) {
-        const barcodeImageFilePath = path.join(qrCodeDirectory, `offer_${offer.offer_id}.png`);
-  
-        if (fs.existsSync(barcodeImageFilePath)) {
-          imagePaths.push(barcodeImageFilePath);
-        }
-      }
-  
-      if (imagePaths.length > 0) {
-        // Set the appropriate content type for images
-        res.setHeader('Content-Type', 'image/png');
-  
-        // Stream each image to the response
-        imagePaths.forEach((imagePath) => {
-          fs.createReadStream(imagePath).pipe(res);
-        });
-  
-        return;
-      }
-  
-      res.status(404).json({ error: 'No barcode images found' });
-    } catch (err) {
-      console.error('Error querying the database:', err);
-      res.status(500).json({ error: 'Failed to fetch offer data' });
+
+router.get('/qrcodes', async (req, res) => {
+  const qrCodeDirectory = 'public/qrcodes';
+
+  try {
+    const qrCodeFiles = fs.readdirSync(qrCodeDirectory);
+    const qrCodeImages = await Promise.all(
+      qrCodeFiles.map(async (filename) => {
+        const qrCodeImagePath = path.join(qrCodeDirectory, filename);
+        const imageBuffer = await offerController.readAndRetrieveQRCodeImage(qrCodeImagePath);
+        return {
+          filename,
+          imageBuffer,
+        };
+      })
+    );
+
+    const validQRCodes = qrCodeImages.filter((item) => item.imageBuffer);
+
+    if (validQRCodes.length > 0) {
+      res.setHeader('Content-Type', 'image/png');
+      res.json(validQRCodes);
+    } else {
+      res.status(404).send('No valid QR Code images found');
     }
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
   
 router.get('/qrcodes/:filename', async (req, res) => {
     const filename = req.params.filename;

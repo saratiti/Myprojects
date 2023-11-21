@@ -154,4 +154,31 @@ Future<dynamic> redeemPoints({
     rethrow;
   }
 }
+Future<int> collectDailyPoints() async {
+  try {
+    var result = await ApiHelper().postRequest("/api/points/collectDaily", {});
+    print("Response Body: $result");
+
+    
+   if (result.containsKey('dailyPoints')) {
+      var dailyPoints = int.tryParse(result['dailyPoints'].toString());
+      if (dailyPoints != null) {
+        return dailyPoints;
+      } else {
+        print("Error: Unable to parse 'dailyPoints' as int");
+        return 0; 
+      }
+    } else {
+      print("Error: 'dailyPoints' key is missing in the API response");
+      return 0; 
+    }
+  } catch (e) {
+    print("Error getting dailyPoints: $e");
+    rethrow;
+  }
 }
+
+
+
+}
+

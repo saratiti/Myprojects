@@ -1,5 +1,4 @@
 
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_eco_print/view/screen/user/edit_user.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
