@@ -1,15 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:ncej_admin/core/constants/theme/theme_helper.dart';
 import 'package:ncej_admin/core/localization/app_localization.dart';
 import 'package:ncej_admin/core/routes/app_routes.dart';
-
-
-
 
 
 void main() async {

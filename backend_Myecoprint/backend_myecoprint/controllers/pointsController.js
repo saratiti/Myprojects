@@ -4,6 +4,7 @@ const Point = require('../models/Point');
 const reasonBarcode = require('../models/reason_barcode');
 const Store = require('../models/store');
 const User=require('../models/user');
+const Transaction=require('../models/transaction');
 const Sequelize = require('sequelize');
 
 exports.createPoint = async (req, res) => {
@@ -80,12 +81,20 @@ exports.deletePoint = async (req, res) => {
 
 exports.collectDaily = async (req, res) => {
   const user = req.user;
+
   if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+
   const dailyPoints = 50;
+
   try {
-    const existingPoint = await Point.findOne();
+    // Find the user's existing point record
+    let existingPoint = await Point.findOne({
+      where: {
+        user_id: user.user_id,
+      },
+    });
 
     if (existingPoint) {
       const now = new Date();
@@ -94,13 +103,15 @@ exports.collectDaily = async (req, res) => {
       if (existingPoint.last_daily_point >= today) {
         return res.status(400).json({ error: 'Points already collected today' });
       }
+
+      // Update existingPoint
       existingPoint.total_points += dailyPoints;
       existingPoint.last_daily_point = new Date();
       await existingPoint.save();
     } else {
-     
-      await Point.create({
-        user_id: user.id,
+      // Create a new point record for the user
+      existingPoint = await Point.create({
+        user_id: user.user_id,
         store_id: 4,
         reasonBarcode_id: 1,
         total_points: dailyPoints,
@@ -108,8 +119,16 @@ exports.collectDaily = async (req, res) => {
       });
     }
 
+    // Create a new transaction record for the user
+    await Transaction.create({
+      user_id: user.user_id,
+      store_id: 4,
+      points: dailyPoints,
+      transaction_type: 'daily_points',
+      transaction_date: new Date(),
+    });
 
-return res.status(200).json({ message: 'Points collected successfully', dailyPoints: dailyPoints });
+    return res.status(200).json({ message: 'Points collected successfully', dailyPoints });
 
   } catch (error) {
     console.error(error);
@@ -117,15 +136,18 @@ return res.status(200).json({ message: 'Points collected successfully', dailyPoi
   }
 };
 
-exports.getTotalPointsByUserId = async (req, res) => {
-
-
+exports.getTotalPointsByUserId = async (userId) => {
   try {
-    const totalPoints = await Point.sum('total_points', {
-    
+    const totalPoints = await Point.findOne({
+      attributes: ['total_points'],
+      where: { user_id: userId },
     });
-    res.json({ totalPoints });
+
+    const userTotalPoints = totalPoints ? totalPoints.total_points : 0;
+
+    return userTotalPoints;
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error('Error in getTotalPointsByUserId:', error);
+    return 0; 
   }
 };

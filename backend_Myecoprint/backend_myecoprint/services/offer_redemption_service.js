@@ -17,14 +17,18 @@ const calculateDiscountedPointsForOffer = async (offerId, pointsRedeemed) => {
   }
 };
 
-const updateTotalPoints = async (pointsToUpdate) => {
+const updateTotalPoints = async (pointsToUpdate, userId) => {
   try {
     const pointRecord = await Point.findOne({
-      
+      where: {
+        user_id: userId,
+      },
     });
+
     if (!pointRecord) {
       throw new Error('Point record not found for the user.');
     }
+
     const updatedTotalPoints = pointRecord.total_points + pointsToUpdate;
     await pointRecord.update({ total_points: updatedTotalPoints });
     return updatedTotalPoints;
@@ -33,6 +37,7 @@ const updateTotalPoints = async (pointsToUpdate) => {
     throw error;
   }
 };
+
 const createPointRedemption = async (storeId, offerId, pointsRedeemed, userId) => {
   try {
       console.log('User ID in createPointRedemption:', userId); // Log the user ID here
@@ -53,12 +58,21 @@ const createPointRedemption = async (storeId, offerId, pointsRedeemed, userId) =
 
 exports.redeemPointsWithOfferDiscount = async (storeId, offerId, pointsRedeemed, userId) => {
   try {
-      const discountedPoints = await calculateDiscountedPointsForOffer(offerId, pointsRedeemed);
-      const redemption = await createPointRedemption(storeId, offerId, discountedPoints, userId);
-      await updateTotalPoints(discountedPoints * -1, userId);
-      return redemption;
+    console.log('Redeem Points With Offer Discount - Start');
+    
+    const discountedPoints = await calculateDiscountedPointsForOffer(offerId, pointsRedeemed);
+    console.log('Discounted Points:', discountedPoints);
+
+    const redemption = await createPointRedemption(storeId, offerId, discountedPoints, userId);
+    console.log('Redemption:', redemption);
+
+    await updateTotalPoints(discountedPoints * -1, userId);
+    console.log('Total Points Updated');
+
+    console.log('Redeem Points With Offer Discount - End');
+    return redemption;
   } catch (error) {
-      console.error('Error redeeming points with offer discount:', error);
-      throw error;
+    console.error('Error redeeming points with offer discount:', error);
+    throw error;
   }
 };

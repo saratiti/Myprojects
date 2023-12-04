@@ -1,7 +1,8 @@
 
-// ignore_for_file: overridden_fields, use_key_in_widget_constructors, use_build_context_synchronously
+// ignore_for_file: overridden_fields, use_key_in_widget_constructors, use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:my_eco_print/controller/point_controller.dart';
@@ -44,14 +45,14 @@ Future<void> scanBarcode() async {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmation'),
+          title: const Text('Confirmation'),
           content: Text(dialogMessage),
           actions: <Widget>[
             TextButton(
               child: const Text('Reject'),
               onPressed: () {
                 // Show a Snackbar for rejection
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                   content: Text('Rejected'),
                 ));
                 Navigator.of(context).pop();
@@ -65,12 +66,12 @@ Future<void> scanBarcode() async {
 
                 if (result) {
                  
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Confirmed'),
                   ));
                 } else {
                  
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text('Rejected'),
                   ));
                 }
@@ -82,7 +83,9 @@ Future<void> scanBarcode() async {
       },
     );
   } catch (e) {
-    print('Error scanning barcode: $e');
+    if (kDebugMode) {
+      print('Error scanning barcode: $e');
+    }
   }
 }
 
@@ -106,14 +109,20 @@ Future<void> scanBarcode() async {
       if (response.statusCode == 200) {
         Map<String, dynamic> responseData = response.data;
         String message = responseData['message'];
-        print('Backend response: $message');
+        if (kDebugMode) {
+          print('Backend response: $message');
+        }
         return message == 'Confirmed';
       } else {
-        print('Failed to send barcode to the backend: ${response.statusCode}');
+        if (kDebugMode) {
+          print('Failed to send barcode to the backend: ${response.statusCode}');
+        }
         return false;
       }
     } catch (e) {
-      print('Error sending barcode to the backend: $e');
+      if (kDebugMode) {
+        print('Error sending barcode to the backend: $e');
+      }
       return false;
     }
   }
@@ -141,7 +150,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
               padding: const EdgeInsets.only(bottom: 50.0),
               child: Column(
                 children: [
-                   SizedBox(height: 35,),
+                   const SizedBox(height: 35,),
                   const RewardsList(),
                 DividerWidget(text: "lbl34".tr,),
                  const SomeStackedWidgets(),
@@ -182,7 +191,9 @@ class RewardsList extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         int dailyPoints = await _collectDailyPoints();
-         print("Daily Points: $dailyPoints");
+         if (kDebugMode) {
+           print("Daily Points: $dailyPoints");
+         }
           _showPopDialog(context,dailyPoints);
         
       }, 
@@ -226,7 +237,9 @@ Future<int> _collectDailyPoints() async {
     int dailyPoints = await pointController.collectDailyPoints();
     return dailyPoints;
   } catch (e) {
-    print("Error collecting daily points: $e");
+    if (kDebugMode) {
+      print("Error collecting daily points: $e");
+    }
     return 0;
   }
 }
@@ -401,7 +414,7 @@ class ScanElevatedButton extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         CustomElevatedButton(
           width: 236.h,
           text: "lbl35".tr,

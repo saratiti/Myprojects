@@ -1,5 +1,5 @@
 
-// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
 
 
 import 'dart:io';
@@ -144,12 +144,12 @@ Future<Response> sendForm(
   }
   data.addAll(fileMap);
   var formData = FormData.fromMap(data);
-  Dio dio = new Dio();
+  Dio dio = Dio();
   return await dio.post(url,
       data: formData, options: Options(contentType: 'multipart/form-data'));
 }
 Future<Response> sendFile(String url, File file) async {
-  Dio dio = new Dio();
+  Dio dio = Dio();
   var len = await file.length();
   var response = await dio.post(url,
       data: file.openRead(),

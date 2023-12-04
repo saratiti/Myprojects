@@ -7,7 +7,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_eco_print/controller/auth.dart';
 import 'package:my_eco_print/controller/text_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/core/constants/theme/theme_helper.dart';
 import 'package:my_eco_print/core/services/auth_service.dart';
 import 'package:my_eco_print/data/module/login.dart';
 import 'package:my_eco_print/view/screen/home_page/home_page_screen.dart';

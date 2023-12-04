@@ -1,6 +1,4 @@
 
-import 'package:my_eco_print/core/constants/theme/theme_helper.dart';
-import 'package:my_eco_print/core/utils/size_utils.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter/material.dart';
 

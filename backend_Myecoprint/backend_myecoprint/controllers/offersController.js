@@ -12,10 +12,11 @@ const path = require('path');
 
 exports.createOffer = async (req, res) => {
   try {
-    const { ...offerData } = req.body; 
+    console.log('req.user:', req.user);
+    const { company_id } = req.user;
+    const { ...offerData } = req.body;
+    offerData.company_id = company_id;
     const offer = await Offer.create(offerData);
-
-   
     const qrCodeData = `offer_id: ${offer.offer_id}\n` +
       `offer_name_arabic: ${offer.offer_name_arabic}\n` +
       `offer_name_english: ${offer.offer_name_english}\n` +
@@ -42,11 +43,19 @@ exports.createOffer = async (req, res) => {
 
     offer.qrCodeImagePath = qrCodeImagePath;
     await offer.save();
-    res.json(offer);
+
+    // Send success response
+    return res.json(offer);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create offer', details: error.message });
-  }
+    // Log the error
+    console.error(error);
+    
+    // Send a generic error response
+    return res.status(400).json({ error: 'Failed to create offer', details: 'An unexpected error occurred.' });
+}
+
 };
+
 
 
 exports.readAndRetrieveQRCodeImage = async (qrCodeImagePath) => {

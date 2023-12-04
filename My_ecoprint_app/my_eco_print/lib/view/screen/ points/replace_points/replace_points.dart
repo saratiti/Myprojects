@@ -67,7 +67,7 @@ class ReplacePointContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ReplacePointHeader(),
+              const ReplacePointHeader(),
               SizedBox(height: 10.h),
               const ReplacePointRichText(),
               SizedBox(height: 10.h),
@@ -214,7 +214,7 @@ class ReplacePointHeader extends StatelessWidget {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     // Return a loading indicator while the data is being fetched
-                    return CircularProgressIndicator();
+                    return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
                     // Handle the error state
                     return Text("Error: ${snapshot.error}");
@@ -260,7 +260,7 @@ class ReplacePointListCoffee extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 60.v),
               child: Column(
                 children: [
-                  Container(
+                  SizedBox(
                     height: 600.v, 
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
@@ -497,7 +497,7 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
         ),
       );
 
-      typeButtons.add(SizedBox(width: 15.0));
+      typeButtons.add(const SizedBox(width: 15.0));
     }
 
     return Directionality(
@@ -543,19 +543,19 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
               if (selectedButton == "lbl45".tr) {
                 visibleWidget = Directionality(
                   textDirection: textDirection,
-                  child: Visibility(
+                  child: const Visibility(
                     visible: true,
-                    child: const AllStoreScreen(),
+                    child: AllStoreScreen(),
                   ),
                 );
               } else if (selectedTypeId != null) {
                 visibleWidget = CoffeeScreen(typeId: selectedTypeId!);
               } else {
-                visibleWidget = SizedBox();
+                visibleWidget = const SizedBox();
               }
 
               return Visibility(
-                visible: visibleWidget != SizedBox(),
+                visible: visibleWidget != const SizedBox(),
                 child: visibleWidget,
               );
             },

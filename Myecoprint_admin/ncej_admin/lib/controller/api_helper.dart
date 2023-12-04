@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class ApiHelper {
-  final String DOMAIN = "192.168.1.145:3000";
+  final String DOMAIN = "https://ecoprint.etarsd.com";
 
   Future<String> getToken() async {
     var storage = const FlutterSecureStorage();
@@ -21,7 +21,7 @@ class ApiHelper {
     return "";
   }
 Future<dynamic> getRequest(String path) async {
-  Uri uriFunction = Uri.http(DOMAIN, path);
+  Uri uriFunction = Uri.parse(DOMAIN+path);
   var token = await getToken();
   var headers = {"Authorization": "Bearer $token"};
   http.Response response = await http.get(uriFunction, headers: headers);
@@ -29,12 +29,12 @@ Future<dynamic> getRequest(String path) async {
 }
 
   Future<dynamic> postRequest(String path, Map body) async {
-    Uri uriFunction = Uri.http(DOMAIN, path);
+    Uri uriFunction = Uri.parse(DOMAIN+path);
     http.Response resposne = await http.post(uriFunction, body: body);
     return resposneFunction(resposne);
   }
 Future<dynamic> putRequest(String path, Map body) async {
-    Uri uriFunction = Uri.http(DOMAIN, path);
+    Uri uriFunction = Uri.parse(DOMAIN+path);
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
     http.Response resposne =
@@ -42,7 +42,7 @@ Future<dynamic> putRequest(String path, Map body) async {
     return resposneFunction(resposne);
   }
   Future<dynamic> deleteRequest(String path) async {
-    Uri uriFunction = Uri.http(DOMAIN, path);
+    Uri uriFunction = Uri.parse(DOMAIN+path);
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
 

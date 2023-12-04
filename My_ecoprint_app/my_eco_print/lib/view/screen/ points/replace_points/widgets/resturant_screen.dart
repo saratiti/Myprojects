@@ -1,5 +1,7 @@
 // // ignore_for_file: camel_case_types
 
+// ignore_for_file: library_private_types_in_public_api, camel_case_types
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
@@ -495,11 +497,11 @@ Widget buildClothesContainer(BuildContext context) {
     future: StoreController().getAllStoresWithOffers(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Center(child: Text('No data available'));
+        return const Center(child: Text('No data available'));
       } else {
         List<Store> stores = snapshot.data!;
 
@@ -782,7 +784,7 @@ Widget buildClothesContainer(BuildContext context) {
                                 children: stores[0].offers!.map((offer) {
                                   return Text(
                                     offer.offerDescription,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),

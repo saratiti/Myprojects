@@ -1,6 +1,7 @@
 const cacheUtil = require('../utils/cache');
 const jwtUtil = require('../utils/jwt.util');
 
+
 module.exports = async (req, res, next) => {
 
     let token = req.headers.authorization;
@@ -30,9 +31,6 @@ module.exports = async (req, res, next) => {
     }
 }
 
-//middleware/authMiddleware.js
-
-// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 const { ACCESS_TOKEN_SECRET } = process.env;
 
@@ -62,6 +60,6 @@ module.exports = {
 
 
 
-module.exports = {
-  authenticateToken,
-};
+
+
+

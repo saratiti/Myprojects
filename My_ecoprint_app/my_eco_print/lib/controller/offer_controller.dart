@@ -1,5 +1,5 @@
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, non_constant_identifier_names
 
 import 'package:dio/dio.dart';
 import 'package:my_eco_print/data/module/offer.dart';

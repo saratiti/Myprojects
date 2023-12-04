@@ -16,15 +16,16 @@ exports.login = (req, res) => {
     },
   })
     .then((user) => {
+      console.log('User:', user);
       if (user) {
         const payload = {
           user_id: user.user_id,
           username: user.username,
           email: user.email,
-          full_name:user.full_name,
-          phone:user.phone,
-
-
+          full_name: user.full_name,
+          phone: user.phone,
+          user_type: user.user_type,
+          company_id: user.company_id, // Include company_id in the payload
         };
 
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
@@ -38,6 +39,8 @@ exports.login = (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     });
 };
+
+
 
 
 exports.register = async (req, res) => {

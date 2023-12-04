@@ -1,7 +1,6 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Branche = require('./branche');
 const Company = require('./company');
 
 const Offer = sequelize.define('Offer', {

@@ -2,7 +2,6 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ncej_admin/controller/offer.dart';
 import 'package:ncej_admin/controller/store.dart';
 import 'package:ncej_admin/core/app_export.dart';
 import 'package:ncej_admin/data/module/store.dart';

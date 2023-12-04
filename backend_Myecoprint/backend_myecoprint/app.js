@@ -23,6 +23,7 @@ const authRoutes = require('./routes/auth');
 const redemRoutes = require('./routes/offer_redemption');
 
 const qrCodeDirectory = 'public/qrcode';
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());

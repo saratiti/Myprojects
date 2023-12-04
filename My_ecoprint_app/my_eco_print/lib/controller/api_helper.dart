@@ -122,7 +122,7 @@ Future<dynamic> postDio(String path, Map body) async {
       );
       return response.data;
     } else {
-      throw e;
+      rethrow;
     }
   }
 }

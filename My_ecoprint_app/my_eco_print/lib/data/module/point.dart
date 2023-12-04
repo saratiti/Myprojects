@@ -1,4 +1,6 @@
 
+// ignore_for_file: prefer_null_aware_operators
+
 class Point {
   int pointId;
   int storeId;

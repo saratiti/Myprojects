@@ -1,5 +1,6 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, use_build_context_synchronously
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/point_controller.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
@@ -10,7 +11,7 @@ import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_
 class CoffeeScreen extends StatelessWidget {
   final int typeId;
 
-  const CoffeeScreen({Key? key, required this.typeId});
+  const CoffeeScreen({super.key, required this.typeId});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,9 @@ void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int point
 
     Navigator.pop(context);
   } catch (e) {
-    print("Error in redeeming points: $e");
+    if (kDebugMode) {
+      print("Error in redeeming points: $e");
+    }
 
   }
 }
@@ -60,11 +63,11 @@ void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int point
     future: StoreController().getStoresWithOffers(typeId),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Center(child: Text('No data available'));
+        return const Center(child: Text('No data available'));
       } else {
         List<Store> stores = snapshot.data!;
 
@@ -353,7 +356,7 @@ void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int point
                                 children: stores[0].offers!.map((offer) {
                                   return Text(
                                     offer.offerDescription,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),

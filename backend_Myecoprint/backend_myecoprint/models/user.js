@@ -1,6 +1,7 @@
-// models/user.js
+
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const Company = require('./company');
 
 const User = sequelize.define('User', {
   user_id: {
@@ -26,14 +27,29 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  user_type: {
+    type: DataTypes.STRING,
+    allowNull: true,
+   
+  },
   profile_picture: {
     type: DataTypes.STRING,
   },
   phone: {
     type: DataTypes.STRING,
     allowNull: false,
- 
+   
   },
+  company_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Company,
+      key: 'company_id',
+    },
+    allowNull: true,
+  },
+
+
   createdAt: {
     type: DataTypes.DATE,
     allowNull: true,
@@ -51,5 +67,6 @@ const User = sequelize.define('User', {
   paranoid: true, 
   tableName: 'users', 
 });
+User.belongsTo(Company, { foreignKey: 'company_id', as: 'companies', onDelete: 'CASCADE' });
 
 module.exports = User;
