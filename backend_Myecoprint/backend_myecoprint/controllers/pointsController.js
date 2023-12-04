@@ -89,7 +89,7 @@ exports.collectDaily = async (req, res) => {
   const dailyPoints = 50;
 
   try {
-    // Find the user's existing point record
+
     let existingPoint = await Point.findOne({
       where: {
         user_id: user.user_id,
@@ -103,13 +103,11 @@ exports.collectDaily = async (req, res) => {
       if (existingPoint.last_daily_point >= today) {
         return res.status(400).json({ error: 'Points already collected today' });
       }
-
-      // Update existingPoint
       existingPoint.total_points += dailyPoints;
       existingPoint.last_daily_point = new Date();
       await existingPoint.save();
     } else {
-      // Create a new point record for the user
+  
       existingPoint = await Point.create({
         user_id: user.user_id,
         store_id: 4,
@@ -119,7 +117,7 @@ exports.collectDaily = async (req, res) => {
       });
     }
 
-    // Create a new transaction record for the user
+
     await Transaction.create({
       user_id: user.user_id,
       store_id: 4,

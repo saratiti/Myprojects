@@ -25,7 +25,7 @@ exports.login = (req, res) => {
           full_name: user.full_name,
           phone: user.phone,
           user_type: user.user_type,
-          company_id: user.company_id, // Include company_id in the payload
+          company_id: user.company_id,
         };
 
         const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
@@ -89,7 +89,7 @@ exports.logout = async (req, res) => {
 
 const bcrypt = require('bcryptjs'); 
 
-// Hash a password
+
 const saltRounds = 10;
 const plainTextPassword = 'your_password_here';
 bcrypt.hash(plainTextPassword, saltRounds, (err, hash) => {

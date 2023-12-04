@@ -52,23 +52,35 @@ exports.redeemPoints = async (req, res) => {
     console.log('User Points:', userPoints);
 
     if (userPoints < pointsRedeemed) {
-      return res.status(400).json({ error: 'Insufficient points for redemption' });
+      return res.status(400).json({ error: 'Not enough points to redeem' });
     }
 
+ 
     const redemption = await redeemPointsWithOfferDiscount(storeId, offerId, pointsRedeemed, req.user_id);
 
+    if (!redemption) {
+  
+      return res.status(400).json({ error: 'Redemption failed not enough points' });
+    }
+
+    // Create a transaction record
     await Transaction.create({
-            user_id: req.user_id,
-            store_id: storeId,
-            offer_id: offerId,
-            points: -pointsRedeemed,
-            transaction_type: 'redemption',
-            transaction_date: new Date(),
-          });
+      user_id: req.user_id,
+      store_id: storeId,
+      offer_id: offerId,
+      points: -pointsRedeemed,
+      transaction_type: 'redemption',
+      transaction_date: new Date(),
+    });
 
     res.status(200).json({ message: 'Points redeemed successfully', redemption });
-  } catch (error) {
+  }  catch (error) {
     console.error('Error in redeemPoints controller:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  
+    if (error.message === 'Not enough points to redeem') {
+      return res.status(400).json({ error: 'Not enough points to redeem' });
+    }
+    return res.status(500).json({ error: 'Internal server error' });
   }
+  
 };
