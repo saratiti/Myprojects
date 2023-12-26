@@ -1,8 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/transaction_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/data/module/transaction.dart';
 
-class CoponScreen extends StatelessWidget {
-  const CoponScreen({Key? key}) : super(key: key);
+class CoponScreen extends StatefulWidget {
+  CoponScreen({Key? key}) : super(key: key);
+
+  @override
+  _CoponScreenState createState() => _CoponScreenState();
+}
+
+class _CoponScreenState extends State<CoponScreen> {
+  final TransactionController transactionController = TransactionController();
+   String selectedSortOrder = 'desc';
+String label24 = "";
+  String label25 = ""; 
+List<dynamic> transactions = [];
+Future<void> fetchData(String sort) async {
+  try {
+    final List<Transaction> result = await transactionController.getAllTransactions();
+
+    if (result.isNotEmpty) {
+      setState(() {
+        label24 = result[0].transactionType;
+        label25 = result[0].points.toString();
+
+        transactions = sortTransactions(result, sort);
+      });
+    } else {
+      print('Empty result');
+    }
+  } catch (error) {
+    print('Error fetching data: $error');
+  }
+}
+
+
+List<Transaction> sortTransactions(List<Transaction> transactions, String sort) {
+  if (sort == 'asc') {
+    transactions.sort((a, b) => a.transactionDate.compareTo(b.transactionDate));
+  } else {
+    transactions.sort((a, b) => b.transactionDate.compareTo(a.transactionDate));
+  }
+
+  return transactions;
+}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,113 +83,163 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     ));
   }
 
-  Widget buildCouponStack() {
-    return SizedBox(
-      height: 715.v,
-      width: double.maxFinite,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Opacity(
-            opacity: 0.1,
-            child: CustomImageView(
-              imagePath: ImageConstant.imgGroup70252,
-              height: 702.v,
-              width: 393.h,
-              alignment: Alignment.center,
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 31.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildCouponContainer("msg30".tr, "lbl_540".tr, ImageConstant.imgMobile),
-                  SizedBox(height: 24.v),
-                  buildCouponContainer("msg31".tr, "lbl_60".tr, ImageConstant.imgFile),
-                  SizedBox(height: 24.v),
-                  buildCouponContainer("msg32".tr, "lbl_1500".tr, ImageConstant.imgFire),
-                  
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+Widget buildCouponStack() {
+  return FutureBuilder<List<Transaction>>(
+    future: transactionController.getAllTransactions(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return Text('No transactions available.');
+      } else {
+        List<Transaction> transactions = snapshot.data!;
 
-
-Widget headerCoupon(){
-
-return Align(
-  alignment: Alignment.centerRight,
+        return SingleChildScrollView(
+          child: SizedBox(
+           
+            width: double.maxFinite,
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                Opacity(
+                  opacity: 0.1,
+                  child: CustomImageView(
+                    imagePath: ImageConstant.imgGroup70252,
+                    height: 702.v,
+                    width: 393.h,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                Align(
+  alignment: Alignment.topCenter,
   child: Padding(
-    padding: const EdgeInsets.only(top: 15, right: 32),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-       
-        Padding(
-          padding: const EdgeInsets.only(left: 26),
-          child: Text(
-            "lbl24".tr,
-            style: CustomTextStyles.titleSmallBahijTheSansArabic,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 26),
-          child: Text(
-            "lbl25".tr,
-            style: CustomTextStyles.titleSmallBahijTheSansArabicLightgreen500,
-          ),
-        ),
-        CustomImageView(
-          svgPath: ImageConstant.imgLocation,
-          height: 24,
-          width: 24,
-          margin: const EdgeInsets.only(left: 26),
-        ),
-      ],
+    padding: EdgeInsets.symmetric(horizontal: 31.h),
+    child: ListView.builder(
+      shrinkWrap: true,
+      itemCount: transactions.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            buildCouponContainer(transactions[index]),
+            if (index < transactions.length - 1) SizedBox(height: 16.v),
+          ],
+        );
+      },
     ),
   ),
-);
+),
 
-}
-
-  Widget buildCouponContainer(String message, String label, String iconPath) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
-      decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-        borderRadius: BorderRadiusStyle.roundedBorder24,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.v),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(message, style: theme.textTheme.titleMedium),
-                Text(label, style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
               ],
             ),
           ),
-          CustomIconButton(
-            height: 44.adaptSize,
-            width: 44.adaptSize,
-            margin: EdgeInsets.only( top: 1.v),
-            padding: EdgeInsets.all(11.h),
-            child: CustomImageView(svgPath: iconPath),
-          ),
-        ],
-      ),
-    );
+        );
+      }
+    },
+  );
+}
+
+
+
+String getIconPathBasedOnTransactionType(String transactionType) {
+  if (transactionType == 'redemption') {
+    return ImageConstant.imgMobile;
+  } else {
+    return ImageConstant.imgFile;
   }
 }
+
+
+
+
+void onSortButtonClick(String sortOrder) {
+  print('Sort button clicked: $sortOrder');
+  print('Sort button clicked: $sortOrder');
+  setState(() {
+    selectedSortOrder = sortOrder;
+  });
+
+  fetchData(sortOrder);
+}
+
+Widget headerCoupon() {
+ return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 15, right: 32),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 26),
+              child: TextButton(
+                onPressed: () => onSortButtonClick('asc'),
+                child: Text(
+                  "lbl24".tr,
+                  style: selectedSortOrder == 'asc'
+                      ? CustomTextStyles.titleSmallBahijTheSansArabicLightgreen500
+                      : CustomTextStyles.titleSmallBahijTheSansArabic,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 26),
+              child: TextButton(
+                onPressed: () => onSortButtonClick('desc'),
+                child: Text(
+                  "lbl25".tr,
+                  style: selectedSortOrder == 'desc'
+                      ? CustomTextStyles.titleSmallBahijTheSansArabicLightgreen500
+                      : CustomTextStyles.titleSmallBahijTheSansArabic,
+                ),
+              ),
+            ),
+            CustomImageView(
+              svgPath: ImageConstant.imgLocation,
+              height: 24,
+              width: 24,
+              margin: const EdgeInsets.only(left: 26),
+            ),
+          ],
+        ),
+      ));
+}
+
+Widget buildCouponContainer(Transaction transaction) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
+    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+      borderRadius: BorderRadiusStyle.roundedBorder24,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 5.v),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(transaction.transactionType, style: theme.textTheme.titleMedium),
+              SizedBox(height: 8.v), 
+              Text(transaction.points.toString(), style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
+            ],
+          ),
+        ),
+        SizedBox(width: 16.h), 
+        CustomIconButton(
+          height: 44.adaptSize,
+          width: 44.adaptSize,
+          margin: EdgeInsets.only(top: 1.v),
+          padding: EdgeInsets.all(11.h),
+          child: CustomImageView(svgPath: getIconPathBasedOnTransactionType(transaction.transactionType)),
+        ),
+      ],
+    ),
+  );
+}
+
+
 
   /// Navigates back to the previous screen.
   ///
@@ -170,10 +266,11 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
       },
     ),
     centerTitle: true,
-    title: AppbarTitle(text:"lbl16".tr),
+    title: AppbarTitle(text:"lbl20_".tr),
   );
 }
 
 void onTapArrowleft(BuildContext context) {
   Navigator.pop(context);
+}
 }

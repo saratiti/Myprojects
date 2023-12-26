@@ -3,7 +3,7 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Company = require('./company');
 const Type = require('./type');
-const Offer=require('./offer');
+
 const Store = sequelize.define('Store', {
     store_id: {
     type: DataTypes.INTEGER,
@@ -50,8 +50,7 @@ const Store = sequelize.define('Store', {
   });
   Store.belongsTo(Company, { foreignKey: 'company_id', as: 'companies',onDelete: 'CASCADE' });
   Store.belongsTo(Type, { foreignKey: 'type_id', as: 'types',onDelete: 'CASCADE' });
-  Store.hasMany(Offer, { foreignKey: 'company_id', sourceKey: 'company_id', as: 'offers',onDelete: 'CASCADE' });
-
+ // Store.hasMany(Offer, { foreignKey: 'store_id', as: 'offers' });
 module.exports = Store;
 
 

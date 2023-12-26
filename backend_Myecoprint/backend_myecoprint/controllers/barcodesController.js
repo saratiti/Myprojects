@@ -6,7 +6,7 @@ const Store = require('../models/store');
 const User = require('../models/user');
 const Point=require('../models/point');
 const qrcode = require('qrcode');
-
+const { v4: uuidv4 } = require('uuid');
 exports.createBarcode = async (req, res) => {
   try {
     const barcode = await Barcode.create(req.body);
@@ -199,19 +199,18 @@ exports.checkBarcode = async (req, res) => {
 
 exports.generateBarcode = async (req, res) => {
   try {
-    const dataToEncode = '98763432'; 
-    
+    const { store_id, offer_id, branch_id} = req.body;
+    const barcodeValue = uuidv4();
     const newBarcode = await Barcode.create({
-      store_id: 4, 
-      offer_id: 42,
-      barcode_value: dataToEncode,
+      store_id,
+      offer_id,
+      barcode_value: barcodeValue,
       barcode_status: 'active',
-      branch_id: 3,
-     // user_id: 6, 
-      barcode_date: new Date(), 
+      branch_id,
+      barcode_date: new Date(),
     });
 
-    qrcode.toDataURL(dataToEncode, (err, qrCodeData) => {
+    qrcode.toDataURL(barcodeValue, (err, qrCodeData) => {
       if (err) {
         res.status(500).send('Error generating QR code');
       } else {
@@ -223,7 +222,83 @@ exports.generateBarcode = async (req, res) => {
         res.send(imageBuffer);
       }
     });
+  } catch (error) {
+    console.error('Error generating barcode and QR code:', error);
+    res.status(500).json({ message: 'Error generating barcode and QR code' });
+  }
+};
+
+// exports.collectPointsFromBarcode = async (req, res) => {
+//   try {
+//     const { barcodeValue, userId } = req.body;
+
     
+//     const barcode = await Barcode.findOne({ barcode_value: barcodeValue });
+
+//     if (!barcode) {
+//       return res.status(404).json({ message: 'Barcode not found' });
+//     }
+
+//     if (barcode.points_collected) {
+//       return res.status(400).json({ message: 'Points already collected for this barcode' });
+//     }
+
+//     const user = await User.findOneAndUpdate(
+//       { _id: userId },
+//       { $inc: { points: barcode.points_to_collect } },
+//       { new: true }
+//     );
+
+//     // Mark the barcode as points collected
+//     barcode.points_collected = true;
+//     await barcode.save();
+
+//     res.json({ success: true, totalPoints: user.points });
+//   } catch (error) {
+//     console.error('Error collecting points:', error);
+//     res.status(500).json({ message: 'Error collecting points' });
+//   }
+// };
+
+
+exports.generateBarcodeOfferStore = async (req, res) => {
+  try {
+    console.log('Received request:', req.body);
+
+    const { dataToEncode } = req.body;
+    const { offer_id, store_id, user_id, number_point } = JSON.parse(dataToEncode);
+    
+    const offer = await Offer.findByPk(offer_id);
+    if (!offer) {
+      console.error('Offer not found for the given offer_id:', offer_id);
+      return res.status(404).json({ message: 'Offer not found' });
+    }
+
+
+    const numberPoint = offer.number_point;
+    const barcodeValue = `${offer_id}_${store_id}_${user_id}_${number_point}`;
+    // const newBarcode = await Barcode.create({
+    //   store_id,
+    //   offer_id,
+    //   barcode_value: barcodeValue,
+    //   barcode_status: 'active',
+    //   barcode_date: new Date(),
+    //   number_point: currentNumberPoint,
+    //   user_id: req.user.id // Fix: Change req.user_id to req.user.id
+    // });
+
+    qrcode.toDataURL(barcodeValue, (err, qrCodeData) => {
+      if (err) {
+        res.status(500).send('Error generating QR code');
+      } else {
+        res.setHeader('Content-Type', 'image/png');
+        //res.setHeader('Content-Disposition', 'attachment; filename="qr-code.png"');
+        const dataUri = `data:image/png;base64,${qrCodeData.split(',')[1]}`;
+        const imageBuffer = Buffer.from(dataUri.split(',')[1], 'base64');
+        res.setHeader('Content-Length', imageBuffer.length);
+        res.send(imageBuffer);
+      }
+    });
   } catch (error) {
     console.error('Error generating barcode and QR code:', error);
     res.status(500).json({ message: 'Error generating barcode and QR code' });

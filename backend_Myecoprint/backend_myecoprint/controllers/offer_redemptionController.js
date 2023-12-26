@@ -62,8 +62,6 @@ exports.redeemPoints = async (req, res) => {
   
       return res.status(400).json({ error: 'Redemption failed not enough points' });
     }
-
-    // Create a transaction record
     await Transaction.create({
       user_id: req.user_id,
       store_id: storeId,

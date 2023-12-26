@@ -1,10 +1,7 @@
 
 // ignore_for_file: non_constant_identifier_names, avoid_print, prefer_const_declarations, use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ncej_admin/data/module/login.dart';
@@ -20,11 +17,11 @@ class AuthController{
 
   UserController() {
     dio = Dio();
-     (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        (client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-        };
+    //  (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    //     (client) {
+    //   client.badCertificateCallback =
+    //       (X509Certificate cert, String host, int port) => true;
+    //     };
   }
    Future<Login?> login(String username, String password) async {
     final Map<String, dynamic>? responseData = await ApiHelper().postRequest("/api/auth/login", {

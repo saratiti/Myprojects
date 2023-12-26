@@ -19,7 +19,7 @@ class TypeController{
 
 Future<List<Type>> getAll() async {
   try {
-    dynamic jsonObject = await ApiHelper().getRequest("/api/types");
+    dynamic jsonObject = await ApiHelper().getRequest("/api/types",);
     if (jsonObject == null) {
       return [];
     }

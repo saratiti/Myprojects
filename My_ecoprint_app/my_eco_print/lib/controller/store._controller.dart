@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:dio/dio.dart';
+import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/data/module/store.dart';
 
 import 'api_helper.dart';
@@ -74,31 +75,39 @@ Future<List<Store>> getAll() async {
   }
 }
 
-Future<List<Store>> getStoresWithOffers(int typeId) async {
-    try {
-      dynamic jsonObject = await ApiHelper().getRequest("/api/stores/type/$typeId");
-      if (jsonObject == null) {
-        return [];
-      }
-      List<Store> result = [];
-      jsonObject.forEach((json) {
-        result.add(Store.fromJson(json));
-      });
-      return result;
-    } catch (ex) {
-      print(ex);
-      rethrow;
+Future<List<Offer>> getStoresWithOffers(int typeId) async {
+  try {
+    final response = await ApiHelper().getRequest("/api/stores/type/$typeId");
+
+    if (response == null || response['data'] == null) {
+      return [];
     }
+
+    List<Offer> result = (response['data'] as List<dynamic>?)
+        ?.map((json) {
+        
+          final offerJson = json['offer'];
+          return Offer.fromJson(offerJson);
+        })
+        .toList() ?? [];
+
+    return result;
+  } catch (ex) {
+    print('Error: $ex');
+    rethrow;
   }
-Future<List<Store>> getAllStoresWithOffers() async {
+}
+
+
+Future<List<Offer>> getAllStoresWithOffers() async {
     try {
       dynamic jsonObject = await ApiHelper().getRequest("/api/stores/typeByoffer");
       if (jsonObject == null) {
         return [];
       }
-      List<Store> result = [];
+      List<Offer> result = [];
       jsonObject.forEach((json) {
-        result.add(Store.fromJson(json));
+        result.add(Offer.fromJson(json));
       });
       return result;
     } catch (ex) {
@@ -106,5 +115,23 @@ Future<List<Store>> getAllStoresWithOffers() async {
       rethrow;
     }
   }
-
+Future<List<Offer>> getOfferByStoreAndOfferId(int storeId, int offerId) async {
+  try {
+    dynamic jsonObject = await ApiHelper().getRequest("/api/stores/$storeId/$offerId");
+    if (jsonObject.containsKey("data") && jsonObject["data"].containsKey("offer")) {
+      jsonObject = jsonObject["data"]["offer"];
+    }
+    List<Offer> result = [Offer.fromJson(jsonObject)];
+    return result;
+  } catch (e) {
+    print(e);
+    throw e; 
+  }
 }
+}
+
+
+
+
+
+

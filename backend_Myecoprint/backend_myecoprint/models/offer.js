@@ -2,6 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Company = require('./company');
+const Store = require('./store');
 
 const Offer = sequelize.define('Offer', {
     offer_id: {
@@ -15,7 +16,11 @@ const Offer = sequelize.define('Offer', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-
+    store_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+  
     offer_name_arabic: {
         type: DataTypes.STRING,
     },
@@ -67,7 +72,9 @@ const Offer = sequelize.define('Offer', {
     paranoid: true, 
     tableName: 'offers', 
   });
-  Offer.belongsTo(Company, { foreignKey: 'company_id', as: 'companies',onDelete: 'CASCADE' });
+  Offer.belongsTo(Company, { foreignKey: 'company_id', as: 'companies', onDelete: 'CASCADE' });
+  Offer.belongsTo(Store, { foreignKey: 'store_id', as: 'stores', onDelete: 'CASCADE' });
+  
 module.exports = Offer;
 
 

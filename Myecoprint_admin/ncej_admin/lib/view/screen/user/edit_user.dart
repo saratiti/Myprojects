@@ -657,3 +657,24 @@ Widget deleteAccount(BuildContext context) {
   );
 }
 }
+
+CustomAppBar buildAppBar(BuildContext context) {
+ final localization = AppLocalizationController.to;
+final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+
+    return CustomAppBar(
+      height: 50.v,
+      leadingWidth: 40.h,
+      leading: CustomImageView(
+              svgPath: (textDirection == TextDirection.rtl)
+                  ? ImageConstant.imgArrowright
+                  : ImageConstant.imgArrowleftOnprimary,
+              height: 24.0,
+              width: 24.0,
+              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
+              onTap: () => onTapArrowleft(context),
+            ),
+      centerTitle: true,
+      title: AppbarTitle(text: "msg34".tr),
+    );
+  }

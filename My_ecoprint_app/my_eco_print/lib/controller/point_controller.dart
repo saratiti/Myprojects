@@ -1,8 +1,9 @@
 
-// ignore_for_file: avoid_print, non_constant_identifier_names
+// ignore_for_file: avoid_print, non_constant_identifier_names, unused_local_variable
 
 import 'package:dio/dio.dart';
 import 'package:my_eco_print/data/module/Point.dart';
+import 'package:my_eco_print/data/module/transaction.dart';
 
 import 'api_helper.dart';
 class PointController{
@@ -30,8 +31,7 @@ class PointController{
 
   rethrow;
 }
-
-  }
+}
 
 Future<Point> getPoint() async {
   try {
@@ -110,7 +110,7 @@ Future<int> getTotalPointsByUserId() async {
   try {
     var result = await ApiHelper().getRequest("/api/points/total");
     if (result.containsKey('totalPoints')) {
-      var totalPoints = int.tryParse(result['totalPoints'].toString());
+      var totalPoints = result['totalPoints']['total_points'];
       if (totalPoints != null) {
         return totalPoints;
       } else {
@@ -126,6 +126,7 @@ Future<int> getTotalPointsByUserId() async {
     rethrow;
   }
 }
+
 Future<dynamic> redeemPoints({
   required int storeId,
   required int offerId,
@@ -141,19 +142,34 @@ Future<dynamic> redeemPoints({
       },
     );
 
+    print("Request Payload: ${{
+      'storeId': storeId.toString(),
+      'offerId': offerId.toString(),
+      'pointsRedeemed': pointsRedeemed.toString(),
+    }}");
 
-    print("Points redeemed successfully: $result");
-        print("Request Payload: ${{
-  'storeId': storeId.toString(),
-  'offerId': offerId.toString(),
-  'pointsRedeemed': pointsRedeemed.toString(),
-}}");
+    
+    if (result != null && result['success'] != null) {
+      bool success = result['success']; 
+      if (success) {
+       
+        Transaction localTransaction = Transaction(
+          storeId: storeId,
+          offerId: offerId,
+          points: pointsRedeemed,
+          transactionType: 'redemption',
+          transactionDate: DateTime.now(),
+        );
+      }
+    }
+
     return result;
   } catch (e) {
     print("Error redeeming points: $e");
     rethrow;
   }
 }
+
 Future<int> collectDailyPoints() async {
   try {
     var result = await ApiHelper().postRequest("/api/points/collectDaily", {});
@@ -177,6 +193,7 @@ Future<int> collectDailyPoints() async {
     rethrow;
   }
 }
+
 
 
 

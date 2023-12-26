@@ -1,10 +1,10 @@
-// PointRedemption.js
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./user');
 const Store = require('./store');
-const Offer = require('./offer'); // Import the Offer model
+const Offer = require('./offer'); 
+
 
 const PointRedemption = sequelize.define('PointRedemption', {
   redemption_id: {
@@ -15,7 +15,7 @@ const PointRedemption = sequelize.define('PointRedemption', {
   },
   user_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    
   },
   store_id: {
     type: DataTypes.INTEGER,
@@ -40,6 +40,6 @@ const PointRedemption = sequelize.define('PointRedemption', {
 
 PointRedemption.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
 PointRedemption.belongsTo(Store, { foreignKey: 'store_id', as: 'stores', onDelete: 'CASCADE' });
-PointRedemption.belongsTo(Offer, { foreignKey: 'offer_id', as: 'offers', onDelete: 'CASCADE' }); // Add the association
+PointRedemption.belongsTo(Offer, { foreignKey: 'offer_id', as: 'offers', onDelete: 'CASCADE' });
 
 module.exports = PointRedemption;

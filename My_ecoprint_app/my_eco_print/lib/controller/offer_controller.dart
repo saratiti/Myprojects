@@ -88,6 +88,19 @@ Future<List<Offer>> getAll() async {
       rethrow;
     }
   }
+Future<Offer> getOfferById(int offerId) async {
+  try {
+    var result = await ApiHelper().getRequest("/api/Offers/$offerId");
+    if (result != null) {
+      return Offer.fromJson(result);
+    } else {
+      throw Exception("No data received from the backend");
+    }
+  } catch (e) {
+    print("Error in getOfferById: $e");
+    rethrow;
+  }
+}
 
 
 }

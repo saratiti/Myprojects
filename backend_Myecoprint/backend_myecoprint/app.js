@@ -21,7 +21,7 @@ const typeRouter = require('./routes/types');
 const usersRouter = require('./routes/users');
 const authRoutes = require('./routes/auth');
 const redemRoutes = require('./routes/offer_redemption');
-
+const transactionsRouter=require('./routes/transaction');
 const qrCodeDirectory = 'public/qrcode';
 
 app.use(express.json());
@@ -41,6 +41,7 @@ app.use('/api/reasones_barcodes',reasonBarcodesRouter);
 app.use('/api/stores',storeRouter);
 app.use('/api/types',typeRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/transactions', transactionsRouter);
 app.use('/api/auth', authRoutes);
 app.use('/api/redeem_points', redemRoutes);
 

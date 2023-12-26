@@ -10,6 +10,7 @@ router.get('/', offerController.getAllOffers);
 //router.get('/:id', offerController.getOfferById);
 router.put('/offers/:id', offerController.updateOffer);
 router.delete('/:id', offerController.deleteOffer);
+router.get('/:id',offerController.getOfferById);
 router.get('/P', offerController.getFilteredOffers);
 router.get('/store',offerController.getStoresByOffer);
 const sharp = require('sharp');

@@ -57,7 +57,7 @@ class AuthController{
 
   Future<User> getUser() async {
     try {
-      var result = await ApiHelper().getRequest("/api/users/profile");
+      var result = await ApiHelper().getRequest("/api/users/profile",);
       return User.fromJson(result);
     } catch (e) {
       rethrow;

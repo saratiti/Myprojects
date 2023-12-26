@@ -94,4 +94,5 @@ class BarcodeController {
       rethrow;
     }
   }
+  
 }

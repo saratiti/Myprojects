@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/data/module/store.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
 
@@ -435,15 +436,14 @@ import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_
 
 
 
-class AllStoreScreen extends StatefulWidget {
-  const AllStoreScreen({Key? key}) : super(key: key);
+ class AllStoreScreen extends StatefulWidget {
+   const AllStoreScreen({Key? key}) : super(key: key);
 
-  @override
-  _AllStoreScreenState createState() => _AllStoreScreenState();
-}
+   @override
+  _AllStoreScreenState createState() => _AllStoreScreenState(); }
 
-class _AllStoreScreenState extends State<AllStoreScreen> {
-  List<Store> stores = [];
+ class _AllStoreScreenState extends State<AllStoreScreen> {
+  List<Offer> stores = [];
 
   @override
   void initState() {
@@ -453,7 +453,7 @@ class _AllStoreScreenState extends State<AllStoreScreen> {
 
   Future<void> fetchAllStoresOffer() async {
     try {
-      List<Store> fetchedStoreOffer =
+      List<Offer> fetchedStoreOffer =
           await StoreController().getAllStoresWithOffers();
 
       setState(() {
@@ -493,37 +493,26 @@ Widget buildClothesContainer(BuildContext context) {
       ? TextDirection.rtl
       : TextDirection.ltr;
 
-  return FutureBuilder<List<Store>>(
+  return FutureBuilder<List<Offer>>(
     future: StoreController().getAllStoresWithOffers(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
+        return Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No data available'));
+        return Center(child: Text('No data available'));
       } else {
-        List<Store> stores = snapshot.data!;
+        List<Offer> offers = snapshot.data!;
 
-        return
-        SizedBox(
-     
-      width: double.maxFinite,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 60.v),
-      
-      child: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: stores.length,
-          itemBuilder: (context, index) {
-            Store store = stores[index];
-
+        return SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: offers.length,
+            itemBuilder: (context, index) {
+              Offer offer = offers[index];
           return 
           
           
@@ -704,144 +693,95 @@ Widget buildClothesContainer(BuildContext context) {
                 },
               );
             },
-            child: Center(
-              child: Container(
-                margin: EdgeInsets.only(top: 20.v),
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.h,
-                  vertical: 5.v,
-                ),
-                decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-                  borderRadius: BorderRadiusStyle.roundedBorder24,
-                ),
-                child: Column(
-                  children: [
-                                                Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (stores[0].offers != null &&
-                              stores[0].offers!.isNotEmpty)
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: paint(
-                                textDirection: textDirection,
-                                // additionalText:
-                                //     stores[0].offers![0].numberPoint.toString(),
-              ),
-                              ),
-                          ],
-                        ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             child: Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 20.v, bottom: 10.v),
+                    padding: EdgeInsets.symmetric(horizontal: 20.h),
+                    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                      borderRadius: BorderRadiusStyle.roundedBorder24,
+                    ),
+                    child: Column(
                       children: [
-                     
-                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 1.v, top: 10),
-                                    child: SizedBox(
-                                      height: 44.adaptSize,
-                                      width: 44.adaptSize,
-                                      child: Container(
-                                        height: 44.adaptSize,
-                                        width: 44.adaptSize,
-                                        padding: EdgeInsets.all(6.h),
-                                        decoration: AppDecoration.fillGray
-                                            .copyWith(
-                                          borderRadius:
-                                              BorderRadiusStyle.roundedBorder17,
-                                        ),
-                                        child: CustomImageView(
-                                          imagePath: ImageConstant.imgImage1305,
-                                          height: 44.adaptSize,
-                                          width: 44.adaptSize,
-                                          alignment: Alignment.center,
-                                        ),
-                                                              
-        
-                    
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              height: 56.adaptSize,
+                              width: 56.adaptSize,
+                              padding: EdgeInsets.all(6.h),
+                              decoration: AppDecoration.fillGray.copyWith(
+                                borderRadius: BorderRadiusStyle.roundedBorder17,
                               ),
-                            ],
-                          ),
-                        
-                        if (stores[0].offers != null &&
-                            stores[0].offers!.isNotEmpty)
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(vertical: 10),
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              child: Column(
-                                children: stores[0].offers!.map((offer) {
-                                  return Text(
-                                    offer.offerDescription,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  );
-                                }).toList(),
+                              child: CustomImageView(
+                                imagePath: ImageConstant.imgImage1305,
+                                height: 44.adaptSize,
+                                width: 44.adaptSize,
+                                alignment: Alignment.center,
                               ),
                             ),
-                          ),
-                        if (stores[0].offers != null &&
-                            stores[0].offers!.isNotEmpty)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: stores[0].offers!.map((offer) {
-                              return Align(
-                                alignment: Alignment.centerLeft,
+                            SizedBox(width: 3.0),
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.only(bottom: 3.0),
                                 child: Text(
-                                  offer.offerDiscount.toString(),
-                                  style: const TextStyle(fontSize: 14),
+                                  '${offer.numberDiscount.toString()}%',
+                                  style: theme.textTheme.headlineSmall,
                                 ),
-                              );
-                            }).toList(),
+                              ),
+                            ),
+                     if (offer.numberPoint != null)
+      Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 8.0),
+          Align(
+            alignment: Alignment.topLeft,
+            child: paint(
+              textDirection: textDirection,
+              additionalText: offer.numberPoint.toString(),
+            ),
+          ),
+        ],
+      ),
+  ],
+ 
+),
+
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Text(
+                              offer.offerDescription.toString(),
+                              style: theme.textTheme.titleMedium,
+                            ),
                           ),
+                        ),
                       ],
                     ),
-                 
-
-
-            
-                    ],
                   ),
                 ),
-              ),
-            );
-          },
-            )
-          )
-   ) ]));
-      }
-    },
-  );
-}
-}
+              );
+            },
+          ),
+        );
+}}
+);
 
-
-
+}}
 
 
 
 class paint extends StatelessWidget {
-  const paint({
-    super.key,
-    required this.textDirection,
-
-  });
-
   final TextDirection textDirection;
- 
+  final String additionalText; 
+
+  const paint({
+    Key? key,
+    required this.textDirection,
+    required this.additionalText, 
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -872,14 +812,11 @@ class paint extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            "lbl_15002".tr,
-                            style: CustomTextStyles.titleMediumWhiteA700,
-                          ),
+                         
                           Padding(
                             padding: EdgeInsets.only(right: 2.h),
                             child: Text(
-                              "lbl39".tr,
+                              additionalText,
                               style: CustomTextStyles.titleMediumWhiteA700,
                             ),
                           ),
@@ -896,6 +833,7 @@ class paint extends StatelessWidget {
     );
   }
 }
+
 
 class MyPainter extends CustomPainter {
   final TextDirection textDirection;

@@ -165,11 +165,6 @@ class ReplacePointContent extends StatelessWidget {
 
 class ReplacePointHeader extends StatelessWidget {
   const ReplacePointHeader({Key? key}) : super(key: key);
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -213,13 +208,12 @@ class ReplacePointHeader extends StatelessWidget {
                 future:PointController().getTotalPointsByUserId(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    // Return a loading indicator while the data is being fetched
+
                     return const CircularProgressIndicator();
                   } else if (snapshot.hasError) {
-                    // Handle the error state
+                 
                     return Text("Error: ${snapshot.error}");
                   } else {
-                    // Display the fetched total points
                     return Text(
                       "Total Points: ${snapshot.data}",
                       style: theme.textTheme.labelLarge,
@@ -306,7 +300,7 @@ class ReplacePointListResturant extends StatelessWidget {
                 separatorBuilder: (context, index) {
                   return SizedBox(height: 25.v);
                 },
-                itemCount: 5,
+                itemCount: 1,
                 itemBuilder: (context, index) {
                   return const AllStoreScreen();
                 },
@@ -340,7 +334,7 @@ class ReplacePointListClothes extends StatelessWidget {
                 separatorBuilder: (context, index) {
                   return SizedBox(height: 25.v);
                 },
-                itemCount: 5,
+                itemCount: 1,
                 itemBuilder: (context, index) {
                   return const ClothesScreen();
                 },
@@ -431,7 +425,7 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
     super.initState();
     fetchTypes();
     
-    // Set initial values to show AllStoreScreen by default
+  
     selectedButton = "lbl45".tr;
     selectedTypeId = null;
   }

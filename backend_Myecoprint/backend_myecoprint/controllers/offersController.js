@@ -1,13 +1,10 @@
 // controllers/offerController.js
 
 const Offer = require('../models/Offer');
-const { Op } = require('sequelize');
-const Store = require('../models/store');
 const Company = require('../models/company');
 const Jimp = require('jimp');
 const QRCode = require('qrcode');
 const fs = require('fs');
-const jsQR = require('jsqr');
 const path = require('path');
 
 exports.createOffer = async (req, res) => {
@@ -44,13 +41,13 @@ exports.createOffer = async (req, res) => {
     offer.qrCodeImagePath = qrCodeImagePath;
     await offer.save();
 
-    // Send success response
+
     return res.json(offer);
   } catch (error) {
-    // Log the error
+  
     console.error(error);
     
-    // Send a generic error response
+  
     return res.status(400).json({ error: 'Failed to create offer', details: 'An unexpected error occurred.' });
 }
 
@@ -148,6 +145,28 @@ exports.updateOffer = async (req, res) => {
   }
 };
 
+
+exports.getOfferById = async (req, res) => {
+  try {
+    const offerId = req.params.id;
+    console.log('Received offer ID:', offerId);
+
+    const offer = await Offer.findByPk(offerId);
+    console.log('Found offer:', offer);
+
+    if (!offer) {
+      console.log('Offer not found');
+      return res.status(404).json({ message: 'Offer not found' });
+    }
+
+    return res.status(200).json(offer);
+  } catch (error) {
+    console.error('Error fetching offer by ID:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+}
+
+
 exports.deleteOffer = async (req, res) => {
   const offerId = req.params.id;
 
@@ -200,3 +219,5 @@ exports.getStoresByOffer = async (req, res) => {
     }
   };
  
+
+  

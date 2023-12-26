@@ -4,7 +4,7 @@ const Store = require('../models/store');
 
 exports.createBranche = async (req, res) => {
   try {
-    const branche = await branch.create(req.body);
+    const branche = await Branche.create(req.body);
     res.json(branche);
   } catch (error) {
     res.status(400).json({ error: 'Failed to create branche', details: error.message });

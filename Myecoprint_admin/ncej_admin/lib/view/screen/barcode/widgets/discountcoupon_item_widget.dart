@@ -10,8 +10,10 @@ class ClothesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
     return Directionality(
       textDirection: textDirection,
@@ -26,12 +28,13 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
-Widget buildClothesContainer(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+  Widget buildClothesContainer(BuildContext context) {
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
-
-   return GestureDetector(
+    return GestureDetector(
         onTap: () {
           showDialog(
             context: context,
@@ -89,100 +92,109 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                       ),
                       SizedBox(height: 20.v),
                       Align(
-  alignment: Alignment.center,
-  child: CustomElevatedButton(
-    height: 35.v,
-    width: 150.h,
-    text: "lbl49".tr,
-    margin: EdgeInsets.only(top: 22.v),
-    buttonStyle: CustomButtonStyles.fillLightGreenTL20,
-    buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
-    onTap: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-             contentPadding: EdgeInsets.zero,
-                content: Container(
-                  width: 350.h,
-                  height: 350.v,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
-                  decoration: AppDecoration.fillWhiteA.copyWith(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Directionality(
-                        textDirection: textDirection,
-                        child: CustomImageView(
-                          svgPath: ImageConstant.imgClose,
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
+                        alignment: Alignment.center,
+                        child: CustomElevatedButton(
+                          height: 35.v,
+                          width: 150.h,
+                          text: "lbl49".tr,
+                          margin: EdgeInsets.only(top: 22.v),
+                          buttonStyle: CustomButtonStyles.fillLightGreenTL20,
+                          buttonTextStyle: CustomTextStyles
+                              .titleSmallBahijTheSansArabicWhiteA700,
                           onTap: () {
-                            onTapImgCloseone(context);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                    contentPadding: EdgeInsets.zero,
+                                    content: Container(
+                                        width: 350.h,
+                                        height: 350.v,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20.h, vertical: 20.v),
+                                        decoration:
+                                            AppDecoration.fillWhiteA.copyWith(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        child: ListView(
+                                            shrinkWrap: true,
+                                            children: [
+                                              Directionality(
+                                                textDirection: textDirection,
+                                                child: CustomImageView(
+                                                  svgPath:
+                                                      ImageConstant.imgClose,
+                                                  height: 24.adaptSize,
+                                                  width: 24.adaptSize,
+                                                  onTap: () {
+                                                    onTapImgCloseone(context);
+                                                  },
+                                                ),
+                                              ),
+                                              SizedBox(height: 10.v),
+                                              Align(
+                                                alignment:
+                                                    Alignment.centerRight,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 24.v, right: 59.h),
+                                                  child: Text(
+                                                    "lbl37".tr,
+                                                    style: theme
+                                                        .textTheme.displaySmall,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 46.v),
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: SizedBox(
+                                                  width: 156.h,
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "lbl_104".tr,
+                                                          style: theme.textTheme
+                                                              .titleMedium,
+                                                        ),
+                                                        TextSpan(
+                                                          text: "lbl_50".tr,
+                                                          style: CustomTextStyles
+                                                              .titleMediumLightgreen500,
+                                                        ),
+                                                        TextSpan(
+                                                          text: "lbl_106".tr,
+                                                          style: theme.textTheme
+                                                              .titleMedium,
+                                                        ),
+                                                        const WidgetSpan(
+                                                          child: SizedBox(
+                                                              width: 10.0),
+                                                        ),
+                                                        TextSpan(
+                                                          text: "lbl_105".tr,
+                                                          style: theme.textTheme
+                                                              .titleMedium,
+                                                        ),
+                                                        TextSpan(
+                                                          text: "lbl_102".tr,
+                                                          style: CustomTextStyles
+                                                              .titleMediumRed700,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            ])));
+                              },
+                            );
                           },
                         ),
                       ),
-                    
-                      SizedBox(height: 10.v),
-                 Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 24.v, right: 59.h),
-                  child: Text(
-                    "lbl37".tr,
-                    style: theme.textTheme.displaySmall,
-                  ),
-                ),
-              ),
-              SizedBox(height: 46.v),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 156.h,
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "lbl_104".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        TextSpan(
-                          text: "lbl_50".tr,
-                          style: CustomTextStyles.titleMediumLightgreen500,
-                        ),
-                             TextSpan(
-                          text: "lbl_106".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                                           const WidgetSpan(
-        child: SizedBox(width: 10.0),
-      ),
-              
-                                TextSpan(
-                          text: "lbl_105".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                                 
-                         TextSpan(
-                          text: "lbl_102".tr,
-                          style: CustomTextStyles.titleMediumRed700,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-                     ] )));
-        },
-      );
-    },
-  ),
-),
-
                     ],
                   ),
                 ),
@@ -190,109 +202,94 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
             },
           );
         },
- child:  Center(
-  child: Container(
-    margin: EdgeInsets.only(top: 20.v),
-    padding: EdgeInsets.symmetric(
-      horizontal: 20.h,
-      vertical: 5.v,
-    ),
-    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-      borderRadius: BorderRadiusStyle.roundedBorder24,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 1.v,top: 10),
-                    child: SizedBox(
-                      height: 44.adaptSize,
-                      width: 44.adaptSize,
-                      child: Container(
-                        height: 44.adaptSize,
-                        width: 44.adaptSize,
-                        padding: EdgeInsets.all(6.h),
-                        decoration: AppDecoration.fillGray.copyWith(
-                          borderRadius: BorderRadiusStyle.roundedBorder17,
-                        ),
-                        child: CustomImageView(
-                                svgPath: ImageConstant.imgMobileOnprimary,
-                              
-                          height: 44.adaptSize,
-                          width: 44.adaptSize,
-                          alignment: Alignment.center,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                
-                  
-
-                 
-                   
-                ],
-
-             
-              ),
-                  
-              
-            ],
-            
-          ),
-        ),
-         Padding(padding:const EdgeInsets.symmetric(vertical: 10),
-                     child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          "lbl_102".tr,
-                          style: theme.textTheme.headlineSmall,
-                        ),
-                      ),
-                    
-                  ), 
-         Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        child: Center(
+          child: Container(
+            margin: EdgeInsets.only(top: 20.v),
+            padding: EdgeInsets.symmetric(
+              horizontal: 20.h,
+              vertical: 5.v,
+            ),
+            decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+              borderRadius: BorderRadiusStyle.roundedBorder24,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                           "msg41".tr,
-                          style: theme.textTheme.labelMedium,
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 1.v, top: 10),
+                            child: SizedBox(
+                              height: 44.adaptSize,
+                              width: 44.adaptSize,
+                              child: Container(
+                                height: 44.adaptSize,
+                                width: 44.adaptSize,
+                                padding: EdgeInsets.all(6.h),
+                                decoration: AppDecoration.fillGray.copyWith(
+                                  borderRadius:
+                                      BorderRadiusStyle.roundedBorder17,
+                                ),
+                                child: CustomImageView(
+                                  svgPath: ImageConstant.imgMobileOnprimary,
+                                  height: 44.adaptSize,
+                                  width: 44.adaptSize,
+                                  alignment: Alignment.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: paint(textDirection: textDirection),
-              ),
-            ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      "lbl_102".tr,
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "msg41".tr,
+                        style: theme.textTheme.labelMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: paint(textDirection: textDirection),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        
-      ],
-    ),
-  ),
-)
-
-
-
-  );
+        ));
+  }
 }
-}
+
 class paint extends StatelessWidget {
   const paint({
     super.key,
@@ -354,6 +351,7 @@ class paint extends StatelessWidget {
     );
   }
 }
+
 class MyPainter extends CustomPainter {
   final TextDirection textDirection;
 
@@ -367,7 +365,7 @@ class MyPainter extends CustomPainter {
     path = Path();
 
     if (textDirection == TextDirection.ltr) {
-      // English text direction, align the shape to the left
+    
       path.lineTo(size.width * 0.78, 0);
       path.cubicTo(
           size.width * 0.78, 0, size.width * 0.22, 0, size.width * 0.22, 0);
@@ -421,8 +419,3 @@ class MyPainter extends CustomPainter {
     return true;
   }
 }
-
-
-
-
-

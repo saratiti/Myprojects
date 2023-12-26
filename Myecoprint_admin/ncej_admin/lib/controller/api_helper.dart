@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -9,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class ApiHelper {
-  final String DOMAIN = "https://ecoprint.etarsd.com";
+  final String DOMAIN = "192.168.146.63:3000";
 
   Future<String> getToken() async {
     var storage = const FlutterSecureStorage();
@@ -20,21 +21,33 @@ class ApiHelper {
     }
     return "";
   }
-Future<dynamic> getRequest(String path) async {
-  Uri uriFunction = Uri.parse(DOMAIN+path);
+Future<dynamic> getRequest(String path,) async {
+  Uri uriFunction = Uri.http(DOMAIN, path);
   var token = await getToken();
   var headers = {"Authorization": "Bearer $token"};
   http.Response response = await http.get(uriFunction, headers: headers);
   return resposneFunction(response);
 }
 
-  Future<dynamic> postRequest(String path, Map body) async {
-    Uri uriFunction = Uri.parse(DOMAIN+path);
-    http.Response resposne = await http.post(uriFunction, body: body);
-    return resposneFunction(resposne);
-  }
+Future<dynamic> postRequest(String path, Map body) async {
+  Uri uriFunction = Uri.http(DOMAIN, path);
+
+  var token = await getToken();
+
+  http.Response response = await http.post(
+    uriFunction,
+    body: body,
+    headers: {
+  
+      'Authorization': 'Bearer $token', 
+    },
+  );
+
+  return resposneFunction(response);
+}
+
 Future<dynamic> putRequest(String path, Map body) async {
-    Uri uriFunction = Uri.parse(DOMAIN+path);
+    Uri uriFunction = Uri.http(DOMAIN, path);
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
     http.Response resposne =
@@ -42,7 +55,7 @@ Future<dynamic> putRequest(String path, Map body) async {
     return resposneFunction(resposne);
   }
   Future<dynamic> deleteRequest(String path) async {
-    Uri uriFunction = Uri.parse(DOMAIN+path);
+    Uri uriFunction = Uri.http(DOMAIN, path);
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
 
@@ -79,12 +92,12 @@ Future<dynamic> putRequest(String path, Map body) async {
   }
 }
 
-  Future postDio(String path, Map body) async {
-    final dio = Dio();
+Future<dynamic> postDio(String path, Map body) async {
+  final dio = Dio();
+  var token = await getToken();
+  var headers = {"Authorization": "Bearer $token"};
 
-    var token = await getToken();
-    var headers = {"Authorization":token};
-
+  try {
     Response response = await dio.post(
       'http://$DOMAIN$path',
       data: body,
@@ -92,26 +105,28 @@ Future<dynamic> putRequest(String path, Map body) async {
         headers: headers,
       ),
     );
-    switch (response.statusCode) {
-      case 200:
-      case 201:
-        return response.data;
-      case 400:
-        throw "Bad Request";
-      case 401:
-        throw "Unauthrizied";
-      case 402:
-        throw "Payment Required";
-      case 403:
-        throw "Forbidden";
-      case 404:
-        throw "Not Found";
-      case 500:
-        throw "Server Error :(";
-      default:
-        throw "Server Error :(";
+    return response.data;
+  } catch (e) {
+    if (e is DioError && e.response?.statusCode == 401) {
+   
+      token = await getToken();
+      headers = {"Authorization": "Bearer $token"};
+
+     
+      Response response = await dio.post(
+        'http://$DOMAIN$path',
+        data: body,
+        options: Options(
+          headers: headers,
+        ),
+      );
+      return response.data;
+    } else {
+      rethrow;
     }
   }
+}
+
   Future<Uint8List> postDioForImage(String path, Map body) async {
   final dio = Dio();
 
@@ -179,4 +194,6 @@ Future<String> uploadPhoto(File photoFile) async {
     throw "Error uploading photo: $e";
   }
 }
+
+
 }

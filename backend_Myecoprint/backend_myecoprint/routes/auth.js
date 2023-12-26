@@ -6,7 +6,7 @@ const ErrorHandler = require('../middleware/error.middleware');
 const AuthGuard = require('../middleware/authMiddleware');
 const schema = require('../validatons/auth');
 const validate = require('../utils/validator.util');
-//const verifyToken = require('../middleware/verifyToken');
+
 router.post('/register', validate(schema.register), ErrorHandler(AuthController.register));
 router.post('/login', AuthController.login);
 router.get('/logout', AuthController.logout);

@@ -1,306 +1,177 @@
 // ignore_for_file: camel_case_types
 
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
-import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/resturant_screen.dart';
+import 'package:my_eco_print/data/module/offer.dart';
 
 
-class ClothesScreen extends StatelessWidget {
-  const ClothesScreen({Key? key}) : super(key: key);
+
+import 'package:provider/provider.dart';
+
+class ClothesScreen extends StatefulWidget {
+  final int? offerId;
+  final int? storeId;
+
+  const ClothesScreen({Key? key, this.offerId, this.storeId}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+  _ClothesScreenState createState() => _ClothesScreenState();
+}
 
-    return Directionality(
-      textDirection: textDirection,
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: SizedBox(
-          height: 107.v,
-          width: 330.h,
-          child: buildClothesContainer(context),
-        ),
-      ),
-    );
+class _ClothesScreenState extends State<ClothesScreen> {
+  late OfferProvider offerProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    offerProvider = OfferProvider();
+    fetchData();
   }
 
-Widget buildClothesContainer(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+  Future<void> fetchData() async {
+    await offerProvider.fetchData(widget.storeId, widget.offerId);
 
+    if (offerProvider.offers.isNotEmpty) {
+      final offer = offerProvider.offers[0];
+      print("Offer ID: ${offer.id}, Description: ${offer.offerDescription}");
+    } else {
+      print("No data available");
+    }
+  }
 
-   return GestureDetector(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                contentPadding: EdgeInsets.zero,
-                content: Container(
-                  width: 350.h,
-                  height: 350.v,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
-                  decoration: AppDecoration.fillWhiteA.copyWith(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Directionality(
-                        textDirection: textDirection,
-                        child: CustomImageView(
-                          svgPath: ImageConstant.imgClose,
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
-                          onTap: () {
-                            onTapImgCloseone(context);
-                          },
-                        ),
-                      ),
-                      Directionality(
-                        textDirection: textDirection,
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 10.h, top: 24.v),
-                          child: Text(
-                            "lbl48".tr,
-                            style: CustomTextStyles.displaySmallRed700,
+    @override
+  Widget build(BuildContext context) {
+    final textDirection = Directionality.of(context);
+
+    return ChangeNotifierProvider<OfferProvider>(
+      create: (context) => offerProvider,
+      child: Consumer<OfferProvider>(
+        builder: (context, offerProvider, child) {
+          return Center(
+            child: Container(
+                margin: EdgeInsets.only(top: 20.v),
+                padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 5.v),
+                decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                  borderRadius: BorderRadiusStyle.roundedBorder24,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 1.v, top: 10),
+                                child: SizedBox(
+                                  height: 44.adaptSize,
+                                  width: 44.adaptSize,
+                                  child: Container(
+                                    height: 44.adaptSize,
+                                    width: 44.adaptSize,
+                                    padding: EdgeInsets.all(6.h),
+                                    decoration: AppDecoration.fillGray.copyWith(
+                                      borderRadius: BorderRadiusStyle.roundedBorder17,
+                                    ),
+                                    child: CustomImageView(
+                                      svgPath: ImageConstant.imgMobileOnprimary,
+                                      height: 44.adaptSize,
+                                      width: 44.adaptSize,
+                                      alignment: Alignment.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                      SizedBox(height: 10.v),
-                      SizedBox(
-                        width: 300.h,
-                        child: RichText(
-                          text: TextSpan(children: [
-                            TextSpan(
-                              text: "msg49".tr,
-                              style: theme.textTheme.titleMedium,
-                            ),
-                            TextSpan(
-                              text: "lbl_103".tr,
-                              style: CustomTextStyles.titleMediumRed700,
-                            ),
-                          ]),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      SizedBox(height: 20.v),
-                      Align(
-  alignment: Alignment.center,
-  child: CustomElevatedButton(
-    height: 35.v,
-    width: 150.h,
-    text: "lbl49".tr,
-    margin: EdgeInsets.only(top: 22.v),
-    buttonStyle: CustomButtonStyles.fillLightGreenTL20,
-    buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
-    onTap: () {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-             contentPadding: EdgeInsets.zero,
-                content: Container(
-                  width: 350.h,
-                  height: 350.v,
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
-                  decoration: AppDecoration.fillWhiteA.copyWith(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      Directionality(
-                        textDirection: textDirection,
-                        child: CustomImageView(
-                          svgPath: ImageConstant.imgClose,
-                          height: 24.adaptSize,
-                          width: 24.adaptSize,
-                          onTap: () {
-                            onTapImgCloseone(context);
-                          },
-                        ),
-                      ),
-                    
-                      SizedBox(height: 10.v),
-                 Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 24.v, right: 59.h),
-                  child: Text(
-                    "lbl37".tr,
-                    style: theme.textTheme.displaySmall,
-                  ),
-                ),
-              ),
-              SizedBox(height: 46.v),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 156.h,
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "lbl_104".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                        TextSpan(
-                          text: "lbl_50".tr,
-                          style: CustomTextStyles.titleMediumLightgreen500,
-                        ),
-                             TextSpan(
-                          text: "lbl_106".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                                           const WidgetSpan(
-        child: SizedBox(width: 10.0),
-      ),
-              
-                                TextSpan(
-                          text: "lbl_105".tr,
-                          style: theme.textTheme.titleMedium,
-                        ),
-                                 
-                         TextSpan(
-                          text: "lbl_102".tr,
-                          style: CustomTextStyles.titleMediumRed700,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-                     ] )));
-        },
-      );
-    },
-  ),
-),
-
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
- child:  Center(
-  child: Container(
-    margin: EdgeInsets.only(top: 20.v),
-    padding: EdgeInsets.symmetric(
-      horizontal: 20.h,
-      vertical: 5.v,
-    ),
-    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-      borderRadius: BorderRadiusStyle.roundedBorder24,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 1.v,top: 10),
-                    child: SizedBox(
-                      height: 44.adaptSize,
-                      width: 44.adaptSize,
-                      child: Container(
-                        height: 44.adaptSize,
-                        width: 44.adaptSize,
-                        padding: EdgeInsets.all(6.h),
-                        decoration: AppDecoration.fillGray.copyWith(
-                          borderRadius: BorderRadiusStyle.roundedBorder17,
-                        ),
-                        child: CustomImageView(
-                                svgPath: ImageConstant.imgMobileOnprimary,
-                              
-                          height: 44.adaptSize,
-                          width: 44.adaptSize,
-                          alignment: Alignment.center,
-                        ),
+                        ],
                       ),
                     ),
-                  ),
-
-                
-                  
-
-                 
-                   
-                ],
-
-             
-              ),
-                  
-              
-            ],
-            
-          ),
-        ),
-         Padding(padding:const EdgeInsets.symmetric(vertical: 10),
-                     child: Align(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Align(
                         alignment: Alignment.topCenter,
                         child: Text(
-                          "lbl_102".tr,
+                          '${offerProvider.offers.isNotEmpty ? offerProvider.offers[0].numberDiscount.toString() : ''}%',
                           style: theme.textTheme.headlineSmall,
                         ),
                       ),
-                    
-                  ), 
-         Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                           "msg41".tr,
-                          style: theme.textTheme.labelMedium,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            offerProvider.offers.isNotEmpty ? offerProvider.offers[0].offerDescription.toString() : '',
+                            style: theme.textTheme.labelMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (offerProvider.offers.isNotEmpty && offerProvider.offers[0].numberPoint != null)
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: paint(
+                                textDirection: textDirection,
+                                additionalText: offerProvider.offers[0].numberPoint.toString(),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: paint(textDirection: textDirection),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-        
-      ],
-    ),
-  ),
-)
+            );
+  }));
+        }
+     
+  }
 
 
 
-  );
+class OfferProvider with ChangeNotifier {
+  List<Offer> _offers = [];
+
+  List<Offer> get offers => _offers;
+
+  Future<void> fetchData(int? storeId, int? offerId) async {
+  if (storeId == null || offerId == null) {
+    print('Error: storeId or offerId is null');
+    return;
+  }
+
+  try {
+    print('storeId: $storeId, offerId: $offerId');
+    _offers = await StoreController().getOfferByStoreAndOfferId(storeId, offerId);
+    notifyListeners();
+  } catch (e) {
+    // Handle other errors
+  }
 }
+
 }
+
+
 class paint extends StatelessWidget {
-  const paint({
-    super.key,
-    required this.textDirection,
-  });
-
   final TextDirection textDirection;
+  final String additionalText; 
+
+  const paint({
+    Key? key,
+    required this.textDirection,
+    required this.additionalText, 
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -331,14 +202,11 @@ class paint extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            "lbl_15002".tr,
-                            style: CustomTextStyles.titleMediumWhiteA700,
-                          ),
+                         
                           Padding(
                             padding: EdgeInsets.only(right: 2.h),
                             child: Text(
-                              "lbl39".tr,
+                              additionalText,
                               style: CustomTextStyles.titleMediumWhiteA700,
                             ),
                           ),
@@ -353,6 +221,75 @@ class paint extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+
+class MyPainter extends CustomPainter {
+  final TextDirection textDirection;
+
+  MyPainter({required this.textDirection});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint();
+    Path path = Path();
+    paint.color = const Color(0xff99CA3C);
+    path = Path();
+
+    if (textDirection == TextDirection.ltr) {
+      // English text direction, align the shape to the left
+      path.lineTo(size.width * 0.78, 0);
+      path.cubicTo(
+          size.width * 0.78, 0, size.width * 0.22, 0, size.width * 0.22, 0);
+      path.cubicTo(
+          size.width * 0.1, 0, 0, size.height * 0.09, 0, size.height * 0.19);
+      path.cubicTo(
+          0, size.height * 0.19, 0, size.height * 0.9, 0, size.height * 0.9);
+      path.cubicTo(0, size.height, size.width * 0.07, size.height * 1.03,
+          size.width * 0.16, size.height * 0.98);
+      path.cubicTo(size.width * 0.16, size.height * 0.98, size.width * 0.45,
+          size.height * 0.85, size.width * 0.45, size.height * 0.85);
+      path.cubicTo(size.width * 0.48, size.height * 0.83, size.width * 0.52,
+          size.height * 0.83, size.width * 0.55, size.height * 0.85);
+      path.cubicTo(size.width * 0.55, size.height * 0.85, size.width * 0.83,
+          size.height * 0.98, size.width * 0.83, size.height * 0.98);
+      path.cubicTo(size.width * 0.93, size.height * 1.03, size.width,
+          size.height, size.width, size.height * 0.9);
+      path.cubicTo(size.width, size.height * 0.9, size.width,
+          size.height * 0.19, size.width, size.height * 0.19);
+      path.cubicTo(size.width, size.height * 0.09, size.width * 0.9, 0,
+          size.width * 0.78, 0);
+    } else {
+      path.lineTo(size.width * 0.22, 0);
+      path.cubicTo(
+          size.width * 0.22, 0, size.width * 0.78, 0, size.width * 0.78, 0);
+      path.cubicTo(size.width * 0.83, 0, size.width, size.height * 0.09,
+          size.width, size.height * 0.19);
+      path.cubicTo(size.width, size.height * 0.19, size.width,
+          size.height * 0.9, size.width, size.height * 0.9);
+      path.cubicTo(size.width, size.height, size.width * 0.93,
+          size.height * 1.03, size.width * 0.83, size.height * 0.98);
+      path.cubicTo(size.width * 0.83, size.height * 0.98, size.width * 0.55,
+          size.height * 0.85, size.width * 0.55, size.height * 0.85);
+      path.cubicTo(size.width * 0.52, size.height * 0.83, size.width * 0.48,
+          size.height * 0.83, size.width * 0.45, size.height * 0.85);
+      path.cubicTo(size.width * 0.45, size.height * 0.85, size.width * 0.16,
+          size.height * 0.98, size.width * 0.16, size.height * 0.98);
+      path.cubicTo(size.width * 0.07, size.height * 1.03, 0, size.height, 0,
+          size.height * 0.9);
+      path.cubicTo(
+          0, size.height * 0.9, 0, size.height * 0.19, 0, size.height * 0.19);
+      path.cubicTo(
+          0, size.height * 0.09, size.width * 0.1, 0, size.width * 0.22, 0);
+    }
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }
 

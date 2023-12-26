@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class ApiHelper {
-  final String DOMAIN = "192.168.1.145:3000";
+  final String DOMAIN = "192.168.1.144:3000";
 
   Future<String> getToken() async {
     var storage = const FlutterSecureStorage();
@@ -20,7 +20,7 @@ class ApiHelper {
     }
     return "";
   }
-Future<dynamic> getRequest(String path) async {
+Future<dynamic> getRequest(String path,) async {
   Uri uriFunction = Uri.http(DOMAIN, path);
   var token = await getToken();
   var headers = {"Authorization": "Bearer $token"};
@@ -31,7 +31,6 @@ Future<dynamic> getRequest(String path) async {
 Future<dynamic> postRequest(String path, Map body) async {
   Uri uriFunction = Uri.http(DOMAIN, path);
 
-  // Assuming you have a function to get the authentication token
   var token = await getToken();
 
   http.Response response = await http.post(
@@ -127,13 +126,17 @@ Future<dynamic> postDio(String path, Map body) async {
   }
 }
 
-  Future<Uint8List> postDioForImage(String path, Map body) async {
+  Future<Uint8List> postDioForImage(String path, Map body,{int? userId}) async {
   final dio = Dio();
 
-  var token = await getToken();
-  var headers = {"Authorization": token};
+ var token = await getToken();
+var headers = {"Authorization": "Bearer $token"};
 
-  Response response = await dio.post(
+ if (userId != null) {
+      body['userId'] = userId;
+    }
+
+ Response response = await dio.post(
     'http://$DOMAIN$path',
     data: body,
     options: Options(
@@ -166,6 +169,7 @@ Future<dynamic> postDio(String path, Map body) async {
       throw "Server Error :(";
   }
 }
+
 
 Future<String> uploadPhoto(File photoFile) async {
   try {

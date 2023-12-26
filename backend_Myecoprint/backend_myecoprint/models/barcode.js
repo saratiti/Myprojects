@@ -35,6 +35,7 @@ const Barcode = sequelize.define('Barcode', {
   user_id: {
     type: DataTypes.INTEGER,
   },
+
   barcode_date: {
     type: DataTypes.DATE,
     allowNull: false,

@@ -296,7 +296,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.l
 
   void navigateToCouponScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => const CoponScreen(),
+      builder: (context) =>  CoponScreen(),
     ));
   }
 }
