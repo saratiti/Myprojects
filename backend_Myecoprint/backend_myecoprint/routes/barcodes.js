@@ -3,7 +3,7 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/authMiddleware');
 const barcodeController = require('../controllers/barcodesController');
 
-router.post('/barcodes', barcodeController.createBarcode);
+router.post('/', barcodeController.createBarcode);
 router.get('/', barcodeController.getAllBarcodes);
 router.get('/:id', barcodeController.getBarcodeById);
 router.put('/barcodes/:id', barcodeController.updateBarcode);

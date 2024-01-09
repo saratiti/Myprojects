@@ -67,8 +67,7 @@ class BarcodeController {
       rethrow;
     }
   }
-
-  Future<void> scanBarcode(String barcode) async {
+ Future<void> scanBarcode(String barcode) async {
     try {
       final response = await ApiHelper()
           .postRequest('/api/barcodes/scanBarcode', {'barcode_value': barcode});
@@ -80,17 +79,22 @@ class BarcodeController {
     }
   }
 
-  Future<Map<String, dynamic>> checkBarcode(String barcodeValue) async {
-    try {
-      final response = await ApiHelper().postRequest(
-        '/api/barcodes/checkBarcode',
-        {'barcodeValue': barcodeValue},
-      );
+Future<Map<String, dynamic>> checkBarcode(int offerId,int storeId) async {
+  try {
+    final response = await ApiHelper().postRequest(
+      '/api/barcodes/checkBarcode',
+      {
+      
+        'offer_id': offerId,
+        'store_id': storeId,
+      },
+    );
 
-      return response;
-    } catch (e) {
-      print('Error checking barcode: $e');
-      rethrow;
-    }
+    return response;
+  } catch (e) {
+    print('Error checking barcode: $e');
+    rethrow;
   }
+}
+
 }

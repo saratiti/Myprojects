@@ -2,6 +2,8 @@ const Offer = require('../models/offer');
 const Point = require('../models/point');
 const PointRedemption = require('../models/point_redemption');
 const PointController=require('../controllers/pointsController');
+
+
 const calculateDiscountedPointsForOffer = async (offerId, pointsRedeemed) => {
   try {
     const offer = await Offer.findByPk(offerId);
@@ -43,47 +45,20 @@ const updateTotalPoints = async (pointsToUpdate, userId) => {
 
 const createPointRedemption = async (storeId, offerId, pointsRedeemed, userId) => {
   try {
-      console.log('User ID in createPointRedemption:', userId); 
-      const redemption = await PointRedemption.create({
-          store_id: storeId,
-          offer_id: offerId,
-          points_redeemed: pointsRedeemed,
-          redemption_date: new Date(),
-          user_id: userId,
-      });
-      return redemption;
+    console.log('User ID in createPointRedemption:', userId);
+    const redemption = await PointRedemption.create({
+      store_id: storeId,
+      offer_id: offerId,
+      points_redeemed: pointsRedeemed,
+      redemption_date: new Date(),
+      user_id: userId,
+    });
+    return redemption;
   } catch (error) {
-      console.error('Error creating point redemption:', error);
-      throw error;
+    console.error('Error creating point redemption:', error);
+    throw error;
   }
 };
-
-
-// exports.redeemPointsWithOfferDiscount = async (storeId, offerId, pointsRedeemed, userId) => {
-//   try {
-//     console.log('Redeem Points With Offer Discount - Start');
-//     const discountedPoints = await calculateDiscountedPointsForOffer(offerId, pointsRedeemed);
-//     console.log('Discounted Points:', discountedPoints);
-//     const userTotalPoints = await PointController.getTotalPointsByUserId(userId);
-//     if (userTotalPoints < discountedPoints) {
-//       console.log('Not enough points to redeem.Total Points Updated');
-//       throw new Error('Not enough points to redeem.');
-//     }
-//     const redemption = await createPointRedemption(storeId, offerId, discountedPoints, userId);
-//     console.log('Redemption:', redemption);
-//     await updateTotalPoints(discountedPoints * -1, userId);
-//     console.log('Total Points Updated');
-//     console.log('Redeem Points With Offer Discount - End');
-//     return redemption;
-//   } catch (error) {
-//     console.error('Error redeeming points with offer discount:', error);
-//     throw error;
-//   }
-// };
-
-
-
-
 
 exports.redeemPointsWithOfferDiscount = async (storeId, offerId, pointsRedeemed, userId) => {
   try {

@@ -134,30 +134,36 @@ exports.collectDaily = async (req, res) => {
   }
 };
 
-exports.getTotalPointsByUserId = async (req, res) => {
+exports.getTotalPointsByUserId = async (req, res, next) => {
   try {
+    // Check if req.user is defined, indicating middleware usage
+    const userId = req.user ? req.user.user_id : req;
+
     // Ensure that res is defined before proceeding
-    if (!res) {
+    if (req.user && !res) {
       console.error('Response object is undefined.');
       return;
     }
 
-    const user = req.user;
     const totalPoints = await Point.findOne({
       attributes: ['total_points'],
-      where: { user_id: user.user_id }
+      where: { user_id: userId }
     });
 
-    res.json({ totalPoints });
+    if (req.user) {
+      return res.status(200).json({ message: 'Total_Points', totalPoints });
+    }
+
+    return totalPoints ? totalPoints.total_points : 0; // Return 0 if user not found
+
   } catch (error) {
-    // Use console.error to log the error, as res may be undefined
     console.error('Error in getTotalPointsByUserId:', error);
-    
-    // Check if res is defined before using it
+
     if (res) {
-      res.status(500).json({ error: 'Internal server error', details: error.message });
+      return res.status(500).json({ error: 'Internal server error', details: error.message });
     } else {
       console.error('Response object is undefined.');
+      throw error;
     }
   }
 };

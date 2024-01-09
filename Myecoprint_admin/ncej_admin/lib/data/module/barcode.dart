@@ -1,3 +1,5 @@
+import 'package:ncej_admin/data/module/offer.dart';
+
 class Barcode {
   int? barcodeId;
   int? storeId;
@@ -7,6 +9,7 @@ class Barcode {
   int? branchId;
   int? userId;
   DateTime? barcodeDate;
+  Offer? offer; 
 
   Barcode({
     this.barcodeId,
@@ -17,18 +20,20 @@ class Barcode {
     this.branchId,
     this.userId,
     this.barcodeDate,
+    this.offer,
   });
 
   factory Barcode.fromJson(Map<String, dynamic> json) {
     return Barcode(
-      barcodeId: json['barcode_id']as int? ??0,
-      storeId: json['store_id']as int? ??0,
-      offerId: json['offer_id']as int? ??0,
-      barcodeValue: json['barcode_value']?? '',
-      barcodeStatus: json['barcode_status']?? '',
-      branchId: json['branch_id']as int? ??0,
-      userId: json['user_id']as int? ??0,
+      barcodeId: json['barcode_id'] as int? ?? 0,
+      storeId: json['store_id'] as int? ?? 0,
+      offerId: json['offer_id'] as int? ?? 0,
+      barcodeValue: json['barcode_value'] ?? '',
+      barcodeStatus: json['barcode_status'] ?? '',
+      branchId: json['branch_id'] as int? ?? 0,
+      userId: json['user_id'] as int? ?? 0,
       barcodeDate: DateTime.parse(json['barcode_date']),
+      offer: Offer.fromJson(json['offer']), // Assuming there is an 'offer' key in the JSON response
     );
   }
 
@@ -42,6 +47,7 @@ class Barcode {
       'branch_id': branchId.toString(),
       'user_id': userId.toString(),
       'barcode_date': barcodeDate!.toIso8601String(),
+      'offer': offer?.toJson(), // Convert the Offer object to JSON
     };
   }
 }

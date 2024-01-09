@@ -1,15 +1,20 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_null_comparison, use_key_in_widget_constructors
 
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:flutter/services.dart';
-import 'package:ncej_admin/controller/barcodes.dart';
+import 'package:ncej_admin/controller/offer.dart';
+import 'package:ncej_admin/controller/point_controller.dart';
 import 'package:ncej_admin/core/app_export.dart';
+import 'package:ncej_admin/data/module/offer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class BarcodeScannerReadScreen extends StatefulWidget {
-  const BarcodeScannerReadScreen({super.key});
+  const BarcodeScannerReadScreen({Key? key}) : super(key: key);
 
   @override
   _BarcodeScannerReadScreenState createState() =>
@@ -18,121 +23,251 @@ class BarcodeScannerReadScreen extends StatefulWidget {
 
 class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
   String scannedData = "";
-  BarcodeController barcodeController=BarcodeController();
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  PointController pointController = PointController();
+  int? storeId;
+  int? offerId;
+  int? pointsToRedeem;
 
+   Future<void> scanBarcode(BuildContext context) async {
+    try {
+      var result = await BarcodeScanner.scan();
 
-  
-  Future<void> scanBarcode(BuildContext context) async {
-  try {
-    ScanResult scanResult = await BarcodeScanner.scan();
+      if (result != null &&
+          result.rawContent != null &&
+          result.format == BarcodeFormat.qr) {
+        setState(() {
+          scannedData = result.rawContent;
+        });
 
-    String barcode = scanResult.rawContent;
-    setState(() {
-      scannedData = barcode;
-    });
-    final response = await barcodeController.checkBarcode(barcode);
-
-    if (response != null) {
-      final offerIdFromBarcode = response['offer']['offer_id'];
-      final offerIdFromResponse = response['offer']['offer_id'];
-      final storeFromBarcode = response['store']['name_arabic'];
-      final storeFromResponse = response['store']['name_arabic'];
-
-      if (offerIdFromBarcode == offerIdFromResponse && storeFromBarcode == storeFromResponse) {
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Barcode Information'),
+              title: Text('Barcode Information'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Barcode Value: $barcode'),
-                  Text('Offer Name: ${response['offer']['offer_name_arabic']}'),
-                  Text('Store Name: $storeFromResponse'),
-                  Text('Branch Email: ${response['branch']['email']}'),
+                  Text('Scanned QR Code: $scannedData'),
                 ],
               ),
               actions: [
                 TextButton(
-                  child: const Text('Close'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
+                  child: const Text('Close'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    var redemptionResult = await onTapRedeemPoints(
+                      context,
+                      scannedData,
+                    );
+
+                    if (redemptionResult != null) {
+                      print('Redemption successful');
+                    } else {
+                      print('Redemption not successful');
+                    }
+
+                    Navigator.of(context).pop(); // Close the dialog after redeeming points
+                  },
+                  child: const Text('Redeem'),
                 ),
               ],
             );
           },
         );
       } else {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Barcode Mismatch'),
-              content: const Text('The scanned barcode does not match the offer or store.'),
-              actions: [
-                TextButton(
-                  child: const Text('Close'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
+        showErrorDialog(
+            context, 'Error Scanning QR Code', 'Result is null or missing properties.');
       }
-    } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Barcode Not Found'),
-            content: const Text('The scanned barcode is not found or does not match.'),
-            actions: [
-              TextButton(
-                child: const Text('Close'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-  } on PlatformException catch (e) {
-    if (e.code == BarcodeScanner.cameraAccessDenied) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Camera Permission Denied'),
-            content: const Text('Please grant camera permission to scan barcodes.'),
-            actions: [
-              TextButton(
-                child: const Text('Close'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      if (kDebugMode) {
-        print('Error scanning barcode: $e');
-      }
+    } catch (e) {
+      print('Error scanning QR code: $e');
+      showErrorDialog(
+          context, 'Error Scanning QR Code', 'Error: $e');
     }
   }
+
+
+  void showErrorDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Scanned Barcode: ${scannedData ?? "N/A"}'),
+              Text('Error Content: $content'), // Display additional error information
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  
+
+Future<Map<String, dynamic>?> onTapRedeemPoints(
+  BuildContext context,
+  String scannedData,
+) async {
+  try {
+    // Parse the barcode data to get storeId, offerId, and pointsToRedeem
+    Map<String, dynamic> barcodeData = parseBarcodeData(scannedData);
+
+    if (barcodeData.isEmpty) {
+      print('Invalid barcode data format');
+      return null; // or handle accordingly
+    }
+
+    int storeId = barcodeData['storeId'];
+    int offerId = barcodeData['offerId'];
+    int pointsToRedeem = barcodeData['pointsToRedeem'];
+
+    var result = await pointController.redeemPoints(
+      storeId: storeId,
+      offerId: offerId,
+      pointsRedeemed: pointsToRedeem,
+      scannedData: scannedData,
+    );
+
+    print('Backend Response: $result');
+
+    // Handle the response as before
+
+  } catch (e) {
+    if (kDebugMode) {
+      print("Error in redeeming points: $e");
+    }
+
+    return null;
+  }
 }
+
+Map<String, dynamic> parseBarcodeData(String scannedData) {
+  try {
+    // Assuming the scanned data format is "#STORE_ID_OFFER_ID_POINTS_TO_REDEEM"
+    List<String> parts = scannedData.split('_');
+
+    if (parts.length == 4) {
+      return {
+        'storeId': int.tryParse(parts[1]) ?? 0,
+        'offerId': int.tryParse(parts[2]) ?? 0,
+        'pointsToRedeem': int.tryParse(parts[3]) ?? 0,
+      };
+    } else {
+      print('Invalid barcode data format');
+      return {};
+    }
+  } catch (e) {
+    print('Error parsing barcode data: $e');
+    return {};
+  }
+}
+
+
+  void showCustomErrorDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool> checkPreviousRedemption(
+    BuildContext context,
+    int storeId,
+    int offerId,
+  ) async {
+    // Implement the logic to check if the user has already redeemed points
+    // for the given storeId and offerId. You may use shared preferences,
+    // database, or any other method to store and retrieve this information.
+
+    // For example, using shared preferences:
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String key = 'REDEMPTION_${storeId}_$offerId';
+    bool redeemed = prefs.getBool(key) ?? false;
+
+    return redeemed;
+  }
+
+  void _showErrorSnackbar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void showRedeemPointsMessage(int pointsRedeemed) {
+    // Use the context property directly
+    final scaffoldKeyContext = _scaffoldKey.currentContext;
+
+    // Check if the Scaffold context is not null before showing SnackBar
+    if (scaffoldKeyContext != null) {
+      ScaffoldMessenger.of(scaffoldKeyContext).showSnackBar(
+        SnackBar(
+          content: Text('Redeemed $pointsRedeemed points successfully!'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Redeem Points'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Points Redeemed: $pointsRedeemed'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: buildAppBar(context),
       body: Center(
         child: Column(
@@ -143,19 +278,19 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
               style: TextStyle(fontSize: 20),
             ),
             Text(
-               scannedData,
+              scannedData,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             BarcodeWidget(
-              data:  scannedData,
+              data: scannedData,
               width: 200,
               height: 100,
               barcode: Barcode.qrCode(),
             ),
             const SizedBox(height: 30),
             MyElevatedButton(
-             onTap: () => scanBarcode(context),
+              onTap: () => scanBarcode(context),
             ),
           ],
         ),
@@ -163,6 +298,7 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
     );
   }
 }
+
 
 class MyElevatedButton extends StatelessWidget {
   final VoidCallback onTap;

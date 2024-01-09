@@ -28,10 +28,11 @@ const Barcode = sequelize.define('Barcode', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  branch_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  // branch_id: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: true,
+    
+  // },
   user_id: {
     type: DataTypes.INTEGER,
   },
@@ -44,7 +45,7 @@ const Barcode = sequelize.define('Barcode', {
 
 Barcode.belongsTo(Store, { foreignKey: 'store_id', as: 'stores',onDelete: 'CASCADE' });
 Barcode.belongsTo(Offer, { foreignKey: 'offer_id', as: 'offers',onDelete: 'CASCADE' });
-Barcode.belongsTo(Branch, { foreignKey: 'branch_id', as: 'branches',onDelete: 'CASCADE' });
+//Barcode.belongsTo(Branch, { foreignKey: 'branch_id', as: 'branches',onDelete: 'CASCADE' });
 Barcode.belongsTo(User, { foreignKey: 'user_id', as: 'users',onDelete: 'CASCADE' });
 
 module.exports = Barcode;
