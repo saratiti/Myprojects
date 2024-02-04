@@ -126,6 +126,32 @@ Future<int> getTotalPointsByUserId() async {
     rethrow;
   }
 }
+Future<int> getTotalPointsRedeemedByUserId() async {
+  try {
+    var result = await ApiHelper().getRequest("/api/redeem_points/totalRedeemed");
+
+    if (result is int) {
+      return result;
+    } else if (result is Map<String, dynamic> && result.containsKey('totalRedeemedPoints')) {
+      // If the result is a map and has a 'totalRedeemedPoints' key, attempt to extract the value
+      var totalRedeemedPoints = result['totalRedeemedPoints'];
+
+      if (totalRedeemedPoints is int) {
+        return totalRedeemedPoints;
+      } else {
+        print("Error: 'totalRedeemedPoints' is not an integer");
+        return 0; 
+      }
+    } else {
+      print("Error: Unexpected response format");
+      return 0; 
+    }
+  } catch (e) {
+    print("Error getting totalRedeemedPoints: $e");
+    rethrow;
+  }
+}
+
 
 Future<dynamic> redeemPoints({
   required int storeId,

@@ -6,86 +6,87 @@ class ChipviewcomputeItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width, 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            width: 190, 
-            child: RawChip(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              showCheckmark: false,
-              labelPadding: EdgeInsets.zero,
-              label: Text(
-                "lbl20".tr,
-                style: TextStyle(
-                  color: appTheme.whiteA700,
-                  fontSize: 16,
-                  fontFamily: 'Bahij TheSansArabic',
-                  fontWeight: FontWeight.w500,
-                ),
+    double responsiveWidth = MediaQuery.of(context).size.width * 0.45;
+    double fontSize = 14.0; // Adjust the font size as needed
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          width: responsiveWidth,
+          child: RawChip(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            showCheckmark: false,
+            labelPadding: EdgeInsets.zero,
+            label: Text(
+              "lbl20".tr,
+              style: TextStyle(
+                color: appTheme.whiteA700,
+                fontSize: fontSize,
+                fontFamily: 'Bahij TheSansArabic',
+                fontWeight: FontWeight.w500,
               ),
-              deleteIcon: SizedBox(
-                height: 40,
-                width: 40,
-                child: CustomImageView(
-                  svgPath: ImageConstant.imgComputer,
-                  color: Colors.white,
-                ),
-              ),
-              onDeleted: () {},
-              selected: false,
-              backgroundColor: appTheme.red700,
-              selectedColor: appTheme.lightGreen500,
-              shape: RoundedRectangleBorder(
-                side: BorderSide.none,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onSelected: (value) {
-                Navigator.of(context).pushNamed(AppRoutes.replacePoints);
-              },
             ),
-          ),
-          const SizedBox(width: 10),
-          SizedBox(
-            width: 190, 
-            child: RawChip(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10), 
-              showCheckmark: false,
-              labelPadding: EdgeInsets.zero,
-              label: Text(
-                "lbl21".tr,
-                style: TextStyle(
-                  color: appTheme.whiteA700,
-                  fontSize: 16, 
-                  fontFamily: 'Bahij TheSansArabic',
-                  fontWeight: FontWeight.w500,
-                ),
+            deleteIcon: SizedBox(
+              height: 30,
+              width: 30,
+              child: CustomImageView(
+                svgPath: ImageConstant.imgComputer,
+                color: Colors.white,
               ),
-              deleteIcon: SizedBox(
-                height: 40,
-                width: 40,
-                child: CustomImageView(
-                  svgPath: ImageConstant.imgFile,
-                  color: Colors.white,
-                ),
-              ),
-              onDeleted: () {},
-              selected: false,
-              backgroundColor: appTheme.lightGreen500,
-              selectedColor: appTheme.lightGreen500,
-              shape: RoundedRectangleBorder(
-                side: BorderSide.none,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onSelected: (value) {
-                Navigator.of(context).pushNamed(AppRoutes.collectingPoints);
-              },
             ),
+            onDeleted: () {},
+            selected: false,
+            backgroundColor: appTheme.red700,
+            selectedColor: appTheme.lightGreen500,
+            shape: RoundedRectangleBorder(
+              side: BorderSide.none,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            onSelected: (value) {
+              Navigator.of(context).pushNamed(AppRoutes.replacePoints);
+            },
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: responsiveWidth,
+          child: RawChip(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+            showCheckmark: false,
+            labelPadding: EdgeInsets.zero,
+            label: Text(
+              "lbl21".tr,
+              style: TextStyle(
+                color: appTheme.whiteA700,
+                fontSize: fontSize,
+                fontFamily: 'Bahij TheSansArabic',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            deleteIcon: SizedBox(
+              height: 30,
+              width: 30,
+              child: CustomImageView(
+                svgPath: ImageConstant.imgFile,
+                color: Colors.white,
+              ),
+            ),
+            onDeleted: () {},
+            selected: false,
+            backgroundColor: appTheme.lightGreen500,
+            selectedColor: appTheme.lightGreen500,
+            shape: RoundedRectangleBorder(
+              side: BorderSide.none,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            onSelected: (value) {
+              Navigator.of(context).pushNamed(AppRoutes.collectingPoints);
+            },
+          ),
+        ),
+      ],
     );
   }
 }
+

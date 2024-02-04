@@ -4,6 +4,10 @@ const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const randomatic = require('randomatic');
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+
 
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -11,16 +15,157 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
+const otpStorage = {};
+const getHashedOtp = (otp) => {
+  const hash = crypto.createHash('sha256');
+  hash.update(otp);
+  return hash.digest('hex');
+};
+
+
 
 exports.createUser = async (req, res) => {
   try {
     const user = await User.create(req.body);
     res.json(user);
   } catch (error) {
+    console.error('Error creating user:', error.message);
     res.status(400).json({ error: 'Failed to create User', details: error.message });
   }
 };
+exports.sendRandomCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const code = generateRandomCode();
 
+    // Store the generated code for later verification
+    otpStorage[email] = hashOtp(code);
+
+    const emailSent = await sendRandomCodeEmail(email, code);
+
+    if (emailSent) {
+      return res.status(200).json({ success: true, message: 'Code sent successfully' });
+    } else {
+      return res.status(500).json({ success: false, message: 'Failed to send code to email' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+async function getHashedOtpFromStorage(email) {
+  try {
+    const user = await User.findOne({
+      where: { email: email.toLowerCase() }
+    });
+
+    
+    return user ? user.hashedOtp : null;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+// This function should validate the received PIN code against the stored hashed OTP
+function validateOtp(receivedOtp, storedHashedOtp) {
+  // Replace this with your actual validation logic
+  // For example, you might use a library like bcrypt to compare the received OTP with the stored hashed OTP
+  // This is a placeholder, and you should replace it with your actual validation logic
+  return receivedOtp === storedHashedOtp;
+}
+exports.validatePin = async (req, res) => {
+  try {
+    const { email, pinCode } = req.body;
+
+    const isValid = true;  // Replace this with your logic to check the dynamically generated OTP
+
+    if (isValid) {
+      return res.status(200).json({ success: true, message: 'PIN code is valid' });
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid email or OTP' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+
+exports.exitEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    console.log('Received Email:', email);
+
+    const existingUser = await User.findOne({
+      where: { email: email.toLowerCase() } 
+    });
+
+    console.log('Existing User:', existingUser);
+
+    if (existingUser) {
+      console.log('Email found');
+
+      // Generate and send the OTP
+      const code = generateRandomCode();
+      const emailSent = await sendRandomCodeEmail(email, code);
+
+      if (emailSent) {
+        // Store the hashed OTP in your storage (e.g., database, cache)
+        const hashedOtp = hashOtp(code);
+        // Save 'hashedOtp' along with user information in the database if needed
+
+        return res.status(200).json({ success: true, message: 'Email found. Code sent successfully', exists: true });
+      } else {
+        return res.status(500).json({ success: false, message: 'Email found. Failed to send code to email', exists: true });
+      }
+    } else {
+      console.log('Email not found');
+      return res.status(200).json({ success: true, message: 'Email not found', exists: false });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
+async function sendRandomCodeEmail(email, code) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'titisara569@gmail.com',
+        pass: 'krvkitqvrzxaokqm',
+      },
+    });
+
+    const mailOptions = {
+      from: 'titisara569@gmail.com',
+      to: email,
+      subject: 'Random Code',
+      text: `Your random code is: ${code}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+function generateRandomCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Function to hash the OTP
+function hashOtp(otp) {
+  return crypto.createHash('sha256').update(otp).digest('hex');
+}
 
 
 exports.uploadUserPhoto = (req, res) => {

@@ -1,15 +1,15 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_null_comparison, use_key_in_widget_constructors
 
 import 'dart:async';
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
+
+
+import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:barcode_widget/barcode_widget.dart';
-import 'package:ncej_admin/controller/offer.dart';
 import 'package:ncej_admin/controller/point_controller.dart';
 import 'package:ncej_admin/core/app_export.dart';
-import 'package:ncej_admin/data/module/offer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -29,17 +29,102 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
   int? offerId;
   int? pointsToRedeem;
 
-   Future<void> scanBarcode(BuildContext context) async {
-    try {
-      var result = await BarcodeScanner.scan();
+//    Future<void> scanBarcode(BuildContext context) async {
+//   try {
+//     var result = await BarcodeScanner.scan();
 
-      if (result != null &&
-          result.rawContent != null &&
-          result.format == BarcodeFormat.qr) {
-        setState(() {
-          scannedData = result.rawContent;
-        });
+//     if (result != null &&
+//         result.rawContent != null &&
+//         result.format == BarcodeFormat.qr) {
+//       setState(() {
+//         scannedData = result.rawContent;
+//       });
 
+
+
+//       showDialog(
+//         context: context,
+//         builder: (BuildContext context) {
+//           return AlertDialog(
+//             title: Text('Barcode Information'),
+//             content: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text('Scanned QR Code: $scannedData'),
+//               ],
+//             ),
+//             actions: [
+//               TextButton(
+//                 onPressed: () {
+//                   Navigator.of(context).pop();
+//                 },
+//                 child: const Text('Close'),
+//               ),
+//               TextButton(
+//                 onPressed: () async {
+//                   var redemptionResult = await onTapRedeemPoints(
+//                     context,
+//                     scannedData,
+//                   );
+
+//                   if (redemptionResult != null) {
+//                     if (redemptionResult['success'] == true) {
+//                       int pointsRedeemed = redemptionResult['redeemedPoints'] ?? 0;
+//                       print('Redemption successful');
+//                       print(
+//                           'StoreId: ${redemptionResult['barcodeInfo']['store_id']}, OfferId: ${redemptionResult['barcodeInfo']['offer_id']}, PointsRedeemed: $pointsRedeemed');
+
+//                       showRedeemPointsMessage(pointsRedeemed);
+//                     } else {
+//                       print('Redemption not successful');
+//                       showCustomErrorDialog(
+//                         context,
+//                         'Redemption Failed',
+//                         'Invalid response format',
+//                       );
+//                     }
+//                   } else {
+//                     print('Redemption not successful');
+//                     showCustomErrorDialog(
+//                       context,
+//                       'Redemption Failed',
+//                       'Invalid response format',
+//                     );
+//                   }
+
+//                   Navigator.of(context).pop();
+//                 },
+//                 child: const Text('Redeem'),
+//               ),
+//             ],
+//           );
+//         },
+//       );
+//     } else {
+//       showErrorDialog(
+//           context, 'Error Scanning QR Code', 'Result is null or missing properties.');
+//     }
+//   } catch (e) {
+//     print('Error scanning QR code: $e');
+//     showErrorDialog(context, 'Error Scanning QR Code', 'Error: $e');
+//   }
+// }
+
+Future<void> scanBarcode(BuildContext context) async {
+  try {
+    ScanResult result = await BarcodeScanner.scan();
+
+    if (result != null && result.rawContent != null) {
+      setState(() {
+        scannedData = result.rawContent;
+      });
+      if (result.type == ResultType.Barcode) {
+  
+        String barcodeFormat = result.format.toString();
+        print('Barcode Format: $barcodeFormat');
+
+       
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -50,6 +135,7 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Scanned QR Code: $scannedData'),
+                  Text('Barcode Format: $barcodeFormat'),
                 ],
               ),
               actions: [
@@ -67,12 +153,31 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
                     );
 
                     if (redemptionResult != null) {
-                      print('Redemption successful');
+                      if (redemptionResult['success'] == true) {
+                        int pointsRedeemed = redemptionResult['redeemedPoints'] ?? 0;
+                        print('Redemption successful');
+                        print(
+                            'StoreId: ${redemptionResult['barcodeInfo']['store_id']}, OfferId: ${redemptionResult['barcodeInfo']['offer_id']}, PointsRedeemed: $pointsRedeemed');
+
+                        showRedeemPointsMessage(pointsRedeemed);
+                      } else {
+                        print('Redemption not successful');
+                        showCustomErrorDialog(
+                          context,
+                          'Redemption Failed',
+                          'Invalid response format',
+                        );
+                      }
                     } else {
                       print('Redemption not successful');
+                      showCustomErrorDialog(
+                        context,
+                        'Redemption Failed',
+                        'Invalid response format',
+                      );
                     }
 
-                    Navigator.of(context).pop(); // Close the dialog after redeeming points
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Redeem'),
                 ),
@@ -81,16 +186,16 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
           },
         );
       } else {
-        showErrorDialog(
-            context, 'Error Scanning QR Code', 'Result is null or missing properties.');
+        showErrorDialog(context, 'Error Scanning Barcode', 'Unsupported barcode format.');
       }
-    } catch (e) {
-      print('Error scanning QR code: $e');
-      showErrorDialog(
-          context, 'Error Scanning QR Code', 'Error: $e');
+    } else {
+      showErrorDialog(context, 'Error Scanning QR Code', 'Result is null or missing properties.');
     }
+  } catch (e) {
+    print('Error scanning QR code: $e');
+    showErrorDialog(context, 'Error Scanning QR Code', 'Error: $e');
   }
-
+}
 
   void showErrorDialog(BuildContext context, String title, String content) {
     showDialog(
@@ -103,7 +208,7 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Scanned Barcode: ${scannedData ?? "N/A"}'),
-              Text('Error Content: $content'), // Display additional error information
+              Text('Error Content: $content'), 
             ],
           ),
           actions: [
@@ -120,22 +225,49 @@ class _BarcodeScannerReadScreenState extends State<BarcodeScannerReadScreen> {
   }
   
 
+void showCustomErrorDialog(BuildContext context, String title, String content) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Scanned Barcode: N/A'),
+            Text('Error Content: $content'), 
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+
 Future<Map<String, dynamic>?> onTapRedeemPoints(
   BuildContext context,
   String scannedData,
 ) async {
   try {
-    // Parse the barcode data to get storeId, offerId, and pointsToRedeem
     Map<String, dynamic> barcodeData = parseBarcodeData(scannedData);
-
     if (barcodeData.isEmpty) {
       print('Invalid barcode data format');
-      return null; // or handle accordingly
+      return null;
     }
 
     int storeId = barcodeData['storeId'];
     int offerId = barcodeData['offerId'];
-    int pointsToRedeem = barcodeData['pointsToRedeem'];
+    int pointsToRedeem = barcodeData['currentNumberPoint'] ?? 0;
 
     var result = await pointController.redeemPoints(
       storeId: storeId,
@@ -146,69 +278,158 @@ Future<Map<String, dynamic>?> onTapRedeemPoints(
 
     print('Backend Response: $result');
 
-    // Handle the response as before
-
-  } catch (e) {
-    if (kDebugMode) {
-      print("Error in redeeming points: $e");
+    if (storeId == 0 || offerId == 0 || pointsToRedeem == 0) {
+      print('Invalid values extracted from barcode data');
+      return null;
     }
 
+
+    if (result != null && result['message'] != null) {
+      String successMessage = result['message'];
+      print('Redemption successful: $successMessage');
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Redemption Successful'),
+            content: Text(successMessage),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+
+      return result;
+    } else {
+      print("Redemption not successful");
+      return null;
+    }
+
+  } catch (e) {
+    if (e is DioError) {
+      print("DioError response: ${e.response}");
+      print("DioError request: ${e.requestOptions}");
+
+      if (e.response?.statusCode == 400) {
+       
+        String errorMessage = e.response?.data['error'] ?? 'Redemption failed';
+        print("Error in redeeming points: $errorMessage");
+
+    
+        if (errorMessage == 'User has already redeemed from this offer and store') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Redemption Failed'),
+                content: Text(errorMessage),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          print("Error in redeeming points: $errorMessage");
+        }
+      } else {
+        print("Error in redeeming points: $e");
+      }
+    }
+
+    print("Redemption not successful");
     return null;
   }
 }
 
-Map<String, dynamic> parseBarcodeData(String scannedData) {
-  try {
-    // Assuming the scanned data format is "#STORE_ID_OFFER_ID_POINTS_TO_REDEEM"
-    List<String> parts = scannedData.split('_');
 
-    if (parts.length == 4) {
+
+
+
+Map<String, dynamic> parseBarcodeData(String barcodeValue) {
+  try {
+    print('Raw Barcode Data: $barcodeValue');
+
+    List<String> parts;
+
+    if (barcodeValue.startsWith('#')) {
+      parts = barcodeValue.substring(1).split('#');
+    } else {
+      print('Invalid barcode data format: $barcodeValue');
+      return {};
+    }
+
+    if (parts.length == 5) {
+      var currentNumberPointRaw = parts[3];
+      int? currentNumberPoint;
+
+      if (currentNumberPointRaw != null && currentNumberPointRaw.isNotEmpty) {
+        currentNumberPoint = int.tryParse(currentNumberPointRaw);
+      }
+
+      if (currentNumberPoint == null) {
+        print('Invalid currentNumberPoint value: $currentNumberPointRaw');
+        return {};
+      }
+
+      int storeId = parts[1] != null ? int.tryParse(parts[1]!) ?? 0 : 0;
+      int offerId = parts[2] != null ? int.tryParse(parts[2]!) ?? 0 : 0;
+      int userId = parts[4] != null ? int.tryParse(parts[4]!) ?? 0 : 0;
+
+      if (storeId == 0 || offerId == 0 || userId == 0) {
+        print('Invalid values extracted from barcode data');
+        return {};
+      }
+
       return {
-        'storeId': int.tryParse(parts[1]) ?? 0,
-        'offerId': int.tryParse(parts[2]) ?? 0,
-        'pointsToRedeem': int.tryParse(parts[3]) ?? 0,
+        'randomString': parts[0],
+        'storeId': storeId,
+        'offerId': offerId,
+        'currentNumberPoint': currentNumberPoint,
+        'userId': userId,
       };
     } else {
-      print('Invalid barcode data format');
+      print('Invalid barcode data format: $barcodeValue');
       return {};
     }
   } catch (e) {
     print('Error parsing barcode data: $e');
-    return {};
+    return {
+      'randomString': '',
+      'storeId': 0,
+      'offerId': 0,
+      'currentNumberPoint': 0,
+      'userId': 0,
+    };
   }
 }
 
 
-  void showCustomErrorDialog(BuildContext context, String title, String content) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
+
+
+
+  
+
 
   Future<bool> checkPreviousRedemption(
     BuildContext context,
     int storeId,
     int offerId,
   ) async {
-    // Implement the logic to check if the user has already redeemed points
-    // for the given storeId and offerId. You may use shared preferences,
-    // database, or any other method to store and retrieve this information.
 
-    // For example, using shared preferences:
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String key = 'REDEMPTION_${storeId}_$offerId';
     bool redeemed = prefs.getBool(key) ?? false;
@@ -226,10 +447,8 @@ Map<String, dynamic> parseBarcodeData(String scannedData) {
   }
 
   void showRedeemPointsMessage(int pointsRedeemed) {
-    // Use the context property directly
-    final scaffoldKeyContext = _scaffoldKey.currentContext;
 
-    // Check if the Scaffold context is not null before showing SnackBar
+    final scaffoldKeyContext = _scaffoldKey.currentContext;
     if (scaffoldKeyContext != null) {
       ScaffoldMessenger.of(scaffoldKeyContext).showSnackBar(
         SnackBar(

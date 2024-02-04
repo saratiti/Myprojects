@@ -12,6 +12,7 @@ router.post('/scanQRCode',barcodeController.scanBarcode);
 router.post('/generateBarcode',barcodeController.generateBarcode);
 router.post('/offerstoreBarcode',authenticateToken,barcodeController.generateBarcodeOfferStore);
 router.post('/checkBarcode', barcodeController.checkBarcode);
+router.post('/collectPointsFromBarcode',authenticateToken,barcodeController.collectPointsFromBarcode);
 //router.post('/pointsFrombarcodes',barcodeController.collectPointsFromBarcode)
 module.exports = router;
 

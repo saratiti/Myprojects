@@ -6,8 +6,8 @@ const Store = require('../models/store');
 const User = require('../models/user');
 const Point=require('../models/point');
 const qrcode = require('qrcode');
-const uuid = require('uuid');
-
+const { v4: uuidv4 } = require('uuid');
+const { Op } = require('sequelize');
 const { promisify } = require('util');
 const fs = require('fs');
 exports.createBarcode = async (req, res) => {
@@ -155,8 +155,6 @@ res.status(200).json({
 exports.checkBarcode = async (req, res) => {
   const offerId = req.body.offer_id;
   const storeId = req.body.store_id;
-
-  // Check if offer_id and store_id are provided
   if (!offerId || !storeId) {
     return res.status(400).json({ message: 'Both offer_id and store_id are required in the request body' });
   }
@@ -164,15 +162,17 @@ exports.checkBarcode = async (req, res) => {
   try {
     const matchingBarcodeExists = await Barcode.findOne({
       where: { offer_id: offerId, store_id: storeId },
-      attributes: ['barcode_id'], // Only retrieve barcode_id to check for existence
+      attributes: ['barcode_id'],  
     });
 
-    // Check if matching barcode exists
+   
+    
     if (!matchingBarcodeExists) {
       return res.status(404).json({ message: 'Barcode not found' });
     }
 
-    // If the execution reaches here, it means there is a matching barcode
+   
+    
     res.json({ message: 'Matching barcode found' });
   } catch (error) {
     console.error(error);
@@ -183,18 +183,36 @@ exports.checkBarcode = async (req, res) => {
 
 exports.generateBarcode = async (req, res) => {
   try {
-    const { store_id, offer_id, branch_id} = req.body;
-    const barcodeValue = uuidv4();
+    const { store_id, number_point } = req.body;
+
+    const newOffer = await Offer.create({
+      number_point,
+    });
+
+    const storeDetails = await Store.findByPk(store_id);
+
+    if (!storeDetails) {
+      return res.status(404).json({ message: 'Store not found' });
+    }
+
+    const barcodeValue = '#' + generateRandomString(11); // Start with #
+
+    const barcodeData = {
+      store_id,
+      offer_id: newOffer.offer_id,
+      number_point,
+    };
+
     const newBarcode = await Barcode.create({
       store_id,
-      offer_id,
+      offer_id: newOffer.offer_id,
       barcode_value: barcodeValue,
       barcode_status: 'active',
-      branch_id,
+      number_point,
       barcode_date: new Date(),
     });
 
-    qrcode.toDataURL(barcodeValue, (err, qrCodeData) => {
+    qrcode.toDataURL(barcodeValue, barcodeData, (err, qrCodeData) => {
       if (err) {
         res.status(500).send('Error generating QR code');
       } else {
@@ -212,37 +230,55 @@ exports.generateBarcode = async (req, res) => {
   }
 };
 
-// exports.collectPointsFromBarcode = async (req, res) => {
-//   try {
-//     const { barcodeValue, userId } = req.body;
 
-    
-//     const barcode = await Barcode.findOne({ barcode_value: barcodeValue });
+function generateRandomString(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+exports.collectPointsFromBarcode = async (req, res) => {
+  try {
+    const { barcodeValue } = req.body;
+    const userId = req.user.user_id;
 
-//     if (!barcode) {
-//       return res.status(404).json({ message: 'Barcode not found' });
-//     }
+    if (!userId) {
+      return res.status(400).json({ error: 'User not found' });
+    }
 
-//     if (barcode.points_collected) {
-//       return res.status(400).json({ message: 'Points already collected for this barcode' });
-//     }
+    const barcode = await Barcode.findOne({
+      where: { barcode_value: barcodeValue, barcode_status: 'active' }, 
+      
+      include: [{ model: Offer, as: 'offers' }],
+    });
 
-//     const user = await User.findOneAndUpdate(
-//       { _id: userId },
-//       { $inc: { points: barcode.points_to_collect } },
-//       { new: true }
-//     );
+    if (!barcode) {
+      return res.status(400).json({ error: 'Barcode not found or invalid' });
+    }
 
-//     // Mark the barcode as points collected
-//     barcode.points_collected = true;
-//     await barcode.save();
+    await Point.create({
+      user_id: userId,
+      total_points: barcode.offers.number_point,
+    });
 
-//     res.json({ success: true, totalPoints: user.points });
-//   } catch (error) {
-//     console.error('Error collecting points:', error);
-//     res.status(500).json({ message: 'Error collecting points' });
-//   }
-// };
+    const user = await User.findByPk(userId);
+    await Point.increment('total_points', {
+      by: barcode.offers.number_point,
+      where: { user_id: userId },
+    });
+
+    res.status(200).json({
+      message: 'Points collected successfully',
+      collectedPoints: barcode.offers.number_point,
+    });
+  } catch (error) {
+    console.error('Error in collectPointsFromBarcode endpoint:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 
 
@@ -254,18 +290,29 @@ function generateRandomString(length) {
   }
   return result;
 }
+async function getBarcodeInformation(scannedBarcode, offerId, storeId) {
+  try {
+    const barcodeInfo = await Barcode.findOne({
+      where: {
+        barcode_value: scannedBarcode,
+      },
+      include: [
+        { model: Offer, as: 'offers', where: { offer_id: offerId } },
+        { model: Store, as: 'stores', where: { store_id: storeId } },
+      ],
+    });
 
+    if (!barcodeInfo) {
+      console.error('Barcode information not found:', scannedBarcode);
+      return null;
+    }
 
-
-function generateRandomString(length) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
+    return barcodeInfo;
+  } catch (error) {
+    console.error('Error retrieving barcode information:', error);
+    throw error;
   }
-  return result;
 }
-
 exports.generateBarcodeOfferStore = async (req, res) => {
   try {
     const { storeId, offerId } = req.body;
@@ -280,10 +327,10 @@ exports.generateBarcodeOfferStore = async (req, res) => {
 
     const currentNumberPoint = offer.number_point;
     const randomString = generateRandomString(12);
-    const barcodeValue = `#${randomString}`;
 
-    // Generate QR code data as a buffer
-    const qrCodeBuffer = await qrcode.toBuffer(barcodeValue);
+
+    
+    const barcodeValue = `#${randomString}#${storeId}#${offerId}#${currentNumberPoint}#${userId}`;
 
     const newBarcode = await Barcode.create({
       store_id: storeId,
@@ -295,12 +342,18 @@ exports.generateBarcodeOfferStore = async (req, res) => {
       user_id: userId,
     });
 
+
     res.writeHead(200, {
       'Content-Type': 'image/png',
       'Content-Disposition': `inline; filename="${barcodeValue}.png"`,
-      'Content-Length': qrCodeBuffer.length,
     });
 
+    
+    
+    const qrCodeBuffer = await qrcode.toBuffer(barcodeValue);
+
+
+    
     res.end(qrCodeBuffer);
 
     console.log('Barcode and QR code generated successfully');

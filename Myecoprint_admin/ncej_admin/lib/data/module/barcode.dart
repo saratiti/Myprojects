@@ -1,6 +1,6 @@
 import 'package:ncej_admin/data/module/offer.dart';
 
-class Barcode {
+class Barcodes {
   int? barcodeId;
   int? storeId;
   int? offerId;
@@ -11,7 +11,7 @@ class Barcode {
   DateTime? barcodeDate;
   Offer? offer; 
 
-  Barcode({
+  Barcodes({
     this.barcodeId,
     this.storeId,
     this.offerId,
@@ -23,8 +23,8 @@ class Barcode {
     this.offer,
   });
 
-  factory Barcode.fromJson(Map<String, dynamic> json) {
-    return Barcode(
+  factory Barcodes.fromJson(Map<String, dynamic> json) {
+    return Barcodes(
       barcodeId: json['barcode_id'] as int? ?? 0,
       storeId: json['store_id'] as int? ?? 0,
       offerId: json['offer_id'] as int? ?? 0,

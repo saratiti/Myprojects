@@ -7,9 +7,17 @@ import 'core/app_export.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  EasyLoading.init(); // Initialize EasyLoading
-
+EasyLoading.instance
+    ..indicatorType = EasyLoadingIndicatorType.ring
+    ..loadingStyle = EasyLoadingStyle.custom
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..backgroundColor =  appTheme.blueGray400
+    ..indicatorColor = Colors.white 
+    ..textColor = Colors.white 
+    ..textStyle = TextStyle(fontSize: 16.0, color: Colors.white)
+    ..contentPadding = EdgeInsets.all(10.0)
+    ..maskColor = Colors.transparent;
   final localizationController = Get.put(AppLocalizationController());
   localizationController.changeLocale(const Locale('ar'));
 
@@ -24,6 +32,7 @@ class MyApp extends StatelessWidget {
      GetMaterialApp(
       translations: AppLocalization(),
       theme: theme,
+     builder: EasyLoading.init(),
       locale: Get.locale,
       fallbackLocale: const Locale('en', ''),
       title: 'NCEJ',

@@ -43,23 +43,23 @@ Widget buildClothesContainer(BuildContext context) {
   final textDirection = localization.locale.languageCode == 'ar'
       ? TextDirection.rtl
       : TextDirection.ltr;
-        PointController pointController = PointController();
-void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int pointsRedeemed) async {
-  try {
-    await pointController.redeemPoints(
-      storeId: storeId, 
-      offerId: offerId,
-      pointsRedeemed: pointsRedeemed, 
-    );
+        // PointController pointController = PointController();
+// void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int pointsRedeemed) async {
+//   try {
+//     await pointController.redeemPoints(
+//       storeId: storeId, 
+//       offerId: offerId,
+//       pointsRedeemed: pointsRedeemed, 
+//     );
 
-    Navigator.pop(context);
-  } catch (e) {
-    if (kDebugMode) {
-      print("Error in redeeming points: $e");
-    }
+//     Navigator.pop(context);
+//   } catch (e) {
+//     if (kDebugMode) {
+//       print("Error in redeeming points: $e");
+//     }
 
-  }
-}
+//   }
+// }
 
 
 return FutureBuilder<List<Offer>>(
@@ -371,7 +371,6 @@ class MyPainter extends CustomPainter {
     path = Path();
 
     if (textDirection == TextDirection.ltr) {
-      // English text direction, align the shape to the left
       path.lineTo(size.width * 0.78, 0);
       path.cubicTo(
           size.width * 0.78, 0, size.width * 0.22, 0, size.width * 0.22, 0);

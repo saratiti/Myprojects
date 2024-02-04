@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class ResetPassowrdEmailScreen extends StatelessWidget {
@@ -9,7 +10,18 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
           key: key,
         );
 
-  bool email = false;
+  final TextEditingController emailController = TextEditingController();
+bool emailExists = false; 
+ Future<bool> checkIfEmailExists(String enteredEmail) async {
+    // Call the UserController's exitEmail method
+    bool exists = await UserController().exitEmail(enteredEmail);
+
+    // Update the emailExists variable based on the result
+    emailExists = exists;
+
+    // Return the result
+    return exists;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +115,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                     ),
                                   ),
                                 CustomTextFormField(
-                            
+                            controller: emailController,
                             margin: EdgeInsets.only(
                               left: 7.h,
                               top: 3.v,
@@ -133,9 +145,92 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                       top: 61.v,
                                       right: 31.h,
                                       
-                                    ),onTap: () {
-                                      Navigator.of(context).pushNamed(AppRoutes.pinCodePassword);
-                                    },
+                                    ),   onTap: () async {
+  String enteredEmail = emailController.text;
+
+  // Check if the email exists
+  bool emailExists = await checkIfEmailExists(enteredEmail);
+
+  if (emailExists) {
+    // Handle the case when the email already exists.
+    print("Email already exists!");
+    
+    
+    showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Your custom message for email exists..."),
+          CustomElevatedButton(
+            height: 62.v,
+            text: "msg18".tr,
+            margin: EdgeInsets.only(
+              top: 53.v,
+              right: 5.h,
+            ),
+            rightIcon: Container(
+              margin: EdgeInsets.only(),
+              child: CustomImageView(
+                svgPath: ImageConstant.imgGroup48096390,
+              ),
+            ),
+            buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
+            buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
+            onTap: () {
+              Navigator.of(context).pop(); // Close the current dialog
+              Navigator.of(context).pushNamed(AppRoutes.pinCodePassword); // Navigate to PinCodePasswordScreen
+            },
+          ),
+        ],
+      ),
+    );
+  },
+);
+
+  } else {
+    // Proceed with your logic when the email doesn't exist.
+    print("Email doesn't exist. Proceeding with your logic...");
+
+ 
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Your custom message for email doesn't exist..."),
+              CustomElevatedButton(
+                height: 62.v,
+                text: "msg19_".tr,
+                margin: EdgeInsets.only(
+                  top: 53.v,
+                  right: 5.h,
+                ),
+                rightIcon: Container(
+                  margin: EdgeInsets.only(),
+                  child: CustomImageView(
+                    svgPath: ImageConstant.imgGroup48096390,
+                  ),
+                ),
+                buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
+                buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
+                onTap: () {
+                  Navigator.of(context).pop(); 
+                  
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+},
+
                                     buttonStyle:
                                         CustomButtonStyles.fillLightGreen,
                                   ),
@@ -185,12 +280,16 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                     width: 289.h,
                     alignment: Alignment.topCenter,
                   ),
+                 
                 ],
               ),
             ),
+            
           ),
         ),
       ),
      ) );
   }
+  
+ 
 }

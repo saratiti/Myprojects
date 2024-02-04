@@ -9,6 +9,7 @@ import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/data/module/store.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
+import 'package:my_eco_print/view/screen/barcode/barcode_read.dart';
 
 // class RestaurantScreen extends StatelessWidget {
 //   const RestaurantScreen({Key? key}) : super(key: key);
@@ -504,16 +505,18 @@ Widget buildClothesContainer(BuildContext context) {
         return Center(child: Text('No data available'));
       } else {
         List<Offer> offers = snapshot.data!;
-
-        return SizedBox(
-          width: double.maxFinite,
+ return SizedBox(
+        width: double.maxFinite,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 60.v),
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: offers.length,
             itemBuilder: (context, index) {
               Offer offer = offers[index];
-          return 
+
+           return 
           
           
            GestureDetector(
@@ -586,104 +589,17 @@ Widget buildClothesContainer(BuildContext context) {
                                   CustomButtonStyles.fillLightGreenTL20,
                               buttonTextStyle: CustomTextStyles
                                   .titleSmallBahijTheSansArabicWhiteA700,
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      contentPadding: EdgeInsets.zero,
-                                      content: Container(
-                                        width: 350.h,
-                                        height: 350.v,
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 20.h,
-                                          vertical: 20.v,
-                                        ),
-                                        decoration: AppDecoration.fillWhiteA
-                                            .copyWith(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        child: ListView(
-                                          shrinkWrap: true,
-                                          children: [
-                                            Directionality(
-                                              textDirection: textDirection,
-                                              child: CustomImageView(
-                                                svgPath:
-                                                    ImageConstant.imgClose,
-                                                height: 24.adaptSize,
-                                                width: 24.adaptSize,
-                                                onTap: () {
-                                                  onTapImgCloseone(context);
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(height: 10.v),
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 24.v, right: 59.h),
-                                                child: Text(
-                                                  "lbl37".tr,
-                                                  style: theme.textTheme
-                                                      .displaySmall,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(height: 46.v),
-                                            Align(
-                                              alignment: Alignment.center,
-                                              child: SizedBox(
-                                                width: 156.h,
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text: "lbl_104".tr,
-                                                        style: theme.textTheme
-                                                            .titleMedium,
-                                                      ),
-                                                      TextSpan(
-                                                        text: "lbl_50".tr,
-                                                        style:
-                                                            CustomTextStyles
-                                                                .titleMediumLightgreen500,
-                                                      ),
-                                                      TextSpan(
-                                                        text: "lbl_106".tr,
-                                                        style: theme.textTheme
-                                                            .titleMedium,
-                                                      ),
-                                                      const WidgetSpan(
-                                                        child: SizedBox(
-                                                            width: 10.0),
-                                                      ),
-                                                      TextSpan(
-                                                        text: "lbl_105".tr,
-                                                        style: theme.textTheme
-                                                            .titleMedium,
-                                                      ),
-                                                      TextSpan(
-                                                        text: "lbl_102".tr,
-                                                        style:
-                                                            CustomTextStyles
-                                                                .titleMediumRed700,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                            onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ScanCodeScreenRef(),
+        settings: RouteSettings(
+          arguments: {'offerId': offer.id, 'storeId': offer.storeId},
+        ),
+      ),
+    );
+  },
                             ),
                           ),
                         ],
@@ -693,80 +609,119 @@ Widget buildClothesContainer(BuildContext context) {
                 },
               );
             },
-             child: Center(
-                  child: Container(
-                    margin: EdgeInsets.only(top: 20.v, bottom: 10.v),
-                    padding: EdgeInsets.symmetric(horizontal: 20.h),
-                    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-                      borderRadius: BorderRadiusStyle.roundedBorder24,
+
+child:  Center(
+  child: Container(
+    margin: EdgeInsets.only(top: 20.v),
+    padding: EdgeInsets.symmetric(
+      horizontal: 20.h,
+      vertical: 5.v,
+    ),
+    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+      borderRadius: BorderRadiusStyle.roundedBorder24,
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 1.v,top: 10),
+                    child: SizedBox(
+                      height: 44.adaptSize,
+                      width: 44.adaptSize,
+                      child: Container(
+                        height: 44.adaptSize,
+                        width: 44.adaptSize,
+                        padding: EdgeInsets.all(6.h),
+                        decoration: AppDecoration.fillGray.copyWith(
+                          borderRadius: BorderRadiusStyle.roundedBorder17,
+                        ),
+                        child: CustomImageView(
+                                svgPath: ImageConstant.imgMobileOnprimary,
+                              
+                          height: 44.adaptSize,
+                          width: 44.adaptSize,
+                          alignment: Alignment.center,
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              height: 56.adaptSize,
-                              width: 56.adaptSize,
-                              padding: EdgeInsets.all(6.h),
-                              decoration: AppDecoration.fillGray.copyWith(
-                                borderRadius: BorderRadiusStyle.roundedBorder17,
-                              ),
-                              child: CustomImageView(
-                                imagePath: ImageConstant.imgImage1305,
-                                height: 44.adaptSize,
-                                width: 44.adaptSize,
-                                alignment: Alignment.center,
-                              ),
-                            ),
-                            SizedBox(width: 3.0),
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(bottom: 3.0),
-                                child: Text(
-                                  '${offer.numberDiscount.toString()}%',
-                                  style: theme.textTheme.headlineSmall,
-                                ),
-                              ),
-                            ),
-                     if (offer.numberPoint != null)
-      Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(width: 8.0),
-          Align(
+                  ),
+
+                
+                  
+
+                 
+                   
+                ],
+
+             
+              ),
+                  
+              
+            ],
+            
+          ),
+        ),
+         Padding(padding:const EdgeInsets.symmetric(vertical: 10),
+                     child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          '${offer.numberDiscount.toString()}%',
+                          style: theme.textTheme.headlineSmall,
+                        ),
+                      ),
+                    
+                  ), 
+                  
+         Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                            offer.offerDescription.toString(),
+                          style: theme.textTheme.labelMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+              if (offer.numberPoint != null)
+ 
+        Expanded(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+             Align(
             alignment: Alignment.topLeft,
             child: paint(
               textDirection: textDirection,
               additionalText: offer.numberPoint.toString(),
             ),
+          )
+          ],
           ),
-        ],
-      ),
-  ],
- 
-),
+        ),
+        
+      ],
+    ),
+  ),
+)
 
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 8.0),
-                            child: Text(
-                              offer.offerDescription.toString(),
-                              style: theme.textTheme.titleMedium,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+
               );
             },
           ),
-        );
-}}
+        ),
+      );
+    }
+  },
 );
 
 }}

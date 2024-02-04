@@ -16,10 +16,12 @@ const { authenticateToken } = require('../middleware/authMiddleware');
 const schema = require('../validatons/auth');
 const validate = require('../utils/validator.util');
 //const passport = require('passport');
-router.post('/users', userController.createUser);
+router.post('/', userController.createUser);
 router.get('/', userController.getAllUsers);
 router.get('/users/:id', userController.getUserById);
 router.put('/users/:id', userController.updateUser);
+router.post('/emailExists',userController.exitEmail);
+router.post('/validPin',userController.validatePin);
 router.delete('/:id', userController.deleteUser);
 router.get('/profile', authenticateToken, (req, res) => {
     res.json(req.user);

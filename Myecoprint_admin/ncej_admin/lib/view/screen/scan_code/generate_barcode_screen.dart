@@ -10,6 +10,7 @@ import 'package:ncej_admin/view/screen/scan_code/scan_barcode_read_screen.dart';
 
 import '../../../core/app_export.dart';
 
+
 class BarcodeGenerator extends StatefulWidget {
   const BarcodeGenerator({super.key});
 
@@ -18,9 +19,17 @@ class BarcodeGenerator extends StatefulWidget {
 }
 
 class _BarcodeGeneratorState extends State<BarcodeGenerator> {
-  String barcodeData = '56432';
+  String barcodeData = '';
   bool isBarcodeVisible = false;
   Image? qrCodeImage;
+
+  int enteredNumberOfPoints = 1; // Default value
+  int selectedStoreId = 1; // Default value
+
+  // Dropdown items
+  List<int> storeIds = [1, 2, 3, 4, 5];
+  List<int> numberOfPointsOptions = [1, 2, 3, 4, 5];
+
 
   void showSuccessSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -31,84 +40,152 @@ class _BarcodeGeneratorState extends State<BarcodeGenerator> {
     );
   }
 
-  Future<void >generateBarcodeAndQRCode(String dataToEncode) async {
-    try {
-      Map<String, dynamic> requestBody = {
-        'dataToEncode': dataToEncode,
-      };
-      dynamic response = await ApiHelper()
-          .postDioForImage('/api/barcodes/generateBarcode', requestBody);
+  Future<void> generateBarcodeAndQRCode(String dataToEncode, int numberOfPoints, int storeId) async {
+  try {
+    Map<String, dynamic> requestBody = {
+      'dataToEncode': dataToEncode,
+      'number_point': numberOfPoints,  
+      'store_id': storeId,
+    };
 
-      if (response is Uint8List) {
-        Uint8List qrCodeImageBytes = response;
-        MemoryImage qrCodeMemoryImage = MemoryImage(qrCodeImageBytes);
-        setState(() {
-          qrCodeImage = Image(image: qrCodeMemoryImage);
-          isBarcodeVisible = true;
-        });
-      } else {
-        if (kDebugMode) {
-          print('Failed to generate QR code: Invalid response type');
-        }
-      }
-    } catch (e) {
+    dynamic response = await ApiHelper().postDioForImage('/api/barcodes/generateBarcode', requestBody);
+
+    if (response is Uint8List) {
+      Uint8List qrCodeImageBytes = response;
+      MemoryImage qrCodeMemoryImage = MemoryImage(qrCodeImageBytes);
+      setState(() {
+        qrCodeImage = Image(image: qrCodeMemoryImage);
+        isBarcodeVisible = true;
+      });
+    } else {
       if (kDebugMode) {
-        print('Error generating QR code: $e');
+        print('Failed to generate QR code: Invalid response type');
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (isBarcodeVisible)
-              BarcodeWidget(
-                barcode: Barcode.qrCode(),
-                data: barcodeData,
-                width: 200,
-                height: 200,
-              ),
-            const SizedBox(height: 20.0),
-            MyElevatedButton(
-              onTap: () {
-                generateBarcodeAndQRCode(barcodeData);
-                showSuccessSnackBar();
-              },
-            ),
-            RefundElevatedButton(
-              onTap: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ScanCodeScreen(); 
-                    },
-                  ),
-                );
-              },
-            ),
-            ScanElevatedButton(
-              onTap: () async {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const BarcodeScannerReadScreen();
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
+  } catch (e) {
+    if (kDebugMode) {
+      print('Error generating QR code: $e');
+    }
   }
 }
 
+
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: buildAppBar(context),
+    body: 
+      Center(
+         child: SingleChildScrollView(
+      child:
+      
+       Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (isBarcodeVisible)
+            BarcodeWidget(
+              barcode: Barcode.qrCode(),
+              data: barcodeData,
+              width: 200,
+              height: 200,
+            ),
+          const SizedBox(height: 20.0),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Select Store:',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              const SizedBox(width: 20.0),
+              DropdownButton<int>(
+                value: selectedStoreId,
+                onChanged: (int? newValue) {
+                  setState(() {
+                    selectedStoreId = newValue!;
+                  });
+                },
+                items: storeIds.map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Enter Number Points:',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              const SizedBox(width: 20.0),
+            
+             
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  border: Border.all(color: Colors.grey),
+                ),
+                child: SizedBox( 
+                  width: 100.0, 
+                  child: TextField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        enteredNumberOfPoints = int.tryParse(value) ?? 1;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10.0),
+          
+          MyElevatedButton(
+            onTap: () {
+              generateBarcodeAndQRCode(barcodeData, enteredNumberOfPoints, selectedStoreId);
+            },
+          ),
+          RefundElevatedButton(
+            onTap: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ScanCodeScreen();
+                  },
+                ),
+              );
+            },
+          ),
+          ScanElevatedButton(
+            onTap: () async {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const BarcodeScannerReadScreen();
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    ),
+  ));
+}
+}
 
 class MyElevatedButton extends StatelessWidget {
   final VoidCallback onTap;

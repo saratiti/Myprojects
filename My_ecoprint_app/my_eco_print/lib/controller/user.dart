@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:my_eco_print/data/module/register.dart';
 import 'package:my_eco_print/data/module/user.dart';
 import 'package:my_eco_print/view/screen/auth/login_screen.dart';
 import 'api_helper.dart';
@@ -76,14 +75,24 @@ Future<User> getUser() async {
 
 
  
-  Future<dynamic> create(Register user) async {
-    try {
-      var result = await ApiHelper().postDio("/api/auth/register", user.toJson());
-      print(result);
-      return result;
-    } catch (e) {
-      rethrow;
+  Future<dynamic> create(User user) async {
+try {
+  var result = await ApiHelper().postDio("/api/users", user.toJson());
+  print(result);
+  return result;
+} catch (e) {
+  if (e is DioError) {
+    if (e.type == DioErrorType) {
+      print("Server error: ${e.response?.statusCode} - ${e.response?.data}");
+    } else {
+      print("Network error: $e");
     }
+  }
+  rethrow;
+}
+
+
+
   }
 Future<String> uploadImage(File file) async {
   try {
@@ -132,6 +141,23 @@ static Future<void> logout(BuildContext context) async {
     rethrow;
   }
 }
+  Future<bool> exitEmail(String email) async {
+    try {
+      var result = await ApiHelper().postRequest("/api/users/emailExists", {
+        "email": email,
+      });
+
+      if (result != null && result['exists'] != null) {
+        return result['exists'];
+      } else {
+
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 
 Future<Response> sendForm(
     String url, Map<String, dynamic> data, Map<String, File> files) async {

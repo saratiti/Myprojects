@@ -11,7 +11,7 @@ class BarcodeController {
     dio = Dio();
   }
 
-  Future<dynamic> createBarcode(Barcode barcode) async {
+  Future<dynamic> createBarcode(Barcodes barcode) async {
     try {
       var result =
           await ApiHelper().postRequest("/api/barcodes", barcode.toJson());
@@ -27,11 +27,11 @@ class BarcodeController {
     }
   }
 
-  Future<Barcode> getBarcode() async {
+  Future<Barcodes> getBarcode() async {
     try {
       var result = await ApiHelper().getRequest("/api/barcodes");
       if (result != null) {
-        return Barcode.fromJson(result);
+        return Barcodes.fromJson(result);
       } else {
         throw Exception("No data received from the backend");
       }
@@ -41,15 +41,15 @@ class BarcodeController {
     }
   }
 
-  Future<List<Barcode>> getAll() async {
+  Future<List<Barcodes>> getAll() async {
     try {
       dynamic jsonObject = await ApiHelper().getRequest("/api/barcodes");
       if (jsonObject == null) {
         return [];
       }
-      List<Barcode> result = [];
+      List<Barcodes> result = [];
       jsonObject.forEach((json) {
-        result.add(Barcode.fromJson(json));
+        result.add(Barcodes.fromJson(json));
       });
       return result;
     } catch (ex) {

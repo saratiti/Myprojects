@@ -23,9 +23,11 @@ class CustomTextFormField extends StatelessWidget {
     this.suffixConstraints,
     this.contentPadding,
     this.borderDecoration,
+    this.onEditingComplete,
     this.fillColor,
     this.filled = false,
-    this.validator,
+    this.validator, 
+     this.onChanged,
   }) : super(
           key: key,
         );
@@ -61,7 +63,7 @@ class CustomTextFormField extends StatelessWidget {
   final BoxConstraints? prefixConstraints;
 
   final Widget? suffix;
-
+final VoidCallback? onEditingComplete;
   final BoxConstraints? suffixConstraints;
 
   final EdgeInsets? contentPadding;
@@ -71,7 +73,7 @@ class CustomTextFormField extends StatelessWidget {
   final Color? fillColor;
 
   final bool? filled;
-
+final ValueChanged<String>? onChanged;
   final FormFieldValidator<String>? validator;
 
   @override
@@ -97,6 +99,8 @@ class CustomTextFormField extends StatelessWidget {
           textInputAction: textInputAction,
           keyboardType: textInputType,
           maxLines: maxLines ?? 1,
+          onEditingComplete: onEditingComplete,
+          onChanged: onChanged,
           decoration: decoration,
           validator: validator,
         ),

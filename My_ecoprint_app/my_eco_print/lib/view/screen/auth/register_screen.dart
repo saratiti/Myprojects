@@ -4,7 +4,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/text_controller.dart';
+import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/data/module/user.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -116,7 +118,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                     suffix: buildLockIcon(),
                   ),
                   buildTermsAndConditionsRow(),
-                  buildElevatedButton(),
+                  buildElevatedButton(context),
                   buildLoginPrompt(),
                 ],
               ),
@@ -299,13 +301,40 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
-  Widget buildElevatedButton() {
-    return CustomElevatedButton(
-      text: "lbl11".tr,
-      margin: EdgeInsets.only(left: 26.h, top: 56.v, right: 27.h),
-    );
-  }
 
+Widget buildElevatedButton(BuildContext context) {
+  return CustomElevatedButton(
+    text: "lbl11".tr,
+    margin: EdgeInsets.only(left: 26.h, top: 56.v, right: 27.h),
+    onTap: () async {
+      // Assuming `UserController` is accessible in this scope.
+      UserController userController = UserController();
+
+     
+      User user = User(
+        username: textControllers.personalnameController.text,
+        email: textControllers.emailaddressController.text,
+        image: '', 
+        fullName: textControllers.personalnameController.text,
+        phone: textControllers.phonenumberoneController.text,
+      );
+
+      try {
+        var result = await userController.create(user);
+
+      
+        if (result != null) {
+        
+          Navigator.pushReplacementNamed(context, '/login_screen');
+        }
+
+      } catch (e) {
+        // Handle errors if necessary
+        print("Error creating user: $e");
+      }
+    },
+  );
+}
   Widget buildLoginPrompt() {
     return Column(
       children: [

@@ -70,6 +70,7 @@ class ImageConstant {
   static String imgClose = '$imagePath/img_close.svg';
   static String imgBookmark = '$imagePath/img_bookmark.svg';
   static String imgMobileOnprimary = '$imagePath/img_mobile_onprimary.svg';
+   static String imgSignalonPrimaryLeft = '$imagePath/img_signal_onPrimaryLeft.svg';
   static String imgClockLightGreen500 =
       '$imagePath/img_clock_light_green_500.svg';
   static String imgCalendar = '$imagePath/img_calendar.svg';

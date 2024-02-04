@@ -5,6 +5,7 @@ const offerRedmptionController = require('../controllers/offer_redemptionControl
 
 
 router.post('/',authenticateToken, offerRedmptionController.redeemPoints);
+router.get('/totalRedeemed', authenticateToken, offerRedmptionController.getTotalRedeemedPoints);
 
 
 module.exports = router;

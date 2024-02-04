@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_eco_print/data/module/login.dart';
-import 'package:my_eco_print/data/module/register.dart';
+
 import 'package:my_eco_print/data/module/user.dart';
 import 'package:my_eco_print/view/screen/auth/login_screen.dart';
 
@@ -67,7 +67,7 @@ class AuthController{
 
 
  
-  Future<dynamic> create(Register user) async {
+  Future<dynamic> create(User user) async {
     try {
       var result = await ApiHelper().postDio("/api/auth/register", user.toJson());
       print(result);

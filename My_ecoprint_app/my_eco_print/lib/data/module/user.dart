@@ -27,10 +27,16 @@ class User {
         phone:json["phone"]?? '',);
   }
 
-  Map<String, dynamic> toJson() {
+Map<String, dynamic> toJson() {
   return {
-    "user_id": id.toString(),
    
+    "username": username,
+    "email": email,
+    "password": password ?? '',
+    "full_name": fullName,
+    "phone": phone,
+  
   };
 }
+
 }

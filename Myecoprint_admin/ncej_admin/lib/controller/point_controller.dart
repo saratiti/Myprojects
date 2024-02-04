@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print, non_constant_identifier_names, unused_local_variable
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:ncej_admin/data/module/point.dart';
 import 'package:ncej_admin/data/module/transaction.dart';
 
@@ -128,7 +129,7 @@ Future<int> getTotalPointsByUserId() async {
   }
 }
 
-Future<Map<String, dynamic>> redeemPoints({
+Future<dynamic> redeemPoints({
   required int storeId,
   required int offerId,
   required int pointsRedeemed,
@@ -141,7 +142,7 @@ Future<Map<String, dynamic>> redeemPoints({
         'storeId': storeId.toString(),
         'offerId': offerId.toString(),
         'pointsRedeemed': pointsRedeemed.toString(),
-        'scannedData': scannedData, // Include scannedData in the request payload
+        'scannedBarcode':scannedData.toString(),
       },
     );
 
@@ -149,39 +150,35 @@ Future<Map<String, dynamic>> redeemPoints({
       'storeId': storeId.toString(),
       'offerId': offerId.toString(),
       'pointsRedeemed': pointsRedeemed.toString(),
-      'scannedData': scannedData,
+      'scannedBarcode':scannedData.toString(),
+
     }}");
 
-    print("Response Body: $result");
-
+    
     if (result != null && result['success'] != null) {
-      bool success = result['success'];
-
+      bool success = result['success']; 
       if (success) {
-        print("Redemption successful");
-
-        // Parse the barcodeInfo from the backend response
-        Map<String, dynamic>? barcodeInfo = result['barcodeInfo'];
-        if (barcodeInfo != null) {
-          // Display barcode information (modify based on your UI requirements)
-          print('Barcode Information: $barcodeInfo');
-        }
-      } else {
-        print("Redemption failed");
+       
+        Transaction localTransaction = Transaction(
+          storeId: storeId,
+          offerId: offerId,
+          points: pointsRedeemed,
+          transactionType: 'redemption',
+          transactionDate: DateTime.now(),
+        );
       }
     }
 
     return result;
   } catch (e) {
-    if (e is DioError) {
-      print("DioError response: ${e.response?.data}");
-    }
     print("Error redeeming points: $e");
-    print("Request Parameters: { 'storeId': $storeId, 'offerId': $offerId, 'pointsRedeemed': $pointsRedeemed, 'scannedData': $scannedData }");
-
     rethrow;
   }
 }
+
+
+
+
 
 
 Future<int> collectDailyPoints() async {

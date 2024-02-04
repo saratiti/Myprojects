@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/point_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
 class CardContainerArabic extends StatelessWidget {
@@ -29,7 +30,10 @@ class CardContentArabic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return   SingleChildScrollView(
+    
+    
+  child:  Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         SizedBox(height: 26.v),
@@ -40,8 +44,8 @@ class CardContentArabic extends StatelessWidget {
             borderRadius: BorderRadiusStyle.roundedBorder40,
           ),
           child: Container(
-            height: 170.v,
-            width: 295.h,
+            height: 180.v,
+            width: 300.h,
             decoration: AppDecoration.gradientLightGreenToLightGreen.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder40,
             ),
@@ -147,26 +151,43 @@ class CardContentArabic extends StatelessWidget {
                               SizedBox(
                                 height: 20.h,
                               ),
-                              Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "lbl18".tr,
-                                        style: CustomTextStyles
-                                            .titleSmallBahijTheSansArabicWhiteA700,
-                                      ),
-                                      Text(
-                                        "lbl_600".tr,
-                                        style: CustomTextStyles
-                                            .titleSmallBahijTheSansArabicWhiteA70015,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
+                             Center(
+  child: Padding(
+    padding: const EdgeInsets.all(2.0),
+    child: SingleChildScrollView(
+      scrollDirection: Axis.vertical, // Set the direction to vertical
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "lbl18".tr,
+            style: CustomTextStyles.titleLargeWhiteA700,
+          ),
+          FutureBuilder<int>(
+            future: PointController().getTotalPointsRedeemedByUserId(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                return Column(
+                  children: [
+                    Text(
+                      " ${snapshot.data}",
+                      style: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    ),
+  ),
+),
+
                             ],
                           ),
                         ),
@@ -202,6 +223,8 @@ class CardContentArabic extends StatelessWidget {
           ),
         )
       ],
-    );
+    ));
   }
 }
+
+

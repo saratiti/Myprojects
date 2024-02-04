@@ -14,7 +14,7 @@ const Point = sequelize.define('Point', {
   
 store_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    
   },
  last_daily_point:{
  type:DataTypes.DATE
@@ -25,7 +25,7 @@ store_id: {
   },
   reasonBarcode_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+  
   },
   user_id: {
     type: DataTypes.INTEGER,

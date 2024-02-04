@@ -1,10 +1,13 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/transaction_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/transaction.dart';
 
 class CoponScreen extends StatefulWidget {
-  CoponScreen({Key? key}) : super(key: key);
+  const CoponScreen({Key? key}) : super(key: key);
 
   @override
   _CoponScreenState createState() => _CoponScreenState();
@@ -28,10 +31,14 @@ Future<void> fetchData(String sort) async {
         transactions = sortTransactions(result, sort);
       });
     } else {
-      print('Empty result');
+      if (kDebugMode) {
+        print('Empty result');
+      }
     }
   } catch (error) {
-    print('Error fetching data: $error');
+    if (kDebugMode) {
+      print('Error fetching data: $error');
+    }
   }
 }
 
@@ -88,11 +95,11 @@ Widget buildCouponStack() {
     future: transactionController.getAllTransactions(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       } else if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Text('No transactions available.');
+        return const Text('No transactions available.');
       } else {
         List<Transaction> transactions = snapshot.data!;
 
