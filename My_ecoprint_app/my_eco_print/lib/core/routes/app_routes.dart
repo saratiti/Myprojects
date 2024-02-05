@@ -1,5 +1,6 @@
 
 import 'package:get/get.dart';
+import 'package:my_eco_print/view/screen/reset_passowrd/rest_password_screen.dart';
 import 'package:my_eco_print/view/screen/user/edit_user.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
 import 'package:my_eco_print/view/screen/%20points/replace_points/replace_points.dart';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const String appNavigationScreen = '/app_navigation_screen';
   static const String popDialog = '/resturant_screen';
   static const String updateUser = '/edit_user';
+  static const String resetPassowrd = '/rest_password_screen';
   
   // static Map<String, WidgetBuilder> routes = {
   //   splashScreen: (context) => const SplashScreen(),
@@ -51,8 +53,9 @@ class AppRoutes {
     GetPage(name: homeScreen, page: () => const HomePageScreen()),
     GetPage(name:scanCodeScreen, page:() => const ScanCodeScreen()),
     GetPage(name:resetPassowrdEmail , page:() =>ResetPassowrdEmailScreen()),
+    GetPage(name:resetPassowrd , page:() =>RestPasswordScreen()),
     GetPage(name:infoScreen , page:() => const InfoScreen()),
-    GetPage(name:pinCodePassword, page:() => const PinCodePasswordScreen()),
+    GetPage(name:pinCodePassword, page:() =>  PinCodePasswordScreen()),
     GetPage(name:collectingPoints , page:() => const CollectingPointScreen()),
     GetPage(name:replacePoints , page:() => const  ReplacePointScreen()),
     GetPage(name:refundableitempoints , page:() => const RefundableItemPointScreen()),

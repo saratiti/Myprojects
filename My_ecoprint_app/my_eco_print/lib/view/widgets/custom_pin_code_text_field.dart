@@ -16,10 +16,11 @@ class CustomPinCodeTextField extends StatelessWidget {
     this.textStyle,
     this.hintStyle,
     this.validator,
+    required this.onPinFilled,
   }) : super(
           key: key,
         );
-
+final Function(String) onPinFilled;
   final Alignment? alignment;
 
   final EdgeInsetsGeometry? margin;
@@ -71,6 +72,10 @@ class CustomPinCodeTextField extends StatelessWidget {
             selectedColor: Colors.transparent,
           ),
           onChanged: (value) => onChanged(value),
+         onCompleted: (pin) {
+            // Trigger the callback when the PIN code is filled
+            onPinFilled(pin);
+          },
           validator: validator,
         ),
       );

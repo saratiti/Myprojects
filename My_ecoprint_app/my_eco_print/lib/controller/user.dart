@@ -19,6 +19,28 @@ class UserController{
     dio = Dio();
   }
 
+Future<bool> changePassword(
+    String email,
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      var result = await ApiHelper().post("/api/users/changedPassword", {
+        "email": email,
+        "currentPassword": currentPassword,
+        "newPassword": newPassword,
+      });
+
+      if (result != null && result['success']) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print('Error changing password: $e');
+      return false;
+    }
+  }
 
   Future<User> update({
   required String email,
@@ -141,24 +163,102 @@ static Future<void> logout(BuildContext context) async {
     rethrow;
   }
 }
-  Future<bool> exitEmail(String email) async {
+Future<void> sendPinForEmailVerification(String email) async {
     try {
-      var result = await ApiHelper().postRequest("/api/users/emailExists", {
+      // Use ApiHelper for making the HTTP request
+      var result = await ApiHelper().postRequest("/api/users/sendPinForEmail", {
         "email": email,
       });
 
-      if (result != null && result['exists'] != null) {
-        return result['exists'];
-      } else {
+      if (result != null && result['success'] && result['hashedCode'] != null) {
+        String hashedCode = result['hashedCode'];
+        print('Received Hashed Code: $hashedCode');
 
-        return false;
+      } else {
+        print('Failed to receive hashed code from the backend');
       }
-    } catch (e) {
-      print(e);
-      return false;
+    } catch (error) {
+      print('Error: $error');
     }
   }
 
+
+  // Future<bool> exitEmail(String email) async {
+  //   try {
+  //     var result = await ApiHelper().postRequest("/api/users/emailExists", {
+  //       "email": email,
+  //     });
+
+  //     if (result != null && result['exists'] != null) {
+  //       return result['exists'];
+  //     } else {
+
+  //       return false;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     return false;
+  //   }
+  // }
+
+
+Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinController) async {
+  try {
+    String pin = pinController;
+
+    var response = await ApiHelper().postDio("/api/users/validPin", {
+      "email": userEmail,
+      "pin": pin,
+    });
+
+    // Print the entire response for debugging
+    print('Dio Response: $response');
+
+    // Handle the result as needed
+    if (response != null) {
+      try {
+        var result = response;
+
+        if (result is Map<String, dynamic> && result.containsKey('success')) {
+          if (result['success']) {
+            // Extract the hashed PIN from the response
+            String? hashedPin = result['hashedPin'];
+
+            // Check if hashedPin is not null before using it
+            if (hashedPin != null) {
+              // Print the received hashed PIN
+              print('Received Hashed PIN from backend: $hashedPin');
+
+              // Now you can use the hashedPin as needed
+              // For example, you might want to save it locally or use it for further operations
+
+              print('PIN code is correct');
+              return true;
+            } else {
+              print('Unexpected response format: Missing hashedPin field');
+            }
+          } else {
+            print('Incorrect PIN code');
+          }
+        } else {
+          print('Unexpected response format: Response does not contain success field');
+        }
+      } catch (e) {
+        print('Error parsing response data: $e');
+      }
+    } else {
+      print('Unexpected response format: Response is null');
+    }
+
+    return false;
+  } catch (e) {
+    print('Error during PIN code verification: $e');
+    return false;
+  }
+}
+
+
+ 
 Future<Response> sendForm(
     String url, Map<String, dynamic> data, Map<String, File> files) async {
   Map<String, MultipartFile> fileMap = {};

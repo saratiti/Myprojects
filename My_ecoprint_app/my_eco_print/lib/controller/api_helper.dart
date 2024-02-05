@@ -46,6 +46,17 @@ class ApiHelper {
 
     return resposneFunction(response);
   }
+Future<dynamic> post(String path, Map body) async {
+  Uri uriFunction = Uri.http(DOMAIN, path);
+
+  http.Response response = await http.post(
+    uriFunction,
+    body: body,
+  
+  );
+
+  return resposneFunction(response);
+}
 
   Future<dynamic> putRequest(String path, Map body) async {
     Uri uriFunction = Uri.http(DOMAIN, path);

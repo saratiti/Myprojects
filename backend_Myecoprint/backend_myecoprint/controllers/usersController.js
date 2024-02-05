@@ -7,22 +7,45 @@ const fs = require('fs');
 const randomatic = require('randomatic');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-
-
+const { Op } = require('sequelize');
+const bcrypt = require('bcrypt');
+const PasswordResetRequest=require('../models/reset_password');
 const storage = multer.diskStorage({
   destination: 'uploads/',
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const otpStorage = {};
-const getHashedOtp = (otp) => {
-  const hash = crypto.createHash('sha256');
-  hash.update(otp);
-  return hash.digest('hex');
+
+
+exports.changePassword = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({  where: { email: email },});
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({ error: 'Incorrect current password' });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
-
-
 
 exports.createUser = async (req, res) => {
   try {
@@ -33,13 +56,15 @@ exports.createUser = async (req, res) => {
     res.status(400).json({ error: 'Failed to create User', details: error.message });
   }
 };
+const otpStorage = {};
+
 exports.sendRandomCode = async (req, res) => {
   try {
     const { email } = req.body;
     const code = generateRandomCode();
 
-    // Store the generated code for later verification
-    otpStorage[email] = hashOtp(code);
+    // Store the hashed code in your otpStorage
+    otpStorage[email] = await hashOtp(code);
 
     const emailSent = await sendRandomCodeEmail(email, code);
 
@@ -54,54 +79,63 @@ exports.sendRandomCode = async (req, res) => {
   }
 };
 
+exports.validatePin = async (req, res) => {
+  const enteredPin = req.body.pin;
+  const recipientEmail = req.body.email;
 
-async function getHashedOtpFromStorage(email) {
   try {
     const user = await User.findOne({
-      where: { email: email.toLowerCase() }
+      where: { email: recipientEmail },
     });
 
-    
-    return user ? user.hashedOtp : null;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-// This function should validate the received PIN code against the stored hashed OTP
-function validateOtp(receivedOtp, storedHashedOtp) {
-  // Replace this with your actual validation logic
-  // For example, you might use a library like bcrypt to compare the received OTP with the stored hashed OTP
-  // This is a placeholder, and you should replace it with your actual validation logic
-  return receivedOtp === storedHashedOtp;
-}
-exports.validatePin = async (req, res) => {
-  try {
-    const { email, pinCode } = req.body;
-
-    const isValid = true;  // Replace this with your logic to check the dynamically generated OTP
-
-    if (isValid) {
-      return res.status(200).json({ success: true, message: 'PIN code is valid' });
-    } else {
-      return res.status(400).json({ success: false, message: 'Invalid email or OTP' });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User not found' });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+
+    const storedHashedPin = otpStorage[recipientEmail];
+
+    console.log('Entered PIN:', enteredPin);
+    console.log('Stored Hashed PIN:', storedHashedPin);
+
+    if (!storedHashedPin || !(await bcrypt.compare(enteredPin, storedHashedPin))) {
+    
+      console.log('Incorrect PIN code');
+      return res.status(401).json({ success: false, message: 'Incorrect PIN code' });
+    }
+
+   
+    delete otpStorage[recipientEmail];
+
+    const hashedPinResponse = await bcrypt.hash(enteredPin, 10);
+
+    console.log('PIN code is correct');
+    return res.status(200).json({
+      success: true,
+      message: 'PIN code is correct',
+      hashedPin: hashedPinResponse,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error verifying PIN code' });
   }
 };
 
 
 
-exports.exitEmail = async (req, res) => {
+const hashPinCode = async (pinCode) => {
+  const saltRounds = 10;
+  const hashedPinCode = await bcrypt.hash(pinCode, saltRounds);
+  return hashedPinCode;
+};
+
+exports.sendPinForEmailVerification = async (req, res) => {
   try {
     const { email } = req.body;
 
     console.log('Received Email:', email);
 
     const existingUser = await User.findOne({
-      where: { email: email.toLowerCase() } 
+      where: { email: email.toLowerCase() },
     });
 
     console.log('Existing User:', existingUser);
@@ -109,18 +143,19 @@ exports.exitEmail = async (req, res) => {
     if (existingUser) {
       console.log('Email found');
 
-      // Generate and send the OTP
-      const code = generateRandomCode();
-      const emailSent = await sendRandomCodeEmail(email, code);
+      
+      const pinCode = generateRandomCode();
+      const hashedPinCode = await hashPinCode(pinCode);
+
+      
+      otpStorage[email] = hashedPinCode;
+
+      const emailSent = await sendPinCodeEmail(email, pinCode);
 
       if (emailSent) {
-        // Store the hashed OTP in your storage (e.g., database, cache)
-        const hashedOtp = hashOtp(code);
-        // Save 'hashedOtp' along with user information in the database if needed
-
-        return res.status(200).json({ success: true, message: 'Email found. Code sent successfully', exists: true });
+        return res.status(200).json({ success: true, message: 'Email found. PIN code sent successfully', exists: true });
       } else {
-        return res.status(500).json({ success: false, message: 'Email found. Failed to send code to email', exists: true });
+        return res.status(500).json({ success: false, message: 'Email found. Failed to send PIN code to email', exists: true });
       }
     } else {
       console.log('Email not found');
@@ -133,7 +168,7 @@ exports.exitEmail = async (req, res) => {
 };
 
 
-async function sendRandomCodeEmail(email, code) {
+async function sendPinCodeEmail(email, code) {
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -162,7 +197,7 @@ function generateRandomCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Function to hash the OTP
+
 function hashOtp(otp) {
   return crypto.createHash('sha256').update(otp).digest('hex');
 }

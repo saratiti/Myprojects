@@ -1,7 +1,9 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/view/screen/auth/login_screen.dart';
 
 class RestPasswordScreen extends StatelessWidget {
   RestPasswordScreen({Key? key})
@@ -17,6 +19,20 @@ class RestPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final Object? routeArguments = ModalRoute.of(context)!.settings.arguments;
+final Map<String, dynamic>? arguments = routeArguments is Map<String, dynamic> ? routeArguments : null;
+
+if (arguments == null) {
+  
+  return Scaffold(
+    body: Center(
+      child: Text('Invalid route arguments'),
+    ),
+  );
+}
+
+final String userEmail = arguments['email'] ?? '';
+
     mediaQueryData = MediaQuery.of(context);
 final localization = AppLocalizationController.to;
 final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
@@ -207,13 +223,43 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                     obscureText: true,
                                   ),
                                   CustomElevatedButton(
-                                    text: "msg28".tr,
-                                    margin: EdgeInsets.only(
-                                      left: 18.h,
-                                      top: 62.v,
-                                      right: 20.h,
-                                    ),
-                                  ),
+                      text: "msg28".tr,
+                      margin: EdgeInsets.only(
+                        left: 18.h,
+                        top: 62.v,
+                        right: 20.h,
+                      ),
+                      onTap: () {
+                
+                        String email = userEmail; 
+                        String currentPassword =
+                            confirmpasswordController.text;
+                        String newPassword = confirmpasswordController1.text;
+
+                        UserController().changePassword(
+                          email,
+                          currentPassword,
+                          newPassword,
+                        ).then((success) {
+                          if (success) {
+                            // Password change was successful, navigate to a new screen or perform necessary actions
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreen(),
+                              ),
+                            );
+                          } else {
+                            // Password change failed, show an error message or handle accordingly
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text("Password change failed"),
+                              ),
+                            );
+                          }
+                        });
+                      },
+                    ),
                                   SizedBox(height: 9.v),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,

@@ -295,7 +295,10 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
         if (savedPassword.isNotEmpty && textControllers.emailController.text == savedEmail) {
           textControllers.passwordController.text = savedPassword;
 
-          _showSavedCredentialsDialog(savedEmail, savedPassword);
+          // Check if dialog is not already open to avoid multiple dialogs
+          if (!Navigator.of(context).canPop()) {
+            _showSavedCredentialsDialog(savedEmail, savedPassword);
+          }
         }
       }
     },
@@ -342,6 +345,7 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
     ),
   );
 }
+
 
 
 

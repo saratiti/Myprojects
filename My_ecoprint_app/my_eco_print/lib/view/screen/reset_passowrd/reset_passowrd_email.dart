@@ -12,15 +12,20 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
 
   final TextEditingController emailController = TextEditingController();
 bool emailExists = false; 
- Future<bool> checkIfEmailExists(String enteredEmail) async {
-    // Call the UserController's exitEmail method
-    bool exists = await UserController().exitEmail(enteredEmail);
+ Future<void> checkIfEmailExists(String enteredEmail) async {
+    try {
+      // Call the UserController's sendPinForEmailVerification method
+      await UserController().sendPinForEmailVerification(enteredEmail);
 
-    // Update the emailExists variable based on the result
-    emailExists = exists;
+      // If the method is successful, set emailExists to true
+      emailExists = true;
+    } catch (error) {
+      // Handle errors, e.g., print an error message
+      print('Error checking email existence: $error');
 
-    // Return the result
-    return exists;
+      // Set emailExists to false in case of an error
+      emailExists = false;
+    }
   }
 
   @override
@@ -138,102 +143,129 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                               bottom: 11.v,
                             ),
                           ),
-                                  CustomElevatedButton(
-                                    text: "lbl12".tr,
-                                    margin: EdgeInsets.only(
-                                      left: 30.h,
-                                      top: 61.v,
-                                      right: 31.h,
-                                      
-                                    ),   onTap: () async {
-  String enteredEmail = emailController.text;
+     CustomElevatedButton(
+  text: "lbl12".tr,
+  margin: EdgeInsets.only(
+    left: 30.h,
+    top: 61.v,
+    right: 31.h,
+  ),
+  onTap: () async {
+    String enteredEmail = emailController.text;
 
-  // Check if the email exists
-  bool emailExists = await checkIfEmailExists(enteredEmail);
-
-  if (emailExists) {
-    // Handle the case when the email already exists.
-    print("Email already exists!");
-    
-    
-    showDialog(
-  context: context,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text("Your custom message for email exists..."),
-          CustomElevatedButton(
-            height: 62.v,
-            text: "msg18".tr,
-            margin: EdgeInsets.only(
-              top: 53.v,
-              right: 5.h,
-            ),
-            rightIcon: Container(
-              margin: EdgeInsets.only(),
-              child: CustomImageView(
-                svgPath: ImageConstant.imgGroup48096390,
-              ),
-            ),
-            buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
-            buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
-            onTap: () {
-              Navigator.of(context).pop(); // Close the current dialog
-              Navigator.of(context).pushNamed(AppRoutes.pinCodePassword); // Navigate to PinCodePasswordScreen
-            },
-          ),
-        ],
-      ),
-    );
-  },
-);
-
-  } else {
-    // Proceed with your logic when the email doesn't exist.
-    print("Email doesn't exist. Proceeding with your logic...");
-
- 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("Your custom message for email doesn't exist..."),
-              CustomElevatedButton(
-                height: 62.v,
-                text: "msg19_".tr,
-                margin: EdgeInsets.only(
-                  top: 53.v,
-                  right: 5.h,
-                ),
-                rightIcon: Container(
-                  margin: EdgeInsets.only(),
-                  child: CustomImageView(
-                    svgPath: ImageConstant.imgGroup48096390,
+    if (enteredEmail.isEmpty) {
+      // Show a dialog for empty email
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Email cannot be empty"),
+                CustomElevatedButton(
+                  height: 62.v,
+                  text: "OK",
+                  margin: EdgeInsets.only(
+                    top: 20.v,
                   ),
+                  buttonStyle: CustomButtonStyles.fillLightGreen,
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the current dialog
+                  },
                 ),
-                buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
-                buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
-                onTap: () {
-                  Navigator.of(context).pop(); 
-                  
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-},
+              ],
+            ),
+          );
+        },
+      );
+      return; // Stop further execution
+    }
 
-                                    buttonStyle:
-                                        CustomButtonStyles.fillLightGreen,
-                                  ),
+    // Check if the email exists
+    await checkIfEmailExists(enteredEmail);
+
+    if (emailExists) {
+      // Handle the case when the email already exists.
+      print("Email already exists!");
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Your custom message for email exists..."),
+                CustomElevatedButton(
+                  height: 62.v,
+                  text: "msg18".tr,
+                  margin: EdgeInsets.only(
+                    top: 53.v,
+                    right: 5.h,
+                  ),
+                  rightIcon: Container(
+                    margin: EdgeInsets.only(),
+                    child: CustomImageView(
+                      svgPath: ImageConstant.imgGroup48096390,
+                    ),
+                  ),
+                  buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
+                  buttonTextStyle:
+                      CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
+                  onTap: () {
+                    Navigator.of(context).pop(); // Close the current dialog
+                    Navigator.of(context).pushNamed(AppRoutes.pinCodePassword,
+                        arguments: {'email': enteredEmail});
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    } else {
+      // Proceed with your logic when the email doesn't exist.
+      print("Email doesn't exist. Proceeding with your logic...");
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Your custom message for email doesn't exist..."),
+                CustomElevatedButton(
+                  height: 62.v,
+                  text: "msg19_".tr,
+                  margin: EdgeInsets.only(
+                    top: 53.v,
+                    right: 5.h,
+                  ),
+                  rightIcon: Container(
+                    margin: EdgeInsets.only(),
+                    child: CustomImageView(
+                      svgPath: ImageConstant.imgGroup48096390,
+                    ),
+                  ),
+                  buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
+                  buttonTextStyle:
+                      CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+  },
+  buttonStyle: CustomButtonStyles.fillLightGreen,
+),
+
                                   SizedBox(height: 25.v),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -257,11 +289,16 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                           textAlign: TextAlign.left,
                                         ),
                                       ),
-                                       Text(
-                                        "lbl3".tr,
-                                        style: CustomTextStyles
-                                            .labelMediumLightgreen500,
-                                      ),
+                                 GestureDetector(
+  onTap: () {
+    Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+  },
+  child: Text(
+    "lbl3".tr,
+    style: CustomTextStyles.labelMediumLightgreen500,
+  ),
+),
+
                                     ],
                                   ),
                         
