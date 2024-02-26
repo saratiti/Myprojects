@@ -1,14 +1,18 @@
 // controllers/UserController.js
 
-const User = require('../models/User');
+const User = require('../models/user');
+const Company = require('../models/company');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs/promises');
+const fsread = require('fs');
 const randomatic = require('randomatic');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const { Op } = require('sequelize');
+const bcryptjs = require('bcryptjs');
 const bcrypt = require('bcrypt');
+
 const PasswordResetRequest=require('../models/reset_password');
 const storage = multer.diskStorage({
   destination: 'uploads/',
@@ -19,24 +23,22 @@ const storage = multer.diskStorage({
 
 
 exports.changePassword = async (req, res) => {
-  const { email, currentPassword, newPassword } = req.body;
+  const {  newPassword, confirmPassword,email } = req.body;
+ 
 
   try {
-    const user = await User.findOne({  where: { email: email },});
-    
+    const user = await User.findOne({ where: { email: email } });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const isPasswordMatch = await bcrypt.compare(currentPassword, user.password);
-
-    if (!isPasswordMatch) {
-      return res.status(401).json({ error: 'Incorrect current password' });
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: 'New password and confirm password do not match' });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    
     user.password = hashedPassword;
     await user.save();
 
@@ -49,7 +51,23 @@ exports.changePassword = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    
+    const salt = await bcrypt.genSalt(10);
+    
+    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
+    
+   
+    const user = await User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword, // Use the hashed password
+      full_name: req.body.full_name,
+      user_type: req.body.user_type,
+      profile_picture: req.body.profile_picture,
+      phone: req.body.phone,
+      company_id: req.body.company_id
+    });
+
     res.json(user);
   } catch (error) {
     console.error('Error creating user:', error.message);
@@ -84,43 +102,35 @@ exports.validatePin = async (req, res) => {
   const recipientEmail = req.body.email;
 
   try {
-    const user = await User.findOne({
-      where: { email: recipientEmail },
-    });
-
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'User not found' });
-    }
-
-    const storedHashedPin = otpStorage[recipientEmail];
+    // Retrieve hashed PIN from otpStorage
+    const storedHashedPins = otpStorage[recipientEmail];
 
     console.log('Entered PIN:', enteredPin);
-    console.log('Stored Hashed PIN:', storedHashedPin);
+    console.log('Stored Hashed PINs:', storedHashedPins);
 
-    if (!storedHashedPin || !(await bcrypt.compare(enteredPin, storedHashedPin))) {
-    
+    if (!storedHashedPins || storedHashedPins.length === 0) {
+      console.log('Stored Hashed PINs is empty');
+      return res.status(401).json({ success: false, message: 'Stored Hashed PINs is empty' });
+    }
+
+    const isPinCorrect = storedHashedPins.some((storedHashedPin) => bcrypt.compareSync(enteredPin, storedHashedPin));
+
+    if (!isPinCorrect) {
       console.log('Incorrect PIN code');
       return res.status(401).json({ success: false, message: 'Incorrect PIN code' });
     }
-
-   
-    delete otpStorage[recipientEmail];
-
-    const hashedPinResponse = await bcrypt.hash(enteredPin, 10);
 
     console.log('PIN code is correct');
     return res.status(200).json({
       success: true,
       message: 'PIN code is correct',
-      hashedPin: hashedPinResponse,
+      hashedPin: storedHashedPins[0], 
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Error verifying PIN code' });
   }
 };
-
-
 
 const hashPinCode = async (pinCode) => {
   const saltRounds = 10;
@@ -143,12 +153,14 @@ exports.sendPinForEmailVerification = async (req, res) => {
     if (existingUser) {
       console.log('Email found');
 
-      
       const pinCode = generateRandomCode();
       const hashedPinCode = await hashPinCode(pinCode);
 
-      
-      otpStorage[email] = hashedPinCode;
+      if (!otpStorage[email]) {
+        otpStorage[email] = [];
+      }
+
+      otpStorage[email].push(hashedPinCode);
 
       const emailSent = await sendPinCodeEmail(email, pinCode);
 
@@ -248,42 +260,105 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-exports.updateUser =  async (req, res) => {
-    try {
-      const authObject = req.user;
-  
-      const payload = req.body;
-  
-      const user = await User.findOne({ _id: authObject.id });
-  
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-  
-     
-      user.username = payload.username;
-      user.email = payload.email;
-      user.phone=payload.phone;
-  
-      if (req.file) {
-        const imageName = req.file.filename;
-        user.image = `uploads/${imageName}`;
-      }
-  
-      const password = req.body.password;
-      if (password && password.length > 0) {
-        user.password = password;
-      }
-  
-      await user.save();
-  
-      return res.json(user);
-    } catch (ex) {
-      console.log(ex);
-      return res.status(400).json({ message: ex.toString() });
-    }
-  }
+exports.update = async (req, res) => {
+  try {
+    const { username, email, full_name, phone } = req.body;
+    const authObject = req.user;
+    const user = await User.findOne({ where: { user_id: authObject.user_id } });
 
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (full_name) user.full_name = full_name;
+    if (phone) user.phone = phone;
+
+    if (req.file) {
+      const profilePicturePath = req.file.path;
+      const fileExtension = path.extname(req.file.originalname);
+      const newFileName = `${user.user_id}${fileExtension}`;
+      const newPath = path.join(__dirname, '..', 'uploads', newFileName);
+      await fs.rename(profilePicturePath, newPath);
+
+      // Check if the user is a company
+      if (user.user_type === 'company') {
+        // Save the profile picture path to the Company table
+        const company = await Company.findOne({ where: { company_id: user.company_id } });
+        if (company) {
+          company.image = newPath;
+          await company.save();
+        } else {
+          return res.status(404).json({ error: 'Company not found' });
+        }
+      } else {
+        // For individual users, save the profile picture path to the User table
+        user.profile_picture = newPath;
+      }
+    }
+
+    await user.save();
+
+    const profilePictureUrl = user.profile_picture ? `http://yourserver.com/uploads/${path.basename(user.profile_picture)}` : '';
+    res.status(200).json({ message: 'Profile updated successfully', profilePictureUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.getProfilePicture = async (req, res) => {
+  try {
+    const userId = req.user_id;
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    let imagePath;
+
+    // Check if the user is a company
+    if (user.user_type === 'company') {
+     
+      const company = await Company.findOne({ where: { company_id: user.company_id } });
+      if (company && company.image) {
+        imagePath = company.image;
+      } else {
+        return res.status(404).json({ error: 'Company profile picture not found' });
+      }
+    } else {
+    
+      imagePath = user.profile_picture;
+    }
+
+    if (!imagePath) {
+      return res.status(204).send();
+    }
+
+    if (!fsread.existsSync(imagePath)) {
+      return res.status(404).json({ error: 'Profile picture not found' });
+    }
+
+    const image = fsread.readFileSync(imagePath);
+    const fileExtension = path.extname(imagePath).substr(1);
+    let contentType;
+    if (fileExtension === 'jpg' || fileExtension === 'jpeg') {
+      contentType = 'image/jpeg';
+    } else if (fileExtension === 'png') {
+      contentType = 'image/png';
+    } else {
+      contentType = 'image/png';
+    }
+
+    res.setHeader('Content-Type', contentType);
+    res.status(200).send(image);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
   exports.deleteUser = async (req, res) => {
     const userId = req.params.id;

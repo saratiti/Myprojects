@@ -26,7 +26,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildAppBar(context),
+            buildAppBar(context,"lbl16"),
              SizedBox(height: 26.v),
              headerCoupon(),
             SizedBox(height: 26.v),
@@ -153,27 +153,3 @@ return Align(
     Navigator.pop(context);
   }
 
-CustomAppBar buildAppBar(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
-  return CustomAppBar(
-    height: 40.v,
-    leadingWidth: 52.h,
-    leading: AppbarImage1(
-      svgPath: (textDirection == TextDirection.rtl)
-          ? ImageConstant.imgArrowright
-          : ImageConstant.imgArrowleftOnprimary,
-      margin: EdgeInsets.only(top: 5.v, bottom: 10),
-      onTap: () {
-        onTapArrowleft(context);
-      },
-    ),
-    centerTitle: true,
-    title: AppbarTitle(text:"lbl16".tr),
-  );
-}
-
-void onTapArrowleft(BuildContext context) {
-  Navigator.pop(context);
-}

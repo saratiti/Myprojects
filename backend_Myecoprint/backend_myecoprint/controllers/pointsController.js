@@ -134,6 +134,8 @@ exports.collectDaily = async (req, res) => {
   }
 };
 
+
+
 exports.getTotalPointsByUserId = async (req, res, next) => {
   try {
 

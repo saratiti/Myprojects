@@ -3,9 +3,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ncej_admin/controller/offer.dart';
+import 'package:ncej_admin/controller/offer_controller.dart';
+import 'package:ncej_admin/controller/provider/company_provider.dart';
+import 'package:ncej_admin/controller/store_controller.dart';
 import 'package:ncej_admin/core/app_export.dart';
 import 'package:ncej_admin/data/module/offer.dart';
+import 'package:ncej_admin/data/module/store.dart';
+import 'package:provider/provider.dart';
 
 class ChipviewcomputeItemWidget extends StatelessWidget {
   const ChipviewcomputeItemWidget({Key? key}) : super(key: key);
@@ -111,7 +115,10 @@ class MyDialog extends StatefulWidget {
 
 class _MyDialogState extends State<MyDialog> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController companyIdController = TextEditingController();
+   late int companyId; 
+    int selectedStoreId = 1;
+
+  List<int> storeIds = []; 
   final TextEditingController branchIdController = TextEditingController();
   final TextEditingController offerNameArabicController = TextEditingController();
   final TextEditingController offerNameEnglishController = TextEditingController();
@@ -139,6 +146,28 @@ class _MyDialogState extends State<MyDialog> {
             DateFormat('yyyy-MM-dd').format(picked);
       });
     }
+  }
+  
+Future<void> fetchStoreIdsByCompanyId(int companyId) async {
+  try {
+    List<Store> stores = await StoreController().getStoresByCompanyId(companyId);
+    setState(() {
+     
+      storeIds = stores.map((store) => store.id ?? 0).toList();
+      selectedStoreId = storeIds.isNotEmpty ? storeIds.first : 0; 
+    });
+  } catch (error) {
+    print("Error fetching storeIds: $error");
+  }
+}
+
+ @override
+  void initState() {
+    super.initState();
+   
+    companyId = Provider.of<CompanyProvider>(context, listen: false).companyId;
+
+    fetchStoreIdsByCompanyId(companyId);
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
@@ -176,13 +205,30 @@ DateTime? parseDate(String dateText) {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              TextFormField(
-                controller: companyIdController,
-                decoration: const InputDecoration(labelText: 'Company ID'),
-              ),
-                TextFormField(
-                controller: branchIdController,
-                decoration: const InputDecoration(labelText: 'Branch ID'),
+          
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Select Store:',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  const SizedBox(width: 20.0),
+                  DropdownButton<int>(
+                    value: selectedStoreId,
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedStoreId = newValue!;
+                      });
+                    },
+                    items: storeIds.map((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
               TextFormField(
                 controller: offerNameArabicController,
@@ -239,8 +285,8 @@ DateTime? parseDate(String dateText) {
 ElevatedButton(
   onPressed: () async {
     if (_formKey.currentState!.validate()) {
-int companyId = int.tryParse(companyIdController.text) ?? 0;
-int branchId = int.tryParse(branchIdController.text) ?? 0;
+
+selectedStoreId;
 String offerNameArabic = offerNameArabicController.text;
 String offerNameEnglish = offerNameEnglishController.text;
 String offerDescription = offerDescriptionController.text;
@@ -252,7 +298,7 @@ double offerDiscount = double.tryParse(offerDiscountController.text) ?? 0.0;
       if (startDate != null && endDate != null) {
         Offer offer = Offer(
           companyId: companyId,
-          branchId:branchId,
+          storeId:selectedStoreId,
           offerNameArabic: offerNameArabic,
           offerNameEnglish: offerNameEnglish,
           offerDescription: offerDescription,

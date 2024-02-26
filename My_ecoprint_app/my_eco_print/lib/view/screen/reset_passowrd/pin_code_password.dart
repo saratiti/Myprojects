@@ -158,38 +158,34 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                               context, userEmail, pin);
                                         }
                                       },
-                                      onPinFilled: (pin) async {
-                                        print('PIN filled: $pin');
-                                        bool isPinCorrect =
-                                            await userController.verifyPinCode(
-                                                context, userEmail, pin);
+                                     onPinFilled: (pin) async {
+  print('PIN filled: $pin');
+  bool isPinCorrect = await userController.verifyPinCode(context, userEmail, pin);
 
-                                       if (isPinCorrect) {
-  Future.delayed(Duration(seconds: 2), () {
-    Navigator.of(context).pushNamed(AppRoutes.resetPassowrd,
-        arguments: {'email': userEmail});
-  });
-} 
- else {
-                                         
-                                          await showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: Text('Incorrect PIN'),
-                                              content: Text(
-                                                  'Please try again with the correct PIN.'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: Text('OK'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }
-                                      },
+  if (isPinCorrect) {
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.of(context).pushNamed(AppRoutes.resetPassowrd, arguments: {'email': userEmail});
+    });
+  } else {
+    // Show an error dialog for incorrect PIN
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Incorrect PIN'),
+        content: Text('Please try again with the correct PIN.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+},
+
                                     ),
                                     SizedBox(height: 10.v),
                                     Row(

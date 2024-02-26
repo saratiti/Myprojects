@@ -5,6 +5,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:my_eco_print/data/module/login.dart';
 
 import 'package:my_eco_print/data/module/user.dart';
@@ -20,18 +21,25 @@ class AuthController{
   UserController() {
     dio = Dio();
   }
-   Future<Login?> login(String username, String password) async {
+Future<Login?> login(String email, String password) async {
+  try {
     final Map<String, dynamic>? responseData = await ApiHelper().postRequest("/api/auth/login", {
-        "username":username,
-        "password": password,
-      });
+      "email": email,
+      "password": password,
+    });
 
     if (responseData != null) {
-      return Login.fromJson(responseData);
+      String accessToken = responseData['accessToken'];
+      int userId = Jwt.parseJwt(accessToken)['user_id']; // Retrieve company ID from the decoded token
+      return Login.fromJson(responseData, userId: userId); // Pass companyId to the Login object
     } else {
-      return null;
+      throw Exception('Login failed');
     }
+  } catch (e) {
+    print('Login error: $e');
+    throw e;
   }
+}
 
   Future<User> update({
   required String email,

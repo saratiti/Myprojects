@@ -59,7 +59,7 @@ class AppRoutes {
     GetPage(name:collectingPoints , page:() => const CollectingPointScreen()),
     GetPage(name:replacePoints , page:() => const  ReplacePointScreen()),
     GetPage(name:refundableitempoints , page:() => const RefundableItemPointScreen()),
-    GetPage(name:updateUser , page:() => const UpdateScreen()),
+    GetPage(name:updateUser , page:() =>  UserProfilePage()),
     
    
   ];

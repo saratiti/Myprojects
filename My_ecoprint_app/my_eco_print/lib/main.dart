@@ -3,7 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import 'package:my_eco_print/controller/user_profile_provider.dart';
+import 'package:provider/provider.dart';
 import 'core/app_export.dart';
+import 'view/screen/ points/replace_points/widgets/discountcoupon_item_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,25 +25,31 @@ EasyLoading.instance
     ..maskColor = Colors.transparent;
   final localizationController = Get.put(AppLocalizationController());
   localizationController.changeLocale(const Locale('ar'));
+  initializeDateFormatting();
 
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  @override
+ @override
   Widget build(BuildContext context) {
-    return
-    
-     GetMaterialApp(
-      translations: AppLocalization(),
-      theme: theme,
-     builder: EasyLoading.init(),
-      locale: Get.locale,
-      fallbackLocale: const Locale('en', ''),
-      title: 'NCEJ',
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppRoutes.splashScreen,
-      getPages: AppRoutes.routes,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProfileModel()),
+        ChangeNotifierProvider(create: (context) => OfferProvider()),
+         
+      ],
+      child: GetMaterialApp(
+        translations: AppLocalization(),
+        theme: theme,
+        builder: EasyLoading.init(),
+        locale: Get.locale,
+        fallbackLocale: const Locale('en', ''),
+        title: 'NCEJ',
+        debugShowCheckedModeBanner: false,
+        initialRoute: AppRoutes.splashScreen,
+        getPages: AppRoutes.routes,
+      ),
     );
   }
 }

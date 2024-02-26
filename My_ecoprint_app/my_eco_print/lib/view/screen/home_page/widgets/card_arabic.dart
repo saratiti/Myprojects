@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/point_controller.dart';
+import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
+import 'package:provider/provider.dart';
 class CardContainerArabic extends StatelessWidget {
   const CardContainerArabic({super.key});
 
@@ -19,14 +21,27 @@ class CardContainerArabic extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: const CardContentArabic(),
+        child:  CardContentArabic(),
       ),
     );
   }
 }
 
-class CardContentArabic extends StatelessWidget {
-  const CardContentArabic({super.key});
+class CardContentArabic extends StatefulWidget {
+  CardContentArabic({Key? key}) : super(key: key);
+
+  @override
+  _CardContentArabicState createState() => _CardContentArabicState();
+}
+
+class _CardContentArabicState extends State<CardContentArabic> {
+  late UserProfileModel userProfile; 
+
+  @override
+  void initState() {
+    super.initState();
+     userProfile = Provider.of<UserProfileModel>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +170,7 @@ class CardContentArabic extends StatelessWidget {
   child: Padding(
     padding: const EdgeInsets.all(2.0),
     child: SingleChildScrollView(
-      scrollDirection: Axis.vertical, // Set the direction to vertical
+      scrollDirection: Axis.vertical, 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -163,8 +178,10 @@ class CardContentArabic extends StatelessWidget {
             "lbl18".tr,
             style: CustomTextStyles.titleLargeWhiteA700,
           ),
-          FutureBuilder<int>(
-            future: PointController().getTotalPointsRedeemedByUserId(),
+         Consumer<UserProfileModel>(
+      builder: (context, userProfile, _) {
+        return FutureBuilder<int>(
+  future:userProfile.totalPointsRedeemed,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -181,8 +198,8 @@ class CardContentArabic extends StatelessWidget {
                 );
               }
             },
-          ),
-        ],
+          );
+   } )],
       ),
     ),
   ),
@@ -208,17 +225,36 @@ class CardContentArabic extends StatelessWidget {
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 44.v, right: 30.v),
-                    child: Text(
-                      "lbl_3650".tr,
-                      style: CustomTextStyles.headlineSmallWhiteA700,
-                    ),
-                  ),
-                ),
-              ],
+Align(
+  alignment: Alignment.topRight,
+  child: Padding(
+    padding: EdgeInsets.only(top: 44.v, right: 30.v),
+    child: Consumer<UserProfileModel>(
+      builder: (context, userProfile, _) {
+        return FutureBuilder<int>(
+  future: userProfile.totalPoints,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text("Error: ${snapshot.error}");
+    } else {
+      
+      return Text(
+        "${snapshot.data}",
+        style: CustomTextStyles.headlineSmallWhiteA700,
+      );
+    }
+  },
+);
+
+      },
+    ),
+  ),
+),
+
+
+            ],
             ),
           ),
         )

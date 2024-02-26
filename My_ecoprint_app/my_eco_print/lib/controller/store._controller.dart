@@ -2,6 +2,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:dio/dio.dart';
+import 'package:my_eco_print/data/module/company.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/data/module/store.dart';
 
@@ -80,23 +81,40 @@ Future<List<Offer>> getStoresWithOffers(int typeId) async {
     final response = await ApiHelper().getRequest("/api/stores/type/$typeId");
 
     if (response == null || response['data'] == null) {
+      print('Invalid response or no data found.');
       return [];
     }
 
     List<Offer> result = (response['data'] as List<dynamic>?)
         ?.map((json) {
-        
           final offerJson = json['offer'];
-          return Offer.fromJson(offerJson);
+
+          final offer = Offer.fromJson(offerJson);
+
+          if (offerJson.containsKey('stores')) {
+            final storeJson = offerJson['stores'];
+            offer.store = Store.fromJson(storeJson);
+          }
+
+          if (offerJson.containsKey('companies')) {
+            final companyJson = offerJson['companies'];
+            offer.company = Company.fromJson(companyJson);
+          }
+
+          return offer;
         })
         .toList() ?? [];
 
     return result;
   } catch (ex) {
     print('Error: $ex');
-    rethrow;
+    return [];
   }
 }
+
+
+
+
 
 
 Future<List<Offer>> getAllStoresWithOffers() async {
@@ -115,21 +133,43 @@ Future<List<Offer>> getAllStoresWithOffers() async {
       rethrow;
     }
   }
+    Stream<List<Offer>> getAllStoresWithOffersStream() {
+    return Stream.fromFuture(getAllStoresWithOffers());
+  }
 Future<List<Offer>> getOfferByStoreAndOfferId(int storeId, int offerId) async {
   try {
     dynamic jsonObject = await ApiHelper().getRequest("/api/stores/$storeId/$offerId");
     if (jsonObject.containsKey("data") && jsonObject["data"].containsKey("offer")) {
       jsonObject = jsonObject["data"]["offer"];
     }
-    List<Offer> result = [Offer.fromJson(jsonObject)];
+    
+    List<Offer> result = [];
+    
+    if (jsonObject is List) {
+     
+      result = jsonObject.map((offerJson) {
+        final offer = Offer.fromJson(offerJson);
+        if (offerJson.containsKey('companies')) {
+          offer.company = Company.fromJson(offerJson['companies']);
+        }
+        return offer;
+      }).toList();
+    } else {
+      // If jsonObject is a single offer, include company information
+      final offer = Offer.fromJson(jsonObject);
+      if (jsonObject.containsKey('companies')) {
+        offer.company = Company.fromJson(jsonObject['companies']);
+      }
+      result.add(offer);
+    }
+    
     return result;
   } catch (e) {
     print(e);
-    throw e; 
+    throw e;
   }
 }
 }
-
 
 
 

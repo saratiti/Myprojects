@@ -2,13 +2,16 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ncej_admin/controller/user.dart';
+import 'package:ncej_admin/controller/api_helper.dart';
+import 'package:ncej_admin/controller/user_controller.dart';
+import 'package:ncej_admin/controller/provider/user_profile_provider.dart';
 import 'package:ncej_admin/core/app_export.dart';
 import 'package:ncej_admin/view/screen/home_page/widgets/card_arabic.dart';
 import 'package:ncej_admin/view/screen/home_page/widgets/card_english.dart';
 import 'package:ncej_admin/view/screen/home_page/widgets/listcoupontext_item_widget.dart';
 import 'package:ncej_admin/view/screen/home_page/widgets/chipviewcompute_item_widget.dart';
 import 'package:ncej_admin/view/screen/home_page/widgets/store_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomePageScreen extends StatefulWidget {
   const HomePageScreen({Key? key}) : super(key: key);
@@ -21,31 +24,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
   String userEmail = "";
   String userName = "";
   String name="";
-
+ final ApiHelper _apiHelper = ApiHelper();
   @override
   void initState() {
     super.initState();
     getUserData();
   }
-// Future<String> getImageUrlFromDatabase() async {
-//   final String apiUrl = 'YOUR_API_ENDPOINT'; // Replace with your API endpoint.
 
-//   try {
-//     final response = await http.get(Uri.parse(apiUrl));
-    
-//     if (response.statusCode == 200) {
-//       // If the request is successful, parse the response JSON to get the image URL.
-//       final Map<String, dynamic> data = json.decode(response.body);
-//       final String imageUrl = data['imageUrl']; // Replace 'imageUrl' with the actual key in your response.
-
-//       return imageUrl;
-//     } else {
-//       throw Exception('Failed to load image URL');
-//     }
-//   } catch (e) {
-//     throw Exception('Error fetching image URL: $e');
-//   }
-// }
   Future<void> getUserData() async {
     try {
       final user = await UserController().getUser();
@@ -69,7 +54,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     return Directionality(
       textDirection: textDirection,
       child: Scaffold(
-        appBar: buildAppBar(context),
+        appBar: buildAppBar(context,"lbl15"),
         body: Directionality(
           textDirection: textDirection,
           child: buildBody(context),
@@ -82,26 +67,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
-  CustomAppBar buildAppBar(BuildContext context) {
- final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
-    return CustomAppBar(
-      height: 50.v,
-      leadingWidth: 40.h,
-      leading: CustomImageView(
-              svgPath: (textDirection == TextDirection.rtl)
-                  ? ImageConstant.imgArrowright
-                  : ImageConstant.imgArrowleftOnprimary,
-              height: 24.0,
-              width: 24.0,
-              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-              onTap: () => onTapArrowleft(context),
-            ),
-      centerTitle: true,
-      title: AppbarTitle(text: "lbl15".tr),
-    );
-  }
+ 
 
   void onTapArrowleft(BuildContext context) {
     Navigator.pop(context);
@@ -277,97 +243,110 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
 
 
 Widget buildUserDetails(BuildContext context) {
- final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.ltr : TextDirection.rtl;
+  final localization = AppLocalizationController.to;
+  final textDirection =
+      localization.locale.languageCode == 'ar' ? TextDirection.ltr : TextDirection.rtl;
 
   return Directionality(
     textDirection: textDirection,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const Spacer(),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              name.tr,
-              style: CustomTextStyles.titleMediumLightgreen700,
-            ),
-            Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(
-                    text: "Email: ",
-                    style: CustomTextStyles.titleSmallBahijTheSansArabic,
-                  ),
-                  TextSpan(
-                    text: userEmail, 
-                    style: CustomTextStyles.titleSmallBahijTheSansArabic,
-                  ),
-                  const TextSpan(text: '\n'),
-                  TextSpan(
-                    text: "Username: ", 
-                    style: CustomTextStyles.titleSmallBahijTheSansArabic,
-                  ),
-                  TextSpan(
-                    text: userName, 
-                    style: CustomTextStyles.titleSmallBahijTheSansArabic,
-                  ),
-                ],
-              ),
-            ),
-            CustomElevatedButton(
-              height: 33.v,
-              width: 200.h,
-              text: "msg34".tr,
-              rightIcon: Container(
-                margin: EdgeInsets.only(left: 1.h),
-                child: CustomImageView(
-                  svgPath: ImageConstant.imgSettings,
+    child: Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.h), 
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Adjust as needed
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      name.tr,
+                      style: CustomTextStyles.titleMediumLightgreen700,
+                    ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: "Email: ",
+                            style: CustomTextStyles.titleSmallBahijTheSansArabic,
+                          ),
+                          TextSpan(
+                            text: userEmail,
+                            style: CustomTextStyles.titleSmallBahijTheSansArabic,
+                          ),
+                          const TextSpan(text: '\n'),
+                          TextSpan(
+                            text: "Username: ",
+                            style: CustomTextStyles.titleSmallBahijTheSansArabic,
+                          ),
+                          TextSpan(
+                            text: userName,
+                            style: CustomTextStyles.titleSmallBahijTheSansArabic,
+                          ),
+                        ],
+                      ),
+                    ),
+                    CustomElevatedButton(
+                      height: 33.v,
+                      width: 200.h,
+                      text: "msg34".tr,
+                      rightIcon: Container(
+                        margin: EdgeInsets.only(left: 1.h),
+                        child: CustomImageView(
+                          svgPath: ImageConstant.imgSettings,
+                        ),
+                      ),
+                      buttonStyle: CustomButtonStyles.fillLightGreenTL16,
+                      buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
+                      onTap: () {
+                        Navigator.of(context).pushNamed(AppRoutes.updateUser);
+                      },
+                    )
+                  ],
                 ),
               ),
-              buttonStyle: CustomButtonStyles.fillLightGreenTL16,
-              buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
-              onTap: () {
-                Navigator.of(context).pushNamed(AppRoutes.updateUser);
-              },
-            )
-          ],
-        ),
-       FutureBuilder<String>(
-  future: getImageUrlFromDatabase(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-    
-      return CircularProgressIndicator();
-    } else if (snapshot.hasError) {
-
-      return Text('Error: ${snapshot.error}');
-    } else if (snapshot.hasData) {
-    
-      return CustomImageView(
-        imagePath: snapshot.data, 
-        height: 56.adaptSize,
-        width: 56.adaptSize,
-        radius: BorderRadius.circular(28.h),
-        margin: EdgeInsets.only(left: 10.h, top: 13.v, bottom: 5.v),
-      );
-    } else {
-     
-      return CustomImageView(
-        imagePath: ImageConstant.imgEllipse63, 
-        height: 56.adaptSize,
-        width: 56.adaptSize,
-        radius: BorderRadius.circular(28.h),
-        margin: EdgeInsets.only(left: 10.h, top: 13.v, bottom: 5.v),
-      );
-    }
-  },
-)
-
-      ],
+              Padding(
+                padding: EdgeInsets.only(left: 8.0), 
+                child: Consumer<UserProfileModel>(
+                  builder: (context, userProfile, _) {
+                    return FutureBuilder(
+                      future: _apiHelper.getProfilePicture(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.data != null) {
+                          Uint8List imageData = snapshot.data as Uint8List;
+                          return ClipOval(
+                            child: Image.memory(
+                              imageData,
+                              width: 56.adaptSize,
+                              height: 56.adaptSize,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        } else {
+                          return ClipOval(
+                            child: CustomImageView(
+                              svgPath: ImageConstant.imgFingerprint,
+                              height: 56.v,
+                              width: 56.h,
+                              alignment: Alignment.topCenter,
+                              margin: EdgeInsets.only(top: 40.v),
+                            ),
+                          );
+                        }
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     ),
   );
 }

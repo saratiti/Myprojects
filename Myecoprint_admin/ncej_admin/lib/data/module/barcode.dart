@@ -33,7 +33,7 @@ class Barcodes {
       branchId: json['branch_id'] as int? ?? 0,
       userId: json['user_id'] as int? ?? 0,
       barcodeDate: DateTime.parse(json['barcode_date']),
-      offer: Offer.fromJson(json['offer']), // Assuming there is an 'offer' key in the JSON response
+      offer: Offer.fromJson(json['offer']), 
     );
   }
 
@@ -47,7 +47,7 @@ class Barcodes {
       'branch_id': branchId.toString(),
       'user_id': userId.toString(),
       'barcode_date': barcodeDate!.toIso8601String(),
-      'offer': offer?.toJson(), // Convert the Offer object to JSON
+      'offer': offer?.toJson(), 
     };
   }
 }

@@ -1,13 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/transaction_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/data/module/transaction.dart';
 
-
-class ListcoupontextItemWidget extends StatelessWidget {
+class ListcoupontextItemWidget extends StatefulWidget {
   const ListcoupontextItemWidget({Key? key}) : super(key: key);
 
   @override
+  _ListcoupontextItemWidgetState createState() =>
+      _ListcoupontextItemWidgetState();
+}
+
+class _ListcoupontextItemWidgetState extends State<ListcoupontextItemWidget> {
+List<Transaction> weeklyTransactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchWeeklyTransactions();
+  }
+
+  Future<void> fetchWeeklyTransactions() async {
+    try {
+      final transactions =
+          await TransactionController().getWeeklyTransactions();
+      setState(() {
+        weeklyTransactions = transactions;
+      });
+    } catch (error) {
+      print('Error fetching weekly transactions: $error');
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ListcoupontextItemWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    fetchWeeklyTransactions();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-  final localization = AppLocalizationController.to;
+    final localization = AppLocalizationController.to;
 
     final isRtl = localization.locale.languageCode == 'ar';
 
@@ -18,11 +53,23 @@ class ListcoupontextItemWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 24.v),
-          buildClothesContainer("msg30".tr, "lbl_540".tr, ImageConstant.imgMobile),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: weeklyTransactions.length,
+            itemBuilder: (context, index) {
+              final transaction = weeklyTransactions[index];
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.v),
+                child: buildClothesContainer(
+                  getMessageForTransactionType(transaction.transactionType),
+                  transaction.points.toString(),
+                  getIconPathBasedOnTransactionType(transaction.transactionType),
+                ),
+              );
+            },
+          ),
           SizedBox(height: 24.v),
-          buildClothesContainer("msg31".tr, "lbl_60".tr, ImageConstant.imgFile),
-          SizedBox(height: 24.v),
-          buildClothesContainer("msg32".tr, "lbl_1500".tr, ImageConstant.imgFire),
         ],
       ),
     );
@@ -38,15 +85,13 @@ class ListcoupontextItemWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.v),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(message, style: theme.textTheme.titleMedium),
-                Text(label, style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
-              ],
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(message, style: theme.textTheme.titleMedium),
+              Text(label,
+                  style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
+            ],
           ),
           CustomIconButton(
             height: 44.adaptSize,
@@ -58,5 +103,28 @@ class ListcoupontextItemWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String getMessageForTransactionType(String transactionType) {
+    final localization = AppLocalizationController.to;
+    final transactionTypeMessages = {
+      'redemption': "msg30",
+      'daily_points': "msg31",
+      'apple_store_points_redemption': "msg32",
+    };
+    final translationKey = transactionTypeMessages[transactionType];
+    return translationKey != null
+        ? localization.getString(translationKey) ?? "Unknown transaction type"
+        : "Unknown transaction type";
+  }
+
+  String getIconPathBasedOnTransactionType(String transactionType) {
+    if (transactionType == 'redemption') {
+      return ImageConstant.imgMobile;
+    } else if (transactionType == 'daily_points') {
+      return ImageConstant.imgFile;
+    } else {
+      return ImageConstant.imgFire;
+    }
   }
 }

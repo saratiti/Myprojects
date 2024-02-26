@@ -12,10 +12,13 @@ import 'package:my_eco_print/controller/barcodes_controller.dart';
 
 import 'package:my_eco_print/controller/offer_controller.dart';
 import 'package:my_eco_print/controller/user.dart';
+import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/barcode.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/discountcoupon_item_widget.dart';
+import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
+import 'package:provider/provider.dart';
 import '../ points/collecting_points/collecting_points.dart';
 import '../../../data/module/user.dart';
 
@@ -25,22 +28,18 @@ class ScanCodeScreenRef extends StatefulWidget {
 }
 
 class _ScanCodeScreenRefState extends State<ScanCodeScreenRef> with WidgetsBindingObserver {
-  Uint8List? qrCodeImageBytes;
+ Uint8List? qrCodeImageBytes;
   String dataToEncode = '';
-
+ButtonStyle buttonStyle = CustomButtonStyles.fillLightGreenTL161;
   String formattedCurrentDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String formattedCurrentTime = DateFormat('hh:mm a').format(DateTime.now());
   Offer? offer;
   int? offerId;
   int? storeId;
   int? userId;
+int ?barcodeId;
 
-@override
-void initState() {
-  super.initState();
-  WidgetsBinding.instance?.addObserver(this);
-  _generateBarcodeAndQRCode();
-}
+  String _displayText = "msg54";
 
 
   @override
@@ -49,15 +48,39 @@ void initState() {
     super.dispose();
   }
 @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance?.addObserver(this);
+  _generateBarcodeAndQRCode().then((barcodeData) {
+    if (barcodeData != null) {
+      final String? barcodeId = barcodeData['barcodeId'];
+      if (barcodeId != null) {
+        fetchBarcodeStatus(int.parse(barcodeId));
+      }
+    }
+  });
+}
+
+@override
 void didUpdateWidget(covariant ScanCodeScreenRef oldWidget) {
   super.didUpdateWidget(oldWidget);
-  _generateBarcodeAndQRCode();
+  _generateBarcodeAndQRCode().then((barcodeData) {
+    if (barcodeData != null) {
+      final String? barcodeId = barcodeData['barcode_id'];
+      if (barcodeId != null) {
+        fetchBarcodeStatus(int.parse(barcodeId));
+      }
+    }
+  });
 }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _generateBarcodeAndQRCode();
+     if (barcodeId != null) {
+    fetchBarcodeStatus(barcodeId!);
+  }
     }
   }
 
@@ -68,67 +91,54 @@ String generateRandomString(int length) {
     length, (_) => chars.codeUnitAt(random.nextInt(chars.length)),
   ));
 
-  // Ensure the barcode value starts with '#'
+
   return '#$randomString';
 }
 String barcodeValue = "";
-Future<void> _generateBarcodeAndQRCode() async {
+Future<Map<String, dynamic>?> _generateBarcodeAndQRCode() async {
   try {
-    if (offerId != null && storeId != null && qrCodeImageBytes == null) {
-      Offer? offer = await OfferController().getOfferById(offerId!);
-      User? user = await UserController().getUser();
-
-      int? offerNumberPoint = offer?.numberPoint;
-      int? userId = user?.id;
-
-      // Generate a random alphanumeric string of maximum length 12
-       barcodeValue = generateRandomString(12);
-
-      // Save barcode data to your local database
-      await _saveBarcodeToLocalDatabase({
-        'store_id': storeId,
-        'offer_id': offerId,
-        'barcode_value': barcodeValue,
-        'barcode_status': 'active',
-        'barcode_date': DateTime.now().toString(),
-        'number_point': offerNumberPoint,
-        'user_id': userId,
-      });
-
-      Map<String, dynamic> barcodeData = {
-        'offer_id': offerId,
-        'store_id': storeId,
-        'user_id': userId,
-        'number_point': offerNumberPoint,
-        'barcode_value': barcodeValue,
+   
+    if (barcodeValue.isNotEmpty && qrCodeImageBytes != null) {
+    
+      return {
+        'barcodeValue': barcodeValue,
+        'qrCodeImageBytes': qrCodeImageBytes,
       };
+    }
 
-      dataToEncode = jsonEncode(barcodeData);
 
-      Map<String, dynamic> requestBody = {
-        'dataToEncode': dataToEncode,
-      };
+    final response = await ApiHelper().postDioForImage(
+      '/api/barcodes/offerstoreBarcode',
+      {
+        'storeId': storeId.toString(),
+        'offerId': offerId.toString(),
+      },
+    );
 
-      print('Generated dataToEncode: $dataToEncode');
-      dynamic response =
-          await ApiHelper().postDioForImage('/api/barcodes/offerstoreBarcode', requestBody);
-
-      if (response is Uint8List) {
-        if (mounted) {
-          setState(() {
-            qrCodeImageBytes = response;
-          });
-        }
+    if (response != null) {
+      if (response is List<int>) {
+      
+        return {
+          'barcodeValue': barcodeValue, 
+          'qrCodeImageBytes': Uint8List.fromList(response),
+        };
       } else {
-        if (kDebugMode) {
-          print('Failed to generate QR code: Invalid response type');
-        }
+
+        print('Error: Invalid response format');
+        return null;
       }
+    } else {
+
+      print('Error: No response received');
+      return null;
     }
   } catch (e) {
-    print('Error generating barcode: $e');
+  
+    print('Error generating or retrieving barcode: $e');
+    return null;
   }
 }
+
 
 Future<void> _saveBarcodeToLocalDatabase(Map<String, dynamic> barcodeData) async {
   try {
@@ -136,20 +146,37 @@ Future<void> _saveBarcodeToLocalDatabase(Map<String, dynamic> barcodeData) async
    await BarcodeController().createBarcode(Barcodes.fromJson(barcodeData));
   } catch (e) {
     print('Error saving barcode data: $e');
-    // Handle the error as needed
+  
   }
 }
 
  Future<Uint8List> _simulateBarcodeGeneration(String barcodeValue) async {
-    // Simulate barcode generation (replace this with actual barcode generation logic)
-    // Here, we simulate the generation of a QR code image and convert it to bytes
-    // Note: You may need to use a package to generate QR codes in your real application
-    // such as 'qr_flutter' or 'barcode_scan'
-    // For simplicity, we simulate it here.
+
     String simulatedQRCodeDataUri = 'data:image/png;base64,SimulatedQRCodeData';
     return Uint8List.fromList(base64.decode(simulatedQRCodeDataUri.split(',')[1]));
   }
 
+bool barcodeRead = false;
+
+Future<void> fetchBarcodeStatus(int barcodeId) async {
+  try {
+    if (barcodeId != null) {
+      
+      bool isBarcodeRead = await BarcodeController().getBarcodeIsRead(barcodeId);
+     
+      setState(() {
+        barcodeRead = isBarcodeRead;
+      });
+    } else {
+     
+      throw Exception('Barcode ID is null');
+    }
+  } catch (e) {
+ 
+    print('Error fetching barcode status: $e');
+   
+  }
+}
 
 
 @override
@@ -167,7 +194,7 @@ Widget build(BuildContext context) {
     return Center(
       child: SafeArea(
         child: Scaffold(
-          appBar: buildCustomAppBar(context),
+          
           body: FutureBuilder(
             future: _generateBarcodeAndQRCode(),
             builder: (context, snapshot) {
@@ -191,22 +218,7 @@ Widget build(BuildContext context) {
 }
 
 
-  CustomAppBar buildCustomAppBar(BuildContext context) {
-   
-    return CustomAppBar(
-      height: 117.v,
-      leadingWidth: 66.h,
-      leading: AppbarImage1(
-        svgPath: ImageConstant.imgArrowleftOnprimary,
-        margin: EdgeInsets.only(left: 42.h, top: 4.v, bottom: 4.v),
-        onTap: () => onTapArrowleft(context),
-      ),
-      title: AppbarTitle(
-        text: "msg50".tr,
-        margin: EdgeInsets.only(left: 47.h),
-      ),
-    );
-  }
+  
 
   Widget buildBody(MediaQueryData mediaQueryData, int? offerId, int? storeId) {
     return SizedBox(
@@ -223,6 +235,7 @@ Widget build(BuildContext context) {
   }
 
   Stack buildStackWithAlignment() {
+    
     return Stack(
       alignment: Alignment.topRight,
       children: [
@@ -312,26 +325,85 @@ Widget build(BuildContext context) {
                             ],
                           ),
                         ),
-                        Center(
-                          child: SizedBox(
-                            width: 200,
-                            height: 200,
-                            child: BarcodeWidget(
-                              barcode: Barcode.qrCode(),
-                              data: '$dataToEncode',
-                              width: 200,
-                              height: 200,
-                              color: Colors.lightGreen,
-                            ),
-                          ),
-                        ),
-                  Padding(
-  padding: EdgeInsets.only(left: 140.h, top: 8.v),
-  child: Text(
-    barcodeValue ?? "", // Use the barcodeValue variable here
-    style: CustomTextStyles.titleMediumOnPrimaryContainer,
+FutureBuilder<Map<String, dynamic>?>(
+  future: _generateBarcodeAndQRCode(), 
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      // If an error occurs while fetching the image, display an error message
+      return Text('Error: ${snapshot.error}');
+    } else {
+      final barcodeData = snapshot.data;
+      if (barcodeData != null) {
+        final String? barcodeValue = barcodeData['barcodeValue'];
+        final Uint8List? qrCodeImageBytes = barcodeData['qrCodeImageBytes'];
+
+        if (qrCodeImageBytes != null) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Image.memory(
+                    qrCodeImageBytes,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+        Padding(
+  padding: EdgeInsets.only( top: 8.v),
+  child: FutureBuilder<List<Map<String, dynamic>>>(
+    future: BarcodeController().getBarcodeByStoreAndOfferId(storeId!, offerId!),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return CircularProgressIndicator(); 
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+        
+          String? barcodeValue = snapshot.data![0]['barcode_value'];
+          if (barcodeValue != null) {
+            int startIndex = barcodeValue.indexOf("#"); 
+            int endIndex = barcodeValue.indexOf("#", startIndex + 1); 
+            if (startIndex >= 0 && endIndex >= 0) {
+              barcodeValue = barcodeValue.substring(startIndex, endIndex);
+              return Text(
+                '$barcodeValue',
+                style: CustomTextStyles.titleMediumOnPrimaryContainer,
+              );
+            } else {
+              return Text('Barcode Value not found');
+            }
+          } else {
+            return Text('No barcode found');
+          }
+        } else {
+          return Text('No barcode data found');
+        }
+      }
+    },
   ),
+)
+
+
+            ],
+          );
+        } else {
+         
+          return Text('Error: Failed to load barcode image');
+        }
+      } else {
+        return CircularProgressIndicator();
+      }
+    }
+    },
 ),
+
 
                         SizedBox(height: 20.v),
                         Padding(
@@ -354,14 +426,61 @@ Widget build(BuildContext context) {
                             style: CustomTextStyles.titleSmallBahijTheSansArabic15,
                           ),
                         ),
-                        CustomElevatedButton(
-                          height: 32.v,
-                          width: 190.h,
-                          text: "msg54".tr,
-                          margin: EdgeInsets.only(left: 100.h, top: 6.v),
-                          buttonStyle: CustomButtonStyles.fillLightGreenTL161,
-                          buttonTextStyle: theme.textTheme.labelLarge,
-                        ),
+FutureBuilder<List<Map<String, dynamic>>>(
+  future: BarcodeController().getBarcodeByStoreAndOfferId(storeId!, offerId!),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      
+      return Text('Error: ${snapshot.error}');
+    } else {
+     
+      final barcodes = snapshot.data;
+      if (barcodes != null && barcodes.isNotEmpty) {
+        
+final barcodeStatus = barcodes[0]['barcode_status'] ?? '';
+if (barcodeStatus == 'redeemed') {
+  final offers = barcodes[0]['offers'];
+  if (offers != null) {
+    final pointsRedeemed = offers['number_point'];
+    if (pointsRedeemed != null) {
+      Provider.of<UserProfileModel>(context, listen: false).updateTotalPointsRedeemed(pointsRedeemed);
+      Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(pointsRedeemed);
+    } else {
+      print('Number of points redeemed is null');
+    }
+  } else {
+    print('Offers object is null');
+  }
+}
+
+        final buttonStyle = barcodeStatus == 'redeemed'
+            ? CustomButtonStyles.fillRed
+            : CustomButtonStyles.fillLightGreenTL161;
+
+       
+        return CustomElevatedButton(
+          height: 32.v,
+          width: 190.h,
+          text:barcodeStatus == 'redeemed' ? 'lbl53'.tr : 'msg54'.tr,
+          margin: EdgeInsets.only(left: 100.h, top: 6.v),
+          buttonStyle: buttonStyle,
+          buttonTextStyle: theme.textTheme.labelLarge,
+          onTap: () {
+            // Handle onTap if needed
+          },
+        );
+      } else {
+        // If no barcodes are found, display a message
+        return Text("No barcode found for the given store ID and offer ID");
+      }
+    }
+  },
+)
+
+
                       ],
                     ),
                   ),
@@ -372,6 +491,42 @@ Widget build(BuildContext context) {
         ),
       ],
     );
+  }
+}
+Widget buildBarcodeImage(Map<String, dynamic>? barcodeData) {
+  if (barcodeData != null) {
+    final String? barcodeValue = barcodeData['barcodeValue'];
+    final Uint8List? qrCodeImageBytes = barcodeData['qrCodeImageBytes'];
+
+    if (qrCodeImageBytes != null) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: SizedBox(
+              width: 200,
+              height: 200,
+              child: Image.memory(
+                qrCodeImageBytes,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 140.h, top: 8.v),
+            child: Text(
+              'Barcode Value: $barcodeValue', 
+              style: CustomTextStyles.titleMediumOnPrimaryContainer,
+            ),
+          ),
+        ],
+      );
+    } else {
+     
+      return Text('Error: Failed to load barcode image');
+    }
+  } else {
+    return CircularProgressIndicator();
   }
 }
 

@@ -4,7 +4,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:ncej_admin/data/module/login.dart';
+
 import 'package:ncej_admin/data/module/register.dart';
 import 'package:ncej_admin/data/module/user.dart';
 import 'package:ncej_admin/view/screen/auth/login_screen.dart';
@@ -23,18 +25,27 @@ class AuthController{
     //       (X509Certificate cert, String host, int port) => true;
     //     };
   }
-   Future<Login?> login(String username, String password) async {
+Future<Login?> login(String email, String password) async {
+  try {
     final Map<String, dynamic>? responseData = await ApiHelper().postRequest("/api/auth/login", {
-        "username":username,
-        "password": password,
-      });
+      "email": email,
+      "password": password,
+    });
 
     if (responseData != null) {
-      return Login.fromJson(responseData);
+      String accessToken = responseData['accessToken'];
+      int companyId = Jwt.parseJwt(accessToken)['company_id']; // Retrieve company ID from the decoded token
+      return Login.fromJson(responseData, companyId: companyId); // Pass companyId to the Login object
     } else {
-      return null;
+      throw Exception('Login failed');
     }
+  } catch (e) {
+    print('Login error: $e');
+    throw e;
   }
+}
+
+
 
   Future<User> update({
   required String email,

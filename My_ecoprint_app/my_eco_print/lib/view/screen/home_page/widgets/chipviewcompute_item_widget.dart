@@ -7,7 +7,7 @@ class ChipviewcomputeItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double responsiveWidth = MediaQuery.of(context).size.width * 0.45;
-    double fontSize = 14.0; // Adjust the font size as needed
+    double fontSize = 14.0; 
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

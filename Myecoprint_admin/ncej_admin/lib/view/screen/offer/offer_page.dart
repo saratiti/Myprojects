@@ -2,7 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ncej_admin/controller/offer.dart';
+import 'package:ncej_admin/controller/offer_controller.dart';
 import 'package:ncej_admin/core/app_export.dart';
 import 'package:ncej_admin/data/module/offer.dart';
 
@@ -91,7 +91,7 @@ Future<void> deleteOffer(int index) async {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: buildAppBar( context),
+    appBar: buildAppBar( context,"lbl60"),
     body: ListView.builder(
       itemCount: offers.length,
       itemBuilder: (context, index) {
@@ -154,23 +154,3 @@ Widget build(BuildContext context) {
   );
 }}
 
- CustomAppBar buildAppBar(BuildContext context) {
- final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
-    return CustomAppBar(
-      height: 50.v,
-      leadingWidth: 40.h,
-      leading: CustomImageView(
-              svgPath: (textDirection == TextDirection.rtl)
-                  ? ImageConstant.imgArrowright
-                  : ImageConstant.imgArrowleftOnprimary,
-              height: 24.0,
-              width: 24.0,
-              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-              onTap: () => onTapArrowleft(context),
-            ),
-      centerTitle: true,
-      title: AppbarTitle(text: "lbl60".tr),
-    );
-  }

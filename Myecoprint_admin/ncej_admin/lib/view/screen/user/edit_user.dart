@@ -1,63 +1,146 @@
-// // ignore_for_file: library_private_types_in_public_api
-
-// ignore_for_file: library_private_types_in_public_api, deprecated_member_use, use_build_context_synchronously
+// // // ignore_for_file: library_private_types_in_public_api
 
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ncej_admin/controller/user.dart';
+import 'package:ncej_admin/controller/api_helper.dart';
+import 'package:ncej_admin/controller/user_controller.dart';
+import 'package:ncej_admin/controller/provider/user_profile_provider.dart';
 import 'package:ncej_admin/core/app_export.dart';
+
 import 'package:ncej_admin/data/module/user.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ncej_admin/view/screen/user/delete_account_form.dart';
 
-class UpdateScreen extends StatefulWidget {
-  const UpdateScreen({Key? key}) : super(key: key);
+import 'package:provider/provider.dart';
 
+import '../../widgets/app_bar/appbar.dart';
+
+class UserProfilePage extends StatefulWidget {
   @override
-  _UpdateScreenState createState() => _UpdateScreenState();
+  _UserProfilePageState createState() => _UserProfilePageState();
 }
 
-class _UpdateScreenState extends State<UpdateScreen> {
-  TextEditingController personalnameController = TextEditingController();
-  TextEditingController emailaddressController = TextEditingController();
-  TextEditingController phonenumberoneController = TextEditingController();
-  TextEditingController usernameController = TextEditingController();
+class _UserProfilePageState extends State<UserProfilePage> {
+   TextEditingController usernameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+
   TextEditingController passwordplacehoController = TextEditingController();
   TextEditingController confirmpasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
+bool isLoading=false;
   bool isCheckmarkVisible = false;
   bool isVisiblePassword = false;
   bool isVisiblePassword2 = false;
-  String _profilePicture = "";
-  String _newProfilePicture = "";
-  File? _selectedImage;
   List<User> users = []; 
   @override
   void initState() {
     super.initState();
+  
     getUserData();
   }
 
- Future<void> getUserData() async {
+   Future<void> getUserData() async {
     try {
       final user = await UserController().getUser();
-      personalnameController.text = user.fullName;
-      emailaddressController.text = user.email;
-      phonenumberoneController.text = user.phone;
+      fullNameController.text = user.fullName;
+      emailController.text = user.email;
+      phoneController.text = user.phone;
       usernameController.text = user.username;
       
-      setState(() {
-        _profilePicture = user.image;
-      });
+    
     } catch (e) {
       if (kDebugMode) {
         print('Error fetching user data: $e');
       }
     }
   }
+  File? _selectedImage;
+
+  final ApiHelper _apiHelper = ApiHelper();
+
+Future<void> _updateProfile() async {
+  try {
+    var data = {
+      'username': usernameController.text,
+      'email': emailController.text,
+      'full_name': fullNameController.text,
+      'phone': phoneController.text,
+    };
+
+   
+    setState(() {
+      isLoading = true;
+    });
+
+    await _apiHelper.putRequest('api/users/updateProfile', data);
+
+    if (_selectedImage != null) {
+      await _uploadProfilePicture();
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
+    print('Profile updated successfully');
+  } catch (e) {
+    setState(() {
+      isLoading = false;
+    });
+    print('Error updating profile: $e');
+  }
+}
+
+
+  Future<void> _uploadProfilePicture() async {
+  try {
+    String imageUrl = await _apiHelper.uploadProfilePicture(_selectedImage!);
+    print('Profile picture uploaded successfully: $imageUrl');
+    
+    Provider.of<UserProfileModel>(context, listen: false).updateProfilePicture(imageUrl);
+  } catch (e) {
+    print('Error uploading profile picture: $e');
+  }
+}
+  void toggleCheckmark() {
+    setState(() {
+      isCheckmarkVisible = !isCheckmarkVisible;
+    });
+  }
+
+  void toggleIconEye() {
+    setState(() {
+      isVisiblePassword = !isVisiblePassword;
+    });
+  }
+
+  void toggleIVisibleEye() {
+    setState(() {
+      isVisiblePassword2 = !isVisiblePassword2;
+    });
+  }
+Future<void> _pickImageFromCamera() async {
+  final pickedFile = await ImagePicker().getImage(source: ImageSource.camera);
+  if (pickedFile != null) {
+    setState(() {
+      _selectedImage = File(pickedFile.path);
+    });
+  }
+}
+
+Future<void> _pickImageFromGallery() async {
+  final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+  if (pickedFile != null) {
+    setState(() {
+      _selectedImage = File(pickedFile.path);
+    });
+  }
+}
+
 Future<void> deleteUser() async {
   try {
     final user = await UserController().getUser();
@@ -107,226 +190,138 @@ void showDeleteAccountDialog(BuildContext context) {
     },
   );
 }
-
-  Future<void> selectProfileImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        _selectedImage = File(pickedImage.path);
-        _profilePicture = pickedImage.path;
-      });
-    }
-  }
-
-  void toggleCheckmark() {
-    setState(() {
-      isCheckmarkVisible = !isCheckmarkVisible;
-    });
-  }
-
-  void toggleIconEye() {
-    setState(() {
-      isVisiblePassword = !isVisiblePassword;
-    });
-  }
-
-  void toggleIVisibleEye() {
-    setState(() {
-      isVisiblePassword2 = !isVisiblePassword2;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final localization = AppLocalizationController.to;
-    final textDirection = localization.locale.languageCode == 'ar'
-        ? TextDirection.rtl
-        : TextDirection.ltr;
+@override
+Widget build(BuildContext context) {
+  final localization = AppLocalizationController.to;
+final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
     return Directionality(
       textDirection: textDirection,
       child: Scaffold(
-        appBar: buildAppBar(context),
-        body: buildBody(),
-      ),
-    );
-  }
-
-  Widget buildBody() {
-  
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 43.v),
-      child: SizedBox(
-        height: 927.v,
-        width: double.maxFinite,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Opacity(
-              opacity: 0.1,
-              child: CustomImageView(
-                imagePath: ImageConstant.imgGroup70252,
-                height: 200.v,
-                width: 200.h,
-                alignment: Alignment.bottomCenter,
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50.h),
-                child: buildProfilePicture(),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding:
-                    EdgeInsets.symmetric(horizontal: 45.h, vertical: 150.v),
-                child: buildForm(context),
-              ),
-            ),
-     Align(
-  alignment: Alignment.bottomCenter,
-  child: Padding(
-    padding: EdgeInsets.symmetric(horizontal: 50.h, vertical: 100.v),
-    child: deleteAccount(context),
-  ),
-)
-
-        ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildProfilePicture() {
-    return GestureDetector(
-      onTap: _handleShowOptions,
-      child: Container(
-        width: 150,
-        height: 150,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.grey,
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            CircleAvatar(
-              radius: 75,
-              backgroundColor: appTheme.gray400,
-              backgroundImage: _selectedImage != null
-                  ? Image.file(_selectedImage!).image
-                  : _profilePicture.isNotEmpty
-                      ? NetworkImage(_profilePicture)
-                      : null,
-              child: _selectedImage == null && _profilePicture.isEmpty
-                  ? Icon(
-                      Icons.person,
-                      size: 75,
-                      color: appTheme.gray100,
-                    )
-                  : null,
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: GestureDetector(
-                onTap: _handleShowOptions,
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 4,
-                      color: Colors.white,
+    appBar: buildAppBar(context,"msg34"),
+    body: isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Circular Image
+                    Container(
+                      width: 150,
+                      height: 150,
+                      child: ClipOval(
+                        child: _selectedImage != null
+                            ? Image.file(
+                                _selectedImage!,
+                                width: 150,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              )
+                            : FutureBuilder(
+                                future: _apiHelper.getProfilePicture(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData) {
+                                    Uint8List imageData =
+                                        snapshot.data as Uint8List;
+                                    return Image.memory(
+                                      imageData,
+                                      width: 150,
+                                      height: 150,
+                                      fit: BoxFit.cover,
+                                    );
+                                  } else {
+                                    return ClipOval(
+                                      child: Container(
+                                        width: 150,
+                                        height: 150,
+                                       
+                                        child: Center(
+                                          child: CustomImageView(
+                                            svgPath: ImageConstant.imgFingerprint,
+                                            height: 100, 
+                                            width: 100, // Adjust as needed
+                                            alignment: Alignment.center,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                      ),
                     ),
-                    color: appTheme.lightGreen500,
-                  ),
-                  child: const Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
+                    // Edit Icon
+                    Positioned(
+                      right: 80,
+                      bottom: 20, // Adjust as needed
+                      child: GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                padding: EdgeInsets.all(16.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ListTile(
+                                      leading: Icon(Icons.camera_alt),
+                                      title: Text('Take a photo'),
+                                      onTap: () {
+                                        _pickImageFromCamera();
+                                        Navigator.pop(context); // Close the bottom sheet
+                                      },
+                                    ),
+                                    ListTile(
+                                      leading: Icon(Icons.photo_library),
+                                      title: Text('Choose from gallery'),
+                                      onTap: () {
+                                        _pickImageFromGallery();
+                                        Navigator.pop(context); // Close the bottom sheet
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 2,
+                              color: Colors.white,
+                            ),
+                            color: appTheme.lightGreen500,
+                          ),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                buildBody(context),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
+     ) );
+}
 
-  _handleShowOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(12.0),
-        height: 170,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Choose your method",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ListTile(
-              onTap: () {
-                handleGetImageAction(context, ImageSource.gallery);
-              },
-              leading: const Icon(Icons.image),
-              title: const Text("Gallery"),
-            ),
-            ListTile(
-              onTap: () {
-                handleGetImageAction(context, ImageSource.camera);
-              },
-              leading: const Icon(Icons.camera),
-              title: const Text("Camera"),
-            ),
-          ],
-        ),
-      ),
-    ).then((value) {
-      if (_newProfilePicture.isNotEmpty) {
-        setState(() {
-          _profilePicture = _newProfilePicture;
-        });
-      }
-    });
-  }
-
-  handleGetImageAction(BuildContext context, ImageSource selectedSource) async {
-    if (Platform.isAndroid || Platform.isIOS) {
-      ImagePicker picker = ImagePicker();
-      XFile? image = await picker.pickImage(source: selectedSource);
-      Navigator.pop(context);
-      setState(() {
-        _selectedImage = File(image!.path);
-        _newProfilePicture = image.path;
-      });
-      EasyLoading.show(status: "Loading");
-      UserController().uploadImage(_selectedImage!).then((value) {
-        EasyLoading.dismiss();
-        setState(() {
-          _profilePicture = value;
-        });
-         SharedPreferences.getInstance().then((prefs) {
-
-      });
-      EasyLoading.showSuccess(value);
-        EasyLoading.showSuccess(value);
-      }).catchError((ex) {
-        EasyLoading.dismiss();
-        EasyLoading.showError(ex.toString());
-      });
-    } else {
-      EasyLoading.showError("Not Supported");
-    }
-  }
 
   Widget buildForm(BuildContext context) {
     return Form(
@@ -337,15 +332,21 @@ void showDeleteAccountDialog(BuildContext context) {
           child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 17.v, right: 28.h),
-            child: Text(
-              "lbl5".tr,
-              style: CustomTextStyles.titleSmallBahijTheSansArabicGray400,
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 22.v,
+                right: 28.h,
+              ),
+              child: Text(
+                "lbl5".tr,
+                style: CustomTextStyles.titleSmallBahijTheSansArabicPrimary,
+              ),
             ),
           ),
           CustomTextFormField(
-            controller: personalnameController,
+            controller: fullNameController,
             margin: EdgeInsets.only(
               left: 7.h,
               top: 3.v,
@@ -386,13 +387,13 @@ void showDeleteAccountDialog(BuildContext context) {
             ),
           ),
           CustomTextFormField(
-            controller: emailaddressController,
+            controller: emailController,
             margin: EdgeInsets.only(
               left: 7.h,
               top: 3.v,
               right: 8.h,
             ),
-            hintText: emailaddressController.text.tr,
+            hintText: emailController.text.tr,
             suffix: Container(
               margin: EdgeInsets.fromLTRB(10.h, 12.v, 20.h, 13.v),
               child: CustomImageView(
@@ -406,7 +407,7 @@ void showDeleteAccountDialog(BuildContext context) {
               left: 30.h,
               top: 11.v,
               bottom: 11.v,
-            ),
+            ), 
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -422,7 +423,7 @@ void showDeleteAccountDialog(BuildContext context) {
             ),
           ),
           CustomTextFormField(
-            controller: phonenumberoneController,
+            controller: phoneController,
             margin: EdgeInsets.only(
               left: 7.h,
               top: 3.v,
@@ -447,7 +448,7 @@ void showDeleteAccountDialog(BuildContext context) {
               left: 30.h,
               top: 11.v,
               bottom: 11.v,
-            ),
+            ), 
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -532,7 +533,7 @@ void showDeleteAccountDialog(BuildContext context) {
               child: CustomImageView(
                 svgPath: ImageConstant.imgLock,
               ),
-            ),
+            ), 
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -579,7 +580,7 @@ void showDeleteAccountDialog(BuildContext context) {
             ),
             suffixConstraints: BoxConstraints(
               maxHeight: 45.v,
-            ),
+            ), 
           ),
         ],
       ))
@@ -589,34 +590,7 @@ void showDeleteAccountDialog(BuildContext context) {
     
   
   }
-void handleSubmitAction() {
-  if (_formKey.currentState!.validate()) {
-    EasyLoading.show(status: "Loading");
-    UserController()
-        .update(
-          email: emailaddressController.text,
-          password: passwordplacehoController.text,
-          username: usernameController.text, 
-          image: _newProfilePicture,
-          fullName: personalnameController.text,
-          profilePicture: '',
-          phone: phonenumberoneController.text, 
-        )
-        .then((value) {
-          EasyLoading.dismiss();
-          EasyLoading.showSuccess("Done");
-          getUserData();
-        })
-        .catchError((error) {
-          EasyLoading.dismiss();
-          EasyLoading.showError(error.toString());
-          if (kDebugMode) {
-            print("Error: $error");
-          }
-        });
-  }
-}
- 
+
 
 Widget deleteAccount(BuildContext context) {
   return Stack(
@@ -626,6 +600,7 @@ Widget deleteAccount(BuildContext context) {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
+            SizedBox(height: 40.v),
             CustomElevatedButton(
               text: "lblـ27".tr,
               margin: EdgeInsets.only(
@@ -634,21 +609,27 @@ Widget deleteAccount(BuildContext context) {
                 right: 27.h,
               ),
               onTap: () {
-                handleSubmitAction();
+                _updateProfile();
               },
+             
             ),
-            SizedBox(height: 10.v),
-          CustomElevatedButton(
+            SizedBox(height: 40.v),
+         CustomElevatedButton(
   text: "lbl30_".tr,
   margin: EdgeInsets.only(
-    left: 60.h,
-    right: 60.h,
+    left: 80.h,  
+    right: 80.h, 
   ),
   onTap: () {
-    showDeleteAccountDialog(context);
+    
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DeleteAccountForm()),
+    );
   },
   buttonStyle: CustomButtonStyles.fillRed,
 )
+
 
           ],
         ),
@@ -656,25 +637,51 @@ Widget deleteAccount(BuildContext context) {
     ],
   );
 }
-}
 
-CustomAppBar buildAppBar(BuildContext context) {
- final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
-    return CustomAppBar(
-      height: 50.v,
-      leadingWidth: 40.h,
-      leading: CustomImageView(
-              svgPath: (textDirection == TextDirection.rtl)
-                  ? ImageConstant.imgArrowright
-                  : ImageConstant.imgArrowleftOnprimary,
-              height: 24.0,
-              width: 24.0,
-              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-              onTap: () => onTapArrowleft(context),
+
+  Widget buildBody(BuildContext context) {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: SizedBox(
+      height: 1000.v,
+      width: double.maxFinite,
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          Opacity(
+            opacity: 0.1,
+            child: CustomImageView(
+              imagePath: ImageConstant.imgGroup70252,
+              height: 200.v,
+              width: 200.h,
+              alignment: Alignment.bottomCenter,
             ),
-      centerTitle: true,
-      title: AppbarTitle(text: "msg34".tr),
-    );
-  }
+          ),
+          // Align(
+          //   alignment: Alignment.topCenter,
+          //   child: Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: 50.h),
+          //     child: buildProfilePicture(),
+          //   ),
+          // ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 45.h, vertical: 20.v), // Reduced vertical padding
+              child: buildForm(context),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 50.h, vertical: 10.v), // Reduced vertical padding
+              child: deleteAccount(context),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+}

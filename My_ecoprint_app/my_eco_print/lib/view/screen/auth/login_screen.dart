@@ -24,36 +24,52 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isCameraEnabled = false;
   bool isVisiblePassword = false;
   Color cameraButtonColor = appTheme.gray400;
- late FocusNode _emailFocusNode;
+  late FocusNode _emailFocusNode;
   late FocusNode _passwordFocusNode;
   String savedPassword = "";
-   @override
+
+  @override
   void initState() {
     super.initState();
-     _emailFocusNode = FocusNode();
+    _emailFocusNode = FocusNode();
     _passwordFocusNode = FocusNode();
-    _checkAndFillPassword();
+      isCameraEnabled = true;
+    _loadSavedData(); 
   }
-void _handleSignInAction(BuildContext context) async {
-  EasyLoading.show(status: "Loading");
-
-  String enteredEmail = textControllers.emailController.text;
-  String enteredPassword = textControllers.passwordController.text;
-
+void _loadSavedData() async {
   String? savedEmail = await const FlutterSecureStorage().read(key: "saved_email");
   String? savedPassword = await const FlutterSecureStorage().read(key: "saved_password");
 
-  // Check if the entered email matches the saved email and saved password is not empty
-  if (enteredEmail == savedEmail && savedPassword!.isNotEmpty) {
-    // Fill the password field with the saved password
-    textControllers.passwordController.text = savedPassword;
+  print("Saved Email: $savedEmail");
+  print("Saved Password: $savedPassword");
+
+  if (savedEmail != null) {
+    textControllers.emailController.text = savedEmail;
   }
 
-  AuthController()
-    .login(enteredEmail, enteredPassword)
-    .then((Login? value) async {
+  if (isCameraEnabled && savedPassword != null) {
+    textControllers.passwordController.text = savedPassword;
+  }
+}
+
+
+
+  void _handleSignInAction(BuildContext context) async {
+    EasyLoading.show(status: "Loading");
+
+    String enteredEmail = textControllers.emailController.text;
+    String enteredPassword = textControllers.passwordController.text;
+
+    AuthController()
+        .login(enteredEmail, enteredPassword)
+        .then((Login? value) async {
       EasyLoading.dismiss();
       await const FlutterSecureStorage().write(key: "token", value: "${value!.accessToken}");
+
+      
+      if (isCameraEnabled) {
+        await saveCredentials(enteredEmail, enteredPassword);
+      }
 
       Navigator.pushReplacement(
         context,
@@ -75,80 +91,42 @@ void _handleSignInAction(BuildContext context) async {
         EasyLoading.showError(errorMessage);
       }
     });
-}
-
-
-
-
-
-  @override
-  void dispose() {
-      _emailFocusNode.dispose();
-    _passwordFocusNode.dispose();
-    textControllers.dispose();
-    super.dispose();
   }
 
 void toggleCamera() {
   setState(() {
     isCameraEnabled = !isCameraEnabled;
-    cameraButtonColor =
-        isCameraEnabled ? appTheme.lightGreen500 : appTheme.gray400;
-
-  
-    if (isCameraEnabled && savedPassword.isEmpty) {
-
-      savePassword();
-    } else if (!isCameraEnabled) {
-
-      savedPassword = "";
-    }
+    cameraButtonColor = isCameraEnabled ? appTheme.lightGreen500 : appTheme.gray400;
   });
-}
-void _showSavedCredentialsDialog(String savedEmail, String savedPassword) {
-  print("Dialog function called!"); 
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text("Saved Credentials"),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Email: $savedEmail"),
-            Text("Password: $savedPassword"),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("Close"),
-          ),
-        ],
-      );
-    },
-  );
+
+  if (isCameraEnabled && savedPassword.isEmpty) {
+    savePassword();
+  } else if (!isCameraEnabled) {
+    savedPassword = "";
+  }
 }
 
 
 void savePassword() async {
   String email = textControllers.emailController.text;
-  String password = textControllers.passwordController.text;
+  String password = textControllers.passwordController.text; 
   savedPassword = password;
-  await saveCredentials(email, password);
-  print('Saved Email: $email');
+
+ 
+  if (isCameraEnabled) {
+    await saveCredentials(email, password);
+  }
+}
+
+
+ Future<void> saveCredentials(String email, String password) async {
+  await const FlutterSecureStorage().write(key: "saved_email", value: email);
+  await const FlutterSecureStorage().write(key: "saved_password", value: password);
+
+
   print('Saved Password: $password');
 }
 
-Future<void> saveCredentials(String email, String password) async {
-  await const FlutterSecureStorage().write(key: "saved_email", value: email);
-  await const FlutterSecureStorage().write(key: "saved_password", value: password);
-  print('Saved Email: $email');
-  print('Saved Password: $password');
-}
 
   void toggleIconEye() {
     setState(() {
@@ -281,24 +259,19 @@ Future<void> saveCredentials(String email, String password) async {
   }
 
 Widget _buildEmailInputField(AppLocalizationController? localization) {
-  String savedEmail = "";
-  String savedPassword = "";
-
   return GestureDetector(
     onTap: () async {
       FocusScope.of(context).requestFocus(_emailFocusNode);
 
       if (isCameraEnabled) {
-        savedEmail = (await FlutterSecureStorage().read(key: "saved_email"))?.toString() ?? "";
-        savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+        String savedEmail = (await FlutterSecureStorage().read(key: "saved_email"))?.toString() ?? "";
+        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
 
         if (savedPassword.isNotEmpty && textControllers.emailController.text == savedEmail) {
           textControllers.passwordController.text = savedPassword;
 
-          // Check if dialog is not already open to avoid multiple dialogs
-          if (!Navigator.of(context).canPop()) {
-            _showSavedCredentialsDialog(savedEmail, savedPassword);
-          }
+         
+         
         }
       }
     },
@@ -330,34 +303,13 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
           bottom: 11.v,
         ),
         onChanged: (enteredEmail) {
-          // Check if the password is saved and entered email matches
-          if (isCameraEnabled &&
-              savedPassword.isNotEmpty &&
-              enteredEmail == savedEmail) {
-           
-            textControllers.passwordController.text = savedPassword;
-          }
         },
         onEditingComplete: () {
-          _checkAndFillPassword();
+         
         },
       ),
     ),
   );
-}
-
-
-
-
-void _checkAndFillPassword() async {
-  String enteredEmail = textControllers.emailController.text;
-  String enteredPassword = textControllers.passwordController.text;
-  String? savedEmail = await const FlutterSecureStorage().read(key: "saved_email");
-  String? savedPassword = await const FlutterSecureStorage().read(key: "saved_password");
-
-  if (enteredEmail == savedEmail && savedPassword!.isNotEmpty) {
-    textControllers.passwordController.text = savedPassword;
-  }
 }
 
 
@@ -368,8 +320,16 @@ void _checkAndFillPassword() async {
 
   Widget _buildPasswordInputField(AppLocalizationController? localization) {
   return GestureDetector(
-    onTap: () {
+    onTap: () async {
       FocusScope.of(context).requestFocus(_passwordFocusNode);
+
+      if (isCameraEnabled) {
+        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+
+        if (savedPassword.isNotEmpty) {
+          textControllers.passwordController.text = savedPassword;
+        }
+      }
     },
     child: Directionality(
       textDirection: localization?.locale.languageCode == 'ar'
@@ -410,12 +370,13 @@ void _checkAndFillPassword() async {
           maxHeight: 45.v,
         ),
         onChanged: (password) {
-          _checkAndFillPassword();
+         
         },
       ),
     ),
   );
 }
+
 
 
   Widget _buildResetPasswordAndCameraButtons(

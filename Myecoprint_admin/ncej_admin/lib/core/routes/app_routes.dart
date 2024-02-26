@@ -61,7 +61,7 @@ class AppRoutes {
     GetPage(name:infoScreen , page:() => const InfoScreen()),
     GetPage(name:pinCodePassword, page:() => const PinCodePasswordScreen()),
     GetPage(name:collectingPoints , page:() => const CollectingPointScreen()),
-    GetPage(name:updateUser , page:() =>  const UpdateScreen()),
+    GetPage(name:updateUser , page:() =>   UserProfilePage()),
     GetPage(name:getAllOffers , page:() =>  const GetAllOffersPage()),
    GetPage(name:readCode , page:() =>  const BarcodeScannerReadScreen()),
     GetPage(name:storePage , page:() =>  const StorePage()),

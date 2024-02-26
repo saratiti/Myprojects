@@ -149,13 +149,31 @@ Widget buildCouponStack() {
 
 
 
-String getIconPathBasedOnTransactionType(String transactionType) {
-  if (transactionType == 'redemption') {
-    return ImageConstant.imgMobile;
-  } else {
-    return ImageConstant.imgFile;
-  }
+String getMessageForTransactionType(String transactionType) {
+   final localization = AppLocalizationController.to;
+final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+
+  final transactionTypeMessages = {
+    'redemption': "msg30",
+    'daily_points': "msg31",
+    'apple_store_points_redemption': "msg32",
+  };
+  final translationKey = transactionTypeMessages[transactionType];
+  return translationKey != null
+      ? localization.getString(translationKey) ?? "Unknown transaction type"
+      : "Unknown transaction type";
 }
+
+  String getIconPathBasedOnTransactionType(String transactionType) {
+    if (transactionType == 'redemption') {
+      return ImageConstant.imgMobile;
+    } else if (transactionType == 'daily_points') {
+      return ImageConstant.imgFile;
+    } else {
+      return ImageConstant.imgFire;
+    }
+  }
+
 
 
 
@@ -214,7 +232,14 @@ Widget headerCoupon() {
 }
 
 Widget buildCouponContainer(Transaction transaction) {
-  return Container(
+  final localization = AppLocalizationController.to;
+
+    final isRtl = localization.locale.languageCode == 'ar';
+
+    return Directionality(
+      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+      child:
+  Container(
     padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
     decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
       borderRadius: BorderRadiusStyle.roundedBorder24,
@@ -227,7 +252,8 @@ Widget buildCouponContainer(Transaction transaction) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(transaction.transactionType, style: theme.textTheme.titleMedium),
+              
+              Text( getMessageForTransactionType(transaction.transactionType), style: theme.textTheme.titleMedium),
               SizedBox(height: 8.v), 
               Text(transaction.points.toString(), style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
             ],
@@ -243,7 +269,7 @@ Widget buildCouponContainer(Transaction transaction) {
         ),
       ],
     ),
-  );
+     ) );
 }
 
 

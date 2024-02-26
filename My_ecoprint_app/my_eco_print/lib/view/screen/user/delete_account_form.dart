@@ -4,9 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
 
-
-import '../ points/collecting_points/collecting_points.dart';
 
 class DeleteAccountForm extends StatefulWidget {
   @override
@@ -68,7 +67,7 @@ void showDeleteAccountDialog(BuildContext context) {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: buildAppBar(context,"lbl30_"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -140,24 +139,4 @@ void showDeleteAccountDialog(BuildContext context) {
     );
   }
 
-CustomAppBar buildAppBar(BuildContext context) {
- final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
-    return CustomAppBar(
-      height: 50.v,
-      leadingWidth: 40.h,
-      leading: CustomImageView(
-              svgPath: (textDirection == TextDirection.rtl)
-                  ? ImageConstant.imgArrowright
-                  : ImageConstant.imgArrowleftOnprimary,
-              height: 24.0,
-              width: 24.0,
-              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-              onTap: () => onTapArrowleft(context),
-            ),
-      centerTitle: true,
-      title: AppbarTitle(text: "lbl30_".tr),
-    );
-  }
 }

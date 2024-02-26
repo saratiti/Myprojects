@@ -9,7 +9,7 @@ class Store {
   int companyId;
   int typeId;
   String? image;
-List<Offer>? offers;
+Offer? offers;
 List<PointRedemption>?pointsRedeemeds;
 
 
@@ -34,9 +34,7 @@ factory Store.fromJson(Map<String, dynamic> json) {
     companyId: json['company_id'] as int? ?? 0,
     typeId: json['type_id'] as int? ?? 0,
     image: json['image'] as String? ?? '',
-   offers: (json['offers'] as List<dynamic>?)
-          ?.map((offerJson) => Offer.fromJson(offerJson))
-          .toList(),
+   offers: json['offers'] != null ? Offer.fromJson(json['offers'] as Map<String, dynamic>) : null,
       pointsRedeemeds: (json['pointsRedeemeds'] as List<dynamic>?)
           ?.map((pointsRedeemedJson) => PointRedemption.fromJson(pointsRedeemedJson))
           .toList(),

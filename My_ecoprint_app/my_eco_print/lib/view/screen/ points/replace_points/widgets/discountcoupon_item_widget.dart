@@ -1,7 +1,11 @@
 // ignore_for_file: camel_case_types
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
+import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 
@@ -28,7 +32,7 @@ class _ClothesScreenState extends State<ClothesScreen> {
     offerProvider = OfferProvider();
     fetchData();
   }
-
+final ApiHelper _apiHelper=ApiHelper();
   Future<void> fetchData() async {
     await offerProvider.fetchData(widget.storeId, widget.offerId);
 
@@ -40,101 +44,148 @@ class _ClothesScreenState extends State<ClothesScreen> {
     }
   }
 
-    @override
-  Widget build(BuildContext context) {
-    final textDirection = Directionality.of(context);
+@override
+Widget build(BuildContext context) {
+  final localization = AppLocalizationController.to;
+  final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
-    return ChangeNotifierProvider<OfferProvider>(
-      create: (context) => offerProvider,
-      child: Consumer<OfferProvider>(
-        builder: (context, offerProvider, child) {
+    return Directionality(
+      textDirection: textDirection,
+      child: ChangeNotifierProvider<OfferProvider>(
+    create: (context) => offerProvider,
+    child: Consumer<OfferProvider>(
+      builder: (context, offerProvider, child) {
+        if (offerProvider.offers.isEmpty) {
           return Center(
-            child: Container(
-                margin: EdgeInsets.only(top: 20.v),
-                padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 5.v),
-                decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-                  borderRadius: BorderRadiusStyle.roundedBorder24,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 1.v, top: 10),
-                                child: SizedBox(
-                                  height: 44.adaptSize,
-                                  width: 44.adaptSize,
-                                  child: Container(
-                                    height: 44.adaptSize,
-                                    width: 44.adaptSize,
-                                    padding: EdgeInsets.all(6.h),
-                                    decoration: AppDecoration.fillGray.copyWith(
-                                      borderRadius: BorderRadiusStyle.roundedBorder17,
+            child: Text("No data available"),
+          );
+        }
+
+        final offer = offerProvider.offers[0];
+
+        return Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20.v),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.h,
+                          vertical: 5.v,
+                        ),
+                        decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                          borderRadius: BorderRadiusStyle.roundedBorder24,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: SizedBox(
+                                            height: 40.adaptSize,
+                                            width: 40.adaptSize,
+                                            child: Container(
+                                              height: 40.adaptSize,
+                                              width: 40.adaptSize,
+                                              padding: EdgeInsets.all(5.h),
+                                              decoration: AppDecoration.fillGray.copyWith(
+                                                borderRadius: BorderRadiusStyle.roundedBorder17,
+                                              ),
+                                              child: Padding(
+                padding: EdgeInsets.only(left: 8.0), 
+                child: FutureBuilder(
+  future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else if (snapshot.hasData) {
+      Uint8List? imageData = snapshot.data as Uint8List?;
+      if (imageData != null) {
+        return Image.memory(
+          imageData,
+          width: 150,
+          height: 150,
+          fit: BoxFit.cover,
+        );
+      } else {
+        // Handle the case when imageData is null
+        return Text('No image available');
+      }
+    } else {
+      return CircularProgressIndicator();
+    }
+  },
+),
+
+              ),
+
+
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 40, bottom: 40),
+                                            child: Flex(
+                                              direction:  Axis.horizontal,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    '${offer.numberDiscount.toString()}%',
+                                                    style: theme.textTheme.headlineSmall,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    child: CustomImageView(
-                                      svgPath: ImageConstant.imgMobileOnprimary,
-                                      height: 44.adaptSize,
-                                      width: 44.adaptSize,
-                                      alignment: Alignment.center,
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          '${offerProvider.offers.isNotEmpty ? offerProvider.offers[0].numberDiscount.toString() : ''}%',
-                          style: theme.textTheme.headlineSmall,
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            offerProvider.offers.isNotEmpty ? offerProvider.offers[0].offerDescription.toString() : '',
-                            style: theme.textTheme.labelMedium,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (offerProvider.offers.isNotEmpty && offerProvider.offers[0].numberPoint != null)
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: paint(
-                                textDirection: textDirection,
-                                additionalText: offerProvider.offers[0].numberPoint.toString(),
+                            ),
+                            Text(
+                              offer.offerDescription != null ? offer.offerDescription.toString() : 'No description available',
+                              style: theme.textTheme.labelMedium,
+                              textAlign: TextAlign.center,
+                            ),
+                            if (offer.numberPoint != null)
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: paint(
+                                        textDirection: textDirection,
+                                        additionalText: offer.numberPoint.toString(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            )
                           ],
                         ),
                       ),
-                  ],
-                ),
-              ),
-            );
-  }));
-        }
+                    );
+      },
+    ),
+      )  );
+}
+
+
+
      
   }
 
@@ -156,7 +207,7 @@ class OfferProvider with ChangeNotifier {
     _offers = await StoreController().getOfferByStoreAndOfferId(storeId, offerId);
     notifyListeners();
   } catch (e) {
-    // Handle other errors
+   
   }
 }
 

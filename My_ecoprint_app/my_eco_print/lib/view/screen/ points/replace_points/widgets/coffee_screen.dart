@@ -1,299 +1,326 @@
 // ignore_for_file: camel_case_types, use_build_context_synchronously, unnecessary_null_comparison
 
-import 'package:flutter/foundation.dart';
+
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
+import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/view/screen/barcode/barcode_read.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
+import 'package:my_eco_print/view/screen/barcode/ref_screen.dart';
 
+class CoffeeScreen extends StatefulWidget {
+  final int? typeId;
+  final String? selectedButton;
 
-class CoffeeScreen extends StatelessWidget {
-  final int typeId;
+  const CoffeeScreen({Key? key, this.typeId, this.selectedButton}) : super(key: key);
 
+  @override
+  _CoffeeScreenState createState() => _CoffeeScreenState();
+}
 
-  const CoffeeScreen({super.key, required this.typeId});
+class _CoffeeScreenState extends State<CoffeeScreen> {
+  late Future<List<Offer>> _offersFuture;
 
+  @override
+  void initState() {
+    super.initState();
+    _fetchOffers();
+  }
+
+  void _fetchOffers() {
+    if (widget.selectedButton == "lbl45") {
+      // Fetch offers based on the selected button
+      _offersFuture = StoreController().getStoresWithOffers(0); // Pass the appropriate type ID or other necessary parameters
+    } else if (widget.typeId != null) {
+      // Fetch offers based on the selected type
+      _offersFuture = StoreController().getStoresWithOffers(widget.typeId!);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CoffeeScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedButton != widget.selectedButton || oldWidget.typeId != widget.typeId) {
+      _fetchOffers();
+    }
+  }
+ ApiHelper _apiHelper=ApiHelper();
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
-  
+
     final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
-
 
     return Directionality(
       textDirection: textDirection,
       child: Align(
         alignment: Alignment.bottomCenter,
         child: SizedBox(
-          height: 800.v,
-          width: 330.h,
           child: buildClothesContainer(context),
         ),
       ),
     );
   }
 
-Widget buildClothesContainer(BuildContext context) {
-  final localization = AppLocalizationController.to;
-  final textDirection = localization.locale.languageCode == 'ar'
-      ? TextDirection.rtl
-      : TextDirection.ltr;
-        // PointController pointController = PointController();
-// void onTapRedeemPoints(BuildContext context, int storeId, int offerId, int pointsRedeemed) async {
-//   try {
-//     await pointController.redeemPoints(
-//       storeId: storeId, 
-//       offerId: offerId,
-//       pointsRedeemed: pointsRedeemed, 
-//     );
+  Widget buildClothesContainer(BuildContext context) {
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
-//     Navigator.pop(context);
-//   } catch (e) {
-//     if (kDebugMode) {
-//       print("Error in redeeming points: $e");
-//     }
+    return FutureBuilder<List<Offer>>(
+      future: _offersFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No data available'));
+        } else {
+          List<Offer> offers = snapshot.data!;
 
-//   }
-// }
+          return SizedBox(
+            width: double.maxFinite,
+            child: Padding(
+              padding: EdgeInsets.only(bottom: 60.v),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: offers.length,
+                itemBuilder: (context, index) {
+                  Offer offer = offers[index];
 
-
-return FutureBuilder<List<Offer>>(
-  future: StoreController().getStoresWithOffers(typeId),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return Center(child: Text('Error: ${snapshot.error}'));
-    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      return const Center(child: Text('No data available'));
-    } else {
-      List<Offer> offers = snapshot.data!;
-
-      return SizedBox(
-        width: double.maxFinite,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 60.v),
-          child: ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: offers.length,
-            itemBuilder: (context, index) {
-              Offer offer = offers[index];
-
-           return 
-          
-          
-           GestureDetector(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    contentPadding: EdgeInsets.zero,
-                    content: Container(
-                      width: 350.h,
-                      height: 350.v,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.h,
-                        vertical: 20.v,
-                      ),
-                      decoration: AppDecoration.fillWhiteA.copyWith(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: ListView(
-                        shrinkWrap: true,
-                        children: [
-                          Directionality(
-                            textDirection: textDirection,
-                            child: CustomImageView(
-                              svgPath: ImageConstant.imgClose,
-                              height: 24.adaptSize,
-                              width: 24.adaptSize,
-                              onTap: () {
-                                onTapImgCloseone(context);
-                              },
-                            ),
-                          ),
-                          Directionality(
-                            textDirection: textDirection,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 10.h, top: 24.v),
-                              child: Text(
-                                "lbl48".tr,
-                                style: CustomTextStyles.displaySmallRed700,
+                  return GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            contentPadding: EdgeInsets.zero,
+                            content: Container(
+                              width: 350.h,
+                              height: 350.v,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.h,
+                                vertical: 20.v,
+                              ),
+                              decoration: AppDecoration.fillWhiteA.copyWith(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: [
+                                  Directionality(
+                                    textDirection: textDirection,
+                                    child: CustomImageView(
+                                      svgPath: ImageConstant.imgClose,
+                                      height: 24.adaptSize,
+                                      width: 24.adaptSize,
+                                      onTap: () {
+                                        onTapImgCloseone(context);
+                                      },
+                                    ),
+                                  ),
+                                  Directionality(
+                                    textDirection: textDirection,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 10.h, top: 24.v),
+                                      child: Text(
+                                        "lbl48".tr,
+                                        style:
+                                            CustomTextStyles.displaySmallRed700,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 10.v),
+                                  SizedBox(
+                                    width: 300.h,
+                                    child: RichText(
+                                      text: TextSpan(children: [
+                                        TextSpan(
+                                          text: offer.store?.nameArabic ??
+                                              'Unknown Store',
+                                          style: theme.textTheme.titleMedium,
+                                        ),
+                                        TextSpan(
+                                          text: offer.numberDiscount.toString(),
+                                          style: CustomTextStyles.titleMediumRed700,
+                                        ),
+                                      ]),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20.v),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: CustomElevatedButton(
+                                      height: 35.v,
+                                      width: 150.h,
+                                      text: "lbl49".tr,
+                                      margin: EdgeInsets.only(top: 22.v),
+                                      buttonStyle: CustomButtonStyles.fillLightGreenTL20,
+                                      buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ScanCodeScreenRef1(),
+                                            settings: RouteSettings(
+                                              arguments: {'offerId': offer.id, 'storeId': offer.storeId},
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          SizedBox(height: 10.v),
-                          SizedBox(
-                            width: 300.h,
-                            child: RichText(
-                              text: TextSpan(children: [
-                                TextSpan(
-                                  text: "msg49".tr,
-                                  style: theme.textTheme.titleMedium,
+                          );
+                        },
+                      );
+                    },
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 20.v),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.h,
+                          vertical: 5.v,
+                        ),
+                        decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                          borderRadius: BorderRadiusStyle.roundedBorder24,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 10),
+                                          child: SizedBox(
+                                            height: 40.adaptSize,
+                                            width: 40.adaptSize,
+                                            child: Container(
+                                              height: 40.adaptSize,
+                                              width: 40.adaptSize,
+                                              padding: EdgeInsets.all(5.h),
+                                              decoration: AppDecoration.fillGray.copyWith(
+                                                borderRadius: BorderRadiusStyle.roundedBorder17,
+                                              ),
+                                           child:  FutureBuilder(
+  future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else if (snapshot.hasData) {
+      Uint8List? imageData = snapshot.data as Uint8List?;
+      if (imageData != null) {
+        return Image.memory(
+          imageData,
+          width: 150,
+          height: 150,
+          fit: BoxFit.cover,
+        );
+      } else {
+        return ClipOval(
+          child: Container(
+            width: 150,
+            height: 150,
+            color: Colors.grey, // Placeholder color
+            child: Center(
+              child: Icon(
+                Icons.image_not_supported,
+                size: 50,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      }
+    } else {
+      return CircularProgressIndicator();
+    }
+  },
+),
+
+
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left: 40, bottom: 40),
+                                            child: Flex(
+                                              direction: Axis.horizontal,
+                                              children: [
+                                                Flexible(
+                                                  child: Text(
+                                                    '${offer.numberDiscount.toString()}%',
+                                                    style: theme.textTheme.headlineSmall,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                                TextSpan(
-                                  text: "lbl_103".tr,
-                                  style: CustomTextStyles.titleMediumRed700,
-                                ),
-                              ]),
+                              ),
+                            ),
+                            Text(
+                              offer.offerDescription != null ? offer.offerDescription.toString() : 'No description available',
+                              style: theme.textTheme.labelMedium,
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                          SizedBox(height: 20.v),
-                          Align(
-                            alignment: Alignment.center,
-                            child: CustomElevatedButton(
-                              height: 35.v,
-                              width: 150.h,
-                              text: "lbl49".tr,
-                              margin: EdgeInsets.only(top: 22.v),
-                              buttonStyle:
-                                  CustomButtonStyles.fillLightGreenTL20,
-                              buttonTextStyle: CustomTextStyles
-                                  .titleSmallBahijTheSansArabicWhiteA700,
-                            onTap: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ScanCodeScreenRef(),
-        settings: RouteSettings(
-          arguments: {'offerId': offer.id, 'storeId': offer.storeId},
-        ),
-      ),
-    );
-  },
-                            ),
-                          ),
-                        ],
+                            if (offer.numberPoint != null)
+                              Expanded(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: paint(
+                                        textDirection: textDirection,
+                                        additionalText: offer.numberPoint.toString(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   );
                 },
-              );
-            },
-
-child:  Center(
-  child: Container(
-    margin: EdgeInsets.only(top: 20.v),
-    padding: EdgeInsets.symmetric(
-      horizontal: 20.h,
-      vertical: 5.v,
-    ),
-    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-      borderRadius: BorderRadiusStyle.roundedBorder24,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 1.v,top: 10),
-                    child: SizedBox(
-                      height: 44.adaptSize,
-                      width: 44.adaptSize,
-                      child: Container(
-                        height: 44.adaptSize,
-                        width: 44.adaptSize,
-                        padding: EdgeInsets.all(6.h),
-                        decoration: AppDecoration.fillGray.copyWith(
-                          borderRadius: BorderRadiusStyle.roundedBorder17,
-                        ),
-                        child: CustomImageView(
-                                svgPath: ImageConstant.imgMobileOnprimary,
-                              
-                          height: 44.adaptSize,
-                          width: 44.adaptSize,
-                          alignment: Alignment.center,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                
-                  
-
-                 
-                   
-                ],
-
-             
               ),
-                  
-              
-            ],
-            
-          ),
-        ),
-         Padding(padding:const EdgeInsets.symmetric(vertical: 10),
-                     child: Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          '${offer.numberDiscount.toString()}%',
-                          style: theme.textTheme.headlineSmall,
-                        ),
-                      ),
-                    
-                  ), 
-                  
-         Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                            offer.offerDescription.toString(),
-                          style: theme.textTheme.labelMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-              if (offer.numberPoint != null)
- 
-        Expanded(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-             Align(
-            alignment: Alignment.topLeft,
-            child: paint(
-              textDirection: textDirection,
-              additionalText: offer.numberPoint.toString(),
             ),
-          )
-          ],
-          ),
-        ),
-        
-      ],
-    ),
-  ),
-)
+          );
+        }
+      },
+    );
+  }
+}
 
-
-              );
-            },
-          ),
-        ),
-      );
-    }
-  },
-);
-
-}}
 
 
 class paint extends StatelessWidget {

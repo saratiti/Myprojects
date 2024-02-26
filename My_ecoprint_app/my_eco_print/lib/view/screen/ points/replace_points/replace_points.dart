@@ -204,23 +204,24 @@ class ReplacePointHeader extends StatelessWidget {
               decoration: AppDecoration.fillLightGreen.copyWith(
                 borderRadius: BorderRadius.circular(13.0),
               ),
-              child: FutureBuilder<int>(
-                future:PointController().getTotalPointsByUserId(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+             child: FutureBuilder<int>(
+  future: PointController().getTotalPointsByUserId(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text("Error: ${snapshot.error}");
+    } else {
+     
+      final totalPoints = snapshot.data ?? 0;
+      return Text(
+        "Total Points: $totalPoints",
+        style: theme.textTheme.labelLarge,
+      );
+    }
+  },
+),
 
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                 
-                    return Text("Error: ${snapshot.error}");
-                  } else {
-                    return Text(
-                      "Total Points: ${snapshot.data}",
-                      style: theme.textTheme.labelLarge,
-                    );
-                  }
-                },
-              ),
             ),
           ],
         ),
@@ -282,7 +283,7 @@ class ReplacePointListCoffee extends StatelessWidget {
 class ReplacePointListResturant extends StatelessWidget {
   const ReplacePointListResturant({super.key});
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 800.v,
@@ -294,16 +295,23 @@ class ReplacePointListResturant extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(bottom: 60.v),
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 25.v);
-                },
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return const AllStoreScreen();
-                },
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 600.v, 
+                    child: ListView.separated(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 25.v);
+                      },
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return AllStoreScreen();
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -313,39 +321,39 @@ class ReplacePointListResturant extends StatelessWidget {
   }
 }
 
-class ReplacePointListClothes extends StatelessWidget {
-  const ReplacePointListClothes({super.key});
+// class ReplacePointListClothes extends StatelessWidget {
+//   const ReplacePointListClothes({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 800.v,
-      width: double.maxFinite,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Padding(
-              padding: EdgeInsets.only(bottom: 60.v),
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: 25.v);
-                },
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return const ClothesScreen();
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return SizedBox(
+//       height: 800.v,
+//       width: double.maxFinite,
+//       child: Stack(
+//         alignment: Alignment.topCenter,
+//         children: [
+//           Align(
+//             alignment: Alignment.topCenter,
+//             child: Padding(
+//               padding: EdgeInsets.only(bottom: 60.v),
+//               child: ListView.separated(
+//                 physics: const BouncingScrollPhysics(),
+//                 shrinkWrap: true,
+//                 separatorBuilder: (context, index) {
+//                   return SizedBox(height: 25.v);
+//                 },
+//                 itemCount: 1,
+//                 itemBuilder: (context, index) {
+//                   return const ClothesScreen();
+//                 },
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class ReplacePointRichText extends StatelessWidget {
   const ReplacePointRichText({Key? key}) : super(key: key);
@@ -424,8 +432,6 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
   void initState() {
     super.initState();
     fetchTypes();
-    
-  
     selectedButton = "lbl45".tr;
     selectedTypeId = null;
   }
@@ -433,7 +439,6 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
   Future<void> fetchTypes() async {
     try {
       List<Type> fetchedTypes = await TypeController().getAll();
-
       setState(() {
         types = fetchedTypes;
       });
@@ -472,7 +477,9 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
         CustomOutlinedButton(
           height: 43.0,
           width: 160.0,
-          text: type.typeArabic,
+          text: textDirection == TextDirection.ltr
+              ? type.typeArabic.tr
+              : type.typeEnglish.tr,
           rightIcon: Container(
             margin: const EdgeInsets.only(left: 10.0),
             child: CustomImageView(
@@ -500,7 +507,7 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(30.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -535,13 +542,7 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
               Widget visibleWidget;
 
               if (selectedButton == "lbl45".tr) {
-                visibleWidget = Directionality(
-                  textDirection: textDirection,
-                  child: const Visibility(
-                    visible: true,
-                    child: AllStoreScreen(),
-                  ),
-                );
+                visibleWidget = AllStoreScreen();
               } else if (selectedTypeId != null) {
                 visibleWidget = CoffeeScreen(typeId: selectedTypeId!);
               } else {
@@ -559,4 +560,3 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
     );
   }
 }
-

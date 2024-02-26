@@ -1,3 +1,6 @@
+import 'package:my_eco_print/data/module/company.dart';
+import 'package:my_eco_print/data/module/store.dart';
+
 class Offer {
 
  int? id;
@@ -12,6 +15,8 @@ class Offer {
   final DateTime offerStartDate;
   final DateTime offerEndDate;
   final double offerDiscount;
+   Store? store;
+   Company?company;
 
   Offer({
    
@@ -27,6 +32,8 @@ class Offer {
     required this.offerEndDate,
     required this.offerDiscount,
     required this.storeId,
+    this.store,
+    this.company,
   });
 
 factory Offer.fromJson(Map<String, dynamic> json) {
@@ -39,6 +46,8 @@ factory Offer.fromJson(Map<String, dynamic> json) {
     offerNameEnglish: json['offer_name_english'] as String? ?? '',
     offerDescription: json['offer_description'] as String? ?? '',
     numberPoint: json['number_point'] as int? ?? 0,
+     store: json['store'] != null ? Store.fromJson(json['store'] as Map<String, dynamic>) : null,
+    company: json['company'] != null ? Company.fromJson(json['company'] as Map<String, dynamic>) : null,
    
     offerStartDate: json['offer_start_date'] != null
         ? DateTime.parse(json['offer_start_date'])
@@ -75,6 +84,8 @@ Map<String, dynamic> toJson() {
     'offer_start_date': offerStartDate.toIso8601String(),
     'offer_end_date': offerEndDate.toIso8601String(),
     'offer_discount': offerDiscount.toString(),
+    "store": store?.toJson(),
+    "company":company?.toJson(),
   };
 }
 

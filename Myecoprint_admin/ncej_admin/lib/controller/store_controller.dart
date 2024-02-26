@@ -72,6 +72,22 @@ Future<List<Store>> getAll() async {
     rethrow;
   }
 }
+Future<List<Store>> getStoresByCompanyId(int companyId) async {
+  try {
+    dynamic jsonObject = await ApiHelper().getRequest("/api/stores/$companyId");
+    if (jsonObject == null) {
+      return [];
+    }
+    List<Store> result = [];
+    jsonObject.forEach((json) {
+      result.add(Store.fromJson(json));
+    });
+    return result;
+  } catch (ex) {
+    print(ex);
+    rethrow;
+  }
+}
 
 
 }

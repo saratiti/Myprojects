@@ -2,7 +2,7 @@ class Offer {
 
  int? id;
   final int companyId;
-  final int branchId;
+  final int storeId;
   final String offerNameArabic;
   final String offerNameEnglish;
   final String offerDescription;
@@ -16,7 +16,7 @@ class Offer {
    
    this.id,
     required this.companyId,
-    required this.branchId,
+    required this.storeId,
     this.offerNameArabic = '',
     required this.offerNameEnglish,
     required this.offerDescription,
@@ -31,7 +31,7 @@ factory Offer.fromJson(Map<String, dynamic> json) {
   return Offer(
     id: json['offer_id'] as int? ?? 0,
     companyId: json['company_id'] as int? ?? 0,
-    branchId: json['branch_id'] as int? ?? 0,
+    storeId: json['store_id'] as int? ?? 0,
     offerNameArabic: json['offer_name_arabic'] as String? ?? '',
     offerNameEnglish: json['offer_name_english'] as String? ?? '',
     offerDescription: json['offer_description'] as String? ?? '',
@@ -62,7 +62,7 @@ Map<String, dynamic> toJson() {
   return {
     "id": id.toString(),
     'company_id': companyId.toString(),
-    'branch_id':branchId.toString(),
+    'store_id':storeId.toString(),
     'offer_name_arabic': offerNameArabic,
     'offer_name_english': offerNameEnglish,
     'offer_description': offerDescription,

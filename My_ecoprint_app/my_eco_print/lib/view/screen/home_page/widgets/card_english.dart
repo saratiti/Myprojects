@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:my_eco_print/controller/point_controller.dart';
+import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
+import 'package:provider/provider.dart';
 class CardContainerEnglish extends StatelessWidget {
   const CardContainerEnglish({super.key});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +23,29 @@ class CardContainerEnglish extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: const CardContentEnglish(),
+        child:  CardContentEnglish(),
       ),
     );
   }
 }
 
-class CardContentEnglish extends StatelessWidget {
-  const CardContentEnglish({super.key});
+class CardContentEnglish extends StatefulWidget {
+
+
+  CardContentEnglish ({Key? key}) : super(key: key);
+
+  @override
+  _CardContentEnglishState createState() => _CardContentEnglishState();
+}
+
+class _CardContentEnglishState extends State<CardContentEnglish > {
+  late UserProfileModel userProfile; 
+
+  @override
+  void initState() {
+    super.initState();
+     userProfile = Provider.of<UserProfileModel>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +60,8 @@ class CardContentEnglish extends StatelessWidget {
             borderRadius: BorderRadiusStyle.roundedBorder40,
           ),
           child: Container(
-            height: 170.v,
-            width: 295.h,
+            height: 180.v,
+            width: 300.h,
             decoration: AppDecoration.gradientLightGreenToLightGreen.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder40,
             ),
@@ -158,12 +178,29 @@ class CardContentEnglish extends StatelessWidget {
                                         style: CustomTextStyles
                                             .titleSmallBahijTheSansArabicWhiteA700,
                                       ),
-                                      Text(
-                                        "lbl_600".tr,
-                                        style: CustomTextStyles
-                                            .titleSmallBahijTheSansArabicWhiteA70015,
-                                      ),
-                                    ],
+                                        Consumer<UserProfileModel>(
+      builder: (context, userProfile, _) {
+        return FutureBuilder<int>(
+  future:userProfile.totalPointsRedeemed,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircularProgressIndicator();
+              } else if (snapshot.hasError) {
+                return Text("Error: ${snapshot.error}");
+              } else {
+                return Column(
+                  children: [
+                    Text(
+                      " ${snapshot.data}",
+                      style: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
+                    ),
+                  ],
+                );
+              }
+            },
+          );
+   } )],
+                                    
                                   ),
                                 ),
                               )
@@ -194,10 +231,27 @@ class CardContentEnglish extends StatelessWidget {
                       top: 44.v,
                       left: 30.h,
                     ),
-                    child: Text(
-                      "lbl_3650".tr,
-                      style: CustomTextStyles.headlineSmallWhiteA700,
-                    ),
+                                       child: Consumer<UserProfileModel>(
+      builder: (context, userProfile, _) {
+        return FutureBuilder<int>(
+  future: userProfile.totalPoints,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text("Error: ${snapshot.error}");
+    } else {
+      
+      return Text(
+        "${snapshot.data}",
+        style: CustomTextStyles.headlineSmallWhiteA700,
+      );
+    }
+  },
+);
+
+      },
+    ),
                   ),
                 ),
               ],

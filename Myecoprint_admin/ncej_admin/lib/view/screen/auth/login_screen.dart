@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ncej_admin/controller/auth.dart';
+import 'package:ncej_admin/controller/auth_controller.dart';
+import 'package:ncej_admin/controller/provider/company_provider.dart';
 import 'package:ncej_admin/controller/text_controller.dart';
 import 'package:ncej_admin/core/app_export.dart';
+import 'package:ncej_admin/core/constants/theme/theme_helper.dart';
 import 'package:ncej_admin/core/services/auth_service.dart';
 import 'package:ncej_admin/data/module/login.dart';
 import 'package:ncej_admin/view/screen/home_page/home_page_screen.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -24,42 +27,108 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isCameraEnabled = false;
   bool isVisiblePassword = false;
   Color cameraButtonColor = appTheme.gray400;
+  late FocusNode _emailFocusNode;
+  late FocusNode _passwordFocusNode;
+  String savedPassword = "";
 
-  _handleSignInAction(BuildContext context) {
-    EasyLoading.show(status: "Loading");
-    AuthController()
-    .login(textControllers.emailController.text, textControllers.passwordController.text)
-    .then((Login? value) async {
-      EasyLoading.dismiss();
-      await const FlutterSecureStorage().write(key: "token", value: "${value!.accessToken} ");
+  @override
+  void initState() {
+    super.initState();
+    _emailFocusNode = FocusNode();
+    _passwordFocusNode = FocusNode();
+      isCameraEnabled = true;
+    _loadSavedData(); 
+  }
+void _loadSavedData() async {
+  String? savedEmail = await const FlutterSecureStorage().read(key: "saved_email");
+  String? savedPassword = await const FlutterSecureStorage().read(key: "saved_password");
+
+  print("Saved Email: $savedEmail");
+  print("Saved Password: $savedPassword");
+
+  if (savedEmail != null) {
+    textControllers.emailController.text = savedEmail;
+  }
+
+  if (isCameraEnabled && savedPassword != null) {
+    textControllers.passwordController.text = savedPassword;
+  }
+}
+
+
+
+void _handleSignInAction(BuildContext context) async {
+  EasyLoading.show(status: "Loading");
+
+  String enteredEmail = textControllers.emailController.text;
+  String enteredPassword = textControllers.passwordController.text;
+
+  try {
+    final Login? value = await AuthController().login(enteredEmail, enteredPassword);
+    EasyLoading.dismiss();
+    
+    if (value != null) {
+      await const FlutterSecureStorage().write(key: "token", value: "${value.accessToken}");
+      Provider.of<CompanyProvider>(context, listen: false).setCompanyId(value.companyId); 
+
+      if (isCameraEnabled) {
+        await saveCredentials(enteredEmail, enteredPassword);
+      }
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePageScreen()),
       );
-    })
-    .catchError((ex) {
-      EasyLoading.dismiss();
-      EasyLoading.showError(ex.toString());
-    });
+    } else {
+      EasyLoading.showError("Invalid email or password");
+    }
+  } catch (ex) {
+    EasyLoading.dismiss();
 
+    if (ex is SocketException) {
+      EasyLoading.showError("No internet connection");
+    } else {
+      EasyLoading.showError("Failed to sign in. Please try again.");
+    }
   }
+}
 
 
 
-  @override
-  void dispose() {
-    textControllers.dispose();
-    super.dispose();
+void toggleCamera() {
+  setState(() {
+    isCameraEnabled = !isCameraEnabled;
+    cameraButtonColor = isCameraEnabled ? appTheme.lightGreen500 : appTheme.gray400;
+  });
+
+  if (isCameraEnabled && savedPassword.isEmpty) {
+    savePassword();
+  } else if (!isCameraEnabled) {
+    savedPassword = "";
   }
+}
 
-  void toggleCamera() {
-    setState(() {
-      isCameraEnabled = !isCameraEnabled;
-      cameraButtonColor =
-          isCameraEnabled ? appTheme.lightGreen500 : appTheme.gray400;
-    });
+
+void savePassword() async {
+  String email = textControllers.emailController.text;
+  String password = textControllers.passwordController.text; 
+  savedPassword = password;
+
+ 
+  if (isCameraEnabled) {
+    await saveCredentials(email, password);
   }
+}
+
+
+ Future<void> saveCredentials(String email, String password) async {
+  await const FlutterSecureStorage().write(key: "saved_email", value: email);
+  await const FlutterSecureStorage().write(key: "saved_password", value: password);
+
+
+  print('Saved Password: $password');
+}
+
 
   void toggleIconEye() {
     setState(() {
@@ -75,7 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
         ? TextDirection.rtl
         : TextDirection.ltr;
 
-    return SafeArea(
+    return GestureDetector(
+      onTap: () {
+     _emailFocusNode.unfocus();
+        _passwordFocusNode.unfocus();
+      },
+      child:
+    
+    
+    SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Directionality(
@@ -142,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildBackgroundImage() {
@@ -183,12 +260,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildEmailInputField(AppLocalizationController? localization) {
-    return Directionality(
+Widget _buildEmailInputField(AppLocalizationController? localization) {
+  return GestureDetector(
+    onTap: () async {
+      FocusScope.of(context).requestFocus(_emailFocusNode);
+
+      if (isCameraEnabled) {
+        String savedEmail = (await FlutterSecureStorage().read(key: "saved_email"))?.toString() ?? "";
+        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+
+        if (savedPassword.isNotEmpty && textControllers.emailController.text == savedEmail) {
+          textControllers.passwordController.text = savedPassword;
+
+         
+         
+        }
+      }
+    },
+    child: Directionality(
       textDirection: localization?.locale.languageCode == 'ar'
           ? TextDirection.rtl
           : TextDirection.ltr,
       child: CustomTextFormField(
+        focusNode: _emailFocusNode,
         controller: textControllers.emailController,
         margin: EdgeInsets.only(
           left: 7.h,
@@ -210,16 +304,37 @@ class _LoginScreenState extends State<LoginScreen> {
           top: 11.v,
           bottom: 11.v,
         ),
+       
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
+
+
+
 
   Widget _buildPasswordInputField(AppLocalizationController? localization) {
-    return Directionality(
+  return GestureDetector(
+    onTap: () async {
+      FocusScope.of(context).requestFocus(_passwordFocusNode);
+
+      if (isCameraEnabled) {
+        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+
+        if (savedPassword.isNotEmpty) {
+          textControllers.passwordController.text = savedPassword;
+        }
+      }
+    },
+    child: Directionality(
       textDirection: localization?.locale.languageCode == 'ar'
           ? TextDirection.rtl
           : TextDirection.ltr,
       child: CustomTextFormField(
+        focusNode: _passwordFocusNode,
         controller: textControllers.passwordController,
         margin: EdgeInsets.only(
           left: 7.h,
@@ -252,9 +367,13 @@ class _LoginScreenState extends State<LoginScreen> {
         suffixConstraints: BoxConstraints(
           maxHeight: 45.v,
         ),
+        
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   Widget _buildResetPasswordAndCameraButtons(
       BuildContext context, AppLocalizationController? localization) {

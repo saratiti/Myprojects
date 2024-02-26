@@ -6,30 +6,38 @@ const jwtConfig = require('../config/jwt');
 const bcryptUtil = require('../utils/ bcrypt');
 const jwtUtil = require('../utils/jwt.util');
 
+
 exports.login = (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   User.findOne({
     where: {
-      username: username,
-      password: password,
+      email: email,
     },
   })
     .then((user) => {
-      console.log('User:', user);
       if (user) {
-        const payload = {
-          user_id: user.user_id,
-          username: user.username,
-          email: user.email,
-          full_name: user.full_name,
-          phone: user.phone,
-          user_type: user.user_type,
-          company_id: user.company_id,
-        };
+        bcrypt.compare(password, user.password, (err, result) => {
+          if (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal Server Error' });
+          } else if (result) {
+            const payload = {
+              user_id: user.user_id,
+              username: user.username,
+              email: user.email,
+              full_name: user.full_name,
+              phone: user.phone,
+              user_type: user.user_type,
+              company_id: user.company_id,
+            };
 
-        const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-        res.status(200).json({ accessToken });
+            const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
+            res.status(200).json({ accessToken, company_id: user.company_id });
+          } else {
+            res.status(401).json({ message: 'Invalid credentials' });
+          }
+        });
       } else {
         res.status(401).json({ message: 'Invalid credentials' });
       }
@@ -39,8 +47,6 @@ exports.login = (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     });
 };
-
-
 
 
 exports.register = async (req, res) => {

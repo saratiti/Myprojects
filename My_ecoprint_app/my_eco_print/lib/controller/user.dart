@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_eco_print/data/module/user.dart';
 import 'package:my_eco_print/view/screen/auth/login_screen.dart';
+
 import 'api_helper.dart';
 import 'package:path/path.dart';
 
@@ -19,34 +20,31 @@ class UserController{
     dio = Dio();
   }
 
-Future<bool> changePassword(
-    String email,
-    String currentPassword,
-    String newPassword,
-  ) async {
-    try {
-      var result = await ApiHelper().post("/api/users/changedPassword", {
-        "email": email,
-        "currentPassword": currentPassword,
-        "newPassword": newPassword,
-      });
+Future<bool> changePassword(String email, String newPassword, String confirmPassword) async {
+  try {
+    var result = await ApiHelper().post("/api/users/changedPassword", {
+      "email": email,
+      "confirmPassword": confirmPassword,
+      "newPassword": newPassword,
+    });
 
-      if (result != null && result['success']) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      print('Error changing password: $e');
+    if (result != null && result['message'] == 'Password updated successfully') {
+      return true;
+    } else {
       return false;
     }
+  } catch (e) {
+    print('Error changing password: $e');
+    return false;
   }
+}
+
 
   Future<User> update({
   required String email,
   required String password,
   required String username,
-  required String image,
+ 
   required String fullName,
   required String profilePicture,
   required String phone
@@ -56,10 +54,10 @@ Future<bool> changePassword(
       "email": email,
       "password": password,
       "username": username,
-      "image": image,
+      
       "full_name":fullName,
-      "profilePicture":profilePicture,
-       "phone":profilePicture,
+      "profile_picture":profilePicture,
+       "phone":phone,
     });
     return User.fromJson(result);
   } catch (e) {
@@ -163,43 +161,59 @@ static Future<void> logout(BuildContext context) async {
     rethrow;
   }
 }
-Future<void> sendPinForEmailVerification(String email) async {
-    try {
-      // Use ApiHelper for making the HTTP request
-      var result = await ApiHelper().postRequest("/api/users/sendPinForEmail", {
-        "email": email,
-      });
+Future<Map<String, dynamic>> sendPinForEmailVerification(String email) async {
+  try {
+    
+    var result = await ApiHelper().postRequest("/api/users/sendPinForEmail", {
+      "email": email,
+    });
 
-      if (result != null && result['success'] && result['hashedCode'] != null) {
-        String hashedCode = result['hashedCode'];
-        print('Received Hashed Code: $hashedCode');
+    
+    if (result != null) {
+ 
+      print('Raw Response: $result');
 
+     
+      if (result is Map<String, dynamic> && result['success'] != null) {
+        bool success = result['success'];
+
+        if (success) {
+          
+          bool emailExists = result['exists'] ?? false; 
+
+          if (emailExists) {
+           
+            String hashedCode = result['hashedCode'] ?? ''; 
+            print('Received Hashed Code: $hashedCode');
+            print('Email exists');
+          } else {
+           
+            print('Email not found.');
+          }
+        } else {
+          print('Failed to receive hashed code from the backend');
+        }
       } else {
-        print('Failed to receive hashed code from the backend');
+        print('Invalid response from the backend');
       }
-    } catch (error) {
-      print('Error: $error');
+    } else {
+      print('Response is null'); 
     }
+
+
+    return result ?? {}; 
+    
+  } catch (error) {
+   
+    print('Error: $error');
+   
+  
+    return {};
   }
+}
 
 
-  // Future<bool> exitEmail(String email) async {
-  //   try {
-  //     var result = await ApiHelper().postRequest("/api/users/emailExists", {
-  //       "email": email,
-  //     });
 
-  //     if (result != null && result['exists'] != null) {
-  //       return result['exists'];
-  //     } else {
-
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     return false;
-  //   }
-  // }
 
 
 Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinController) async {
@@ -214,7 +228,6 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
     // Print the entire response for debugging
     print('Dio Response: $response');
 
-    // Handle the result as needed
     if (response != null) {
       try {
         var result = response;
@@ -224,21 +237,25 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
             // Extract the hashed PIN from the response
             String? hashedPin = result['hashedPin'];
 
-            // Check if hashedPin is not null before using it
             if (hashedPin != null) {
               // Print the received hashed PIN
               print('Received Hashed PIN from backend: $hashedPin');
-
-              // Now you can use the hashedPin as needed
-              // For example, you might want to save it locally or use it for further operations
-
               print('PIN code is correct');
+
+             
               return true;
             } else {
               print('Unexpected response format: Missing hashedPin field');
             }
           } else {
-            print('Incorrect PIN code');
+            
+            if (response.statusCode == 401) {
+              
+              print(result.containsKey('message') ? result['message'] : 'Your request is unauthorized. Please check your PIN and try again.');
+            } else {
+             
+              print(result.containsKey('message') ? result['message'] : 'Incorrect PIN code');
+            }
           }
         } else {
           print('Unexpected response format: Response does not contain success field');
@@ -256,6 +273,8 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
     return false;
   }
 }
+
+
 
 
  

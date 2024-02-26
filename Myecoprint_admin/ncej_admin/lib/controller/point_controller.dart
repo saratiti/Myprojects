@@ -129,7 +129,7 @@ Future<int> getTotalPointsByUserId() async {
   }
 }
 
-Future<dynamic> redeemPoints({
+Future<Map<String, dynamic>> redeemPoints({
   required int storeId,
   required int offerId,
   required int pointsRedeemed,
@@ -142,7 +142,7 @@ Future<dynamic> redeemPoints({
         'storeId': storeId.toString(),
         'offerId': offerId.toString(),
         'pointsRedeemed': pointsRedeemed.toString(),
-        'scannedBarcode':scannedData.toString(),
+        'scannedBarcode': scannedData.toString(),
       },
     );
 
@@ -150,24 +150,19 @@ Future<dynamic> redeemPoints({
       'storeId': storeId.toString(),
       'offerId': offerId.toString(),
       'pointsRedeemed': pointsRedeemed.toString(),
-      'scannedBarcode':scannedData.toString(),
-
+      'scannedBarcode': scannedData.toString(),
     }}");
 
-    
-    if (result != null && result['success'] != null) {
-      bool success = result['success']; 
-      if (success) {
-       
-        Transaction localTransaction = Transaction(
-          storeId: storeId,
-          offerId: offerId,
-          points: pointsRedeemed,
-          transactionType: 'redemption',
-          transactionDate: DateTime.now(),
-        );
-      }
-    }
+   if (result != null && result['message'] != null) {
+  String message = result['message']; 
+  int redeemedPoints = int.tryParse(result['redeemedPoints'] ?? '0') ?? 0; // Ensure redeemedPoints is an integer
+  print("Redeemed Points: $redeemedPoints");
+  return {
+    'success': true,
+    'message': message,
+    'redeemedPoints': redeemedPoints,
+  };
+}
 
     return result;
   } catch (e) {
@@ -175,7 +170,6 @@ Future<dynamic> redeemPoints({
     rethrow;
   }
 }
-
 
 
 

@@ -108,24 +108,37 @@ Future<List<Point>> getAllPointsWithOffers() async {
   }
 Future<int> getTotalPointsByUserId() async {
   try {
+   
     var result = await ApiHelper().getRequest("/api/points/total");
+
+   
     if (result.containsKey('totalPoints')) {
-      var totalPoints = result['totalPoints']['total_points'];
+  
+      var totalPoints = result['totalPoints'];
+
+  
       if (totalPoints != null) {
-        return totalPoints;
+       
+        return totalPoints['total_points'] ?? 0;
       } else {
-        print("Error: Unable to parse 'totalPoints' as int");
+      
+        print("Error: 'totalPoints' value is null");
         return 0; 
       }
     } else {
+      // If 'totalPoints' key is missing in the API response, log an error and return 0
       print("Error: 'totalPoints' key is missing in the API response");
       return 0; 
     }
   } catch (e) {
+  
     print("Error getting total points: $e");
+   
     rethrow;
   }
 }
+
+
 Future<int> getTotalPointsRedeemedByUserId() async {
   try {
     var result = await ApiHelper().getRequest("/api/redeem_points/totalRedeemed");
@@ -133,7 +146,7 @@ Future<int> getTotalPointsRedeemedByUserId() async {
     if (result is int) {
       return result;
     } else if (result is Map<String, dynamic> && result.containsKey('totalRedeemedPoints')) {
-      // If the result is a map and has a 'totalRedeemedPoints' key, attempt to extract the value
+     
       var totalRedeemedPoints = result['totalRedeemedPoints'];
 
       if (totalRedeemedPoints is int) {
@@ -150,6 +163,9 @@ Future<int> getTotalPointsRedeemedByUserId() async {
     print("Error getting totalRedeemedPoints: $e");
     rethrow;
   }
+
+
+  
 }
 
 
@@ -219,7 +235,6 @@ Future<int> collectDailyPoints() async {
     rethrow;
   }
 }
-
 
 
 

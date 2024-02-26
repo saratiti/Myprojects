@@ -28,3 +28,4 @@ export 'package:ncej_admin/view/widgets/custom_bottom_app_bar.dart';
 export 'package:ncej_admin/view/screen/copon/copon_screen.dart';
 
 export 'package:ncej_admin/view/widgets/custom_pin_code_text_field.dart';
+export 'package:ncej_admin/view/widgets/app_bar/appbar.dart';

@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:my_eco_print/controller/barcodes_controller.dart';
 import 'package:my_eco_print/controller/point_controller.dart';
+import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
+import 'package:my_eco_print/view/screen/%20points/collecting_points/widgets/cleander_widget.dart';
+import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
+import 'package:provider/provider.dart';
 
 
 class CollectingPointScreen extends StatefulWidget {
@@ -63,6 +67,9 @@ class _CollectingPointScreenState extends State<CollectingPointScreen> {
 
     if (response != null && response['collectedPoints'] != null) {
       int pointsCollected = response['collectedPoints'];
+
+      Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(pointsCollected);
+
       return pointsCollected;
     } else {
       return 0;
@@ -87,7 +94,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
    child: SafeArea(
       child: Scaffold(
         
-        appBar:buildAppBar(context),
+        appBar:buildAppBar(context,"lbl21"),
         body:
         SizedBox(
           width: mediaQueryData.size.width,
@@ -97,7 +104,11 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
               child: Column(
                 children: [
                    const SizedBox(height: 35,),
-                  const RewardsList(),
+                  CalendarWidget(),
+
+
+
+                  //const RewardsList(), 
                DividerWidget(text: "lbl34".tr,),
                const SizedBox(height: 50), 
                  const SomeStackedWidgets(),
@@ -130,54 +141,55 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
 
 
 
-class RewardsList extends StatelessWidget {
-  const RewardsList({super.key});
+// class RewardsList extends StatelessWidget {
+//   const RewardsList({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        int dailyPoints = await _collectDailyPoints();
-         if (kDebugMode) {
-           print("Daily Points: $dailyPoints");
-         }
-          _showPopDialog(context,dailyPoints);
-        
-      }, 
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//  onTap: () async {
+//   List<String> collectedDates = _collectedDates.entries.where((entry) => entry.value).map((entry) => entry.key).toList();
+//   int dailyPoints = await _collectDailyPoints(collectedDates);
+//   if (kDebugMode) {
+//     print("Daily Points: $dailyPoints");
+//   }
+//   _showPopDialog(context, dailyPoints);
+// }
+
       
-      child:
+//       child:
       
-       RawChip(
-        padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
-        showCheckmark: false,
-        labelPadding: EdgeInsets.zero,
-        label: Text(
-          "msg72".tr,
-          style: TextStyle(
-            color: appTheme.whiteA700,
-            fontSize: 16.fSize,
-            fontFamily: 'Bahij TheSansArabic',
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        deleteIcon: CustomImageView(
-          svgPath: ImageConstant.imgFile,
-          height: 40.h,
-          width: 40.h,
-          margin: EdgeInsets.only(left: 5.h),
-          color: Colors.white,
-        ),
-        onDeleted: () {},
-        selected: false,
-        backgroundColor: appTheme.lightGreen500,
-        selectedColor: appTheme.lightGreen500,
-        shape: RoundedRectangleBorder(
-          side: BorderSide.none,
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-    );
-  }
+//        RawChip(
+//         padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
+//         showCheckmark: false,
+//         labelPadding: EdgeInsets.zero,
+//         label: Text(
+//           "msg72".tr,
+//           style: TextStyle(
+//             color: appTheme.whiteA700,
+//             fontSize: 16.fSize,
+//             fontFamily: 'Bahij TheSansArabic',
+//             fontWeight: FontWeight.w500,
+//           ),
+//         ),
+//         deleteIcon: CustomImageView(
+//           svgPath: ImageConstant.imgFile,
+//           height: 40.h,
+//           width: 40.h,
+//           margin: EdgeInsets.only(left: 5.h),
+//           color: Colors.white,
+//         ),
+//         onDeleted: () {},
+//         selected: false,
+//         backgroundColor: appTheme.lightGreen500,
+//         selectedColor: appTheme.lightGreen500,
+//         shape: RoundedRectangleBorder(
+//           side: BorderSide.none,
+//           borderRadius: BorderRadius.circular(20),
+//         ),
+//       ),
+//     );
+//   }
 Future<int> _collectDailyPoints() async {
   try {
     PointController pointController = PointController();
@@ -190,6 +202,7 @@ Future<int> _collectDailyPoints() async {
     return 0;
   }
 }
+
 
 void _showPopDialog(BuildContext context, int dailyPoints) {
   String messageText = dailyPoints > 0
@@ -261,7 +274,7 @@ void _showPopDialog(BuildContext context, int dailyPoints) {
     },
   );
 }
-}
+
  void onTapImgCloseone(BuildContext context) {
     Navigator.pop(context);
   }
@@ -312,14 +325,14 @@ class DividerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
 final localization = AppLocalizationController.to;
 final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
+ final isRtl = localization.locale.languageCode == 'ar';
   return Directionality(
     textDirection: textDirection,child: 
-        Align(
-                              alignment: Alignment.centerRight,
+        Align(alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+                         
                               child: Padding(
                                   padding:
-                                      EdgeInsets.only(top: 50.v, right: 30.h),
+                                      EdgeInsets.only(top: 40.v, left: 30.h,right: 20.h),
                                   child: Text("lbl34".tr,
                                       style: CustomTextStyles
                                           .titleSmallBahijTheSansArabic15))),
@@ -446,33 +459,4 @@ class SomeOtherWidgets extends StatelessWidget {
       ),
     );
   }
-}
-CustomAppBar buildAppBar(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
-
-  return 
-
-  
-  
- CustomAppBar(
-
-    height: 50.v,
-    leadingWidth: 52.h,
-    leading: CustomImageView(
-              svgPath: (textDirection == TextDirection.rtl)
-                  ? ImageConstant.imgArrowright
-                  : ImageConstant.imgArrowleftOnprimary,
-              height: 24.0,
-              width: 24.0,
-              margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-              onTap: () => onTapArrowleft(context),
-            ),
-    centerTitle: true,
-    title: AppbarTitle(text:"lbl21".tr),
-  );
-}
-
-void onTapArrowleft(BuildContext context) {
-  Navigator.pop(context);
 }

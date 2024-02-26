@@ -3,7 +3,7 @@ class User {
   String username;
   String email;
   String fullName;
-  String? password;
+  String?password;
   late String image;
   String phone;
 
@@ -14,6 +14,7 @@ class User {
     required this.image,
     required this.fullName,
     required this.phone,
+    this.password,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -22,9 +23,11 @@ class User {
       id: json['user_id'] as int? ??0,
       username: json['username']?? '',
        email: json['email']?? '', 
-       image: '',
+       image: json['profile_picture']?? '',
        fullName: json['full_name']?? '',
+       password: json['password']?? '',
         phone:json["phone"]?? '',);
+        
   }
 
 Map<String, dynamic> toJson() {

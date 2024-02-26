@@ -95,6 +95,77 @@ class BarcodeController {
       rethrow;
     }
   }
+Future<List<Map<String, dynamic>>> getBarcodeByStoreAndOfferId(int storeId, int offerId) async {
+  try {
+    dynamic jsonObject = await ApiHelper().getRequest("/api/barcodes/$storeId/$offerId");
+    if (jsonObject.containsKey("data") && jsonObject["data"].containsKey("barcode")) {
+      jsonObject = jsonObject["data"]["barcode"];
+
+      // Convert Barcodes object to map
+      List<Map<String, dynamic>> barcodes = [Barcodes.fromJson(jsonObject).toJson()];
+
+      return barcodes;
+    } else {
+      throw Exception("Barcode not found");
+    }
+  } catch (e) {
+    print(e);
+    throw e; 
+  }
+}
+Future<Map<String, dynamic>?> generateBarcodeAndQRCode() async {
+  try {
+   Uint8List? qrCodeImageBytes;
+  String barcodeValue = '';
+
+
+  int? offerId;
+  int? storeId;
+  int? userId;
+int ?barcodeId;
+    if (barcodeValue.isNotEmpty && qrCodeImageBytes != null) {
+    
+      return {
+        'barcodeValue': barcodeValue,
+        'qrCodeImageBytes': qrCodeImageBytes,
+      };
+    }
+
+
+    final response = await ApiHelper().postDioForImage(
+      '/api/barcodes/offerstoreBarcode',
+      {
+        'storeId': storeId.toString(),
+        'offerId': offerId.toString(),
+      },
+    );
+
+    if (response != null) {
+      if (response is List<int>) {
+      
+        return {
+          'barcodeValue': barcodeValue, 
+          'qrCodeImageBytes': Uint8List.fromList(response),
+        };
+      } else {
+
+        print('Error: Invalid response format');
+        return null;
+      }
+    } else {
+
+      print('Error: No response received');
+      return null;
+    }
+  } catch (e) {
+  
+    print('Error generating or retrieving barcode: $e');
+    return null;
+  }
+}
+
+
+
 Future<Map<String, dynamic>?> collectPointsFromBarcode(String barcode) async {
     try {
       final response = await ApiHelper().postRequest(
@@ -110,4 +181,39 @@ Future<Map<String, dynamic>?> collectPointsFromBarcode(String barcode) async {
       return null;
     }
   }
+
+
+Future<bool> getBarcodeIsRead(int barcodeId) async {
+  try {
+    final jsonResponse = await ApiHelper().getRequest("/api/barcodes/$barcodeId");
+
+    
+    if (jsonResponse.containsKey('isRead')) {
+     
+      return jsonResponse['isRead'];
+    } else {
+     
+      throw Exception('Barcode status not found in the response');
+    }
+  } catch (e) {
+    
+    print('Error getting barcode status: $e');
+    throw e;
+  }
+}
+
+void checkBarcodeStatus(int barcodeId) async {
+  try {
+    bool isRead = await getBarcodeIsRead(barcodeId);
+    if (isRead) {
+      print('Barcode with ID $barcodeId is read');
+    } else {
+      print('Barcode with ID $barcodeId is not read');
+    }
+  } catch (e) {
+    print('Error occurred while checking barcode status: $e');
+  }
+}
+
+
 }

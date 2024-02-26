@@ -55,7 +55,24 @@ Future<List<Transaction>> getAllTransactions() async {
     rethrow;
   }
 }
+ Future<List<Transaction>> getWeeklyTransactions() async {
+    try {
+      final result = await ApiHelper().getRequest("/api/transactions/transactionWeekly");
 
+      if (result != null && result is List<dynamic>) {
+        List<Transaction> transactions = result.map((transactionJson) {
+          return Transaction.fromJson(transactionJson);
+        }).toList();
+        return transactions;
+      } else {
+        print('Invalid response format');
+        return [];
+      }
+    } catch (error) {
+      print('Error: $error');
+      throw error;
+    }
+  }
 
 
 }

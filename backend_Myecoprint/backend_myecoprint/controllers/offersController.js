@@ -23,7 +23,7 @@ exports.createOffer = async (req, res) => {
       `offer_start_date: ${offer.offer_start_date}\n` +
       `offer_end_date: ${offer.offer_end_date}\n` +
       `offer_discount: ${offer.offer_discount}\n` +
-      `branch_id: ${offer.branch_id}\n` +
+      `store_id: ${offer.store_id}\n` +
       `company_id: ${offer.company_id}\n`;
 
     const qrCodeDirectory = 'public/qrcodes';
@@ -206,18 +206,15 @@ exports.getStoresByOffer = async (req, res) => {
   try {
     const companies = await Offer.findAll({
       where: { company_id: companyId },
-        include: [
-          { model: Company, as: 'companies' },
-          
-        ]
-      });
-      res.json(companies);
-      return companies;
-    } catch (error) {
-      console.error('Error getting companies by offers:', error);
-      throw error;
-    }
-  };
- 
-
-  
+      include: [
+        { model: Company, as: 'companies' },
+      ],
+      order: [['createdAt', 'DESC']] 
+    });
+    res.json(companies);
+    return companies;
+  } catch (error) {
+    console.error('Error getting companies by offers:', error);
+    throw error;
+  }
+};

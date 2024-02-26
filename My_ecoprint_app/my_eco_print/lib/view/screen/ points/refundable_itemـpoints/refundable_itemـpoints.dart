@@ -3,6 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/view/screen/%20points/refundable_item%D9%80points/widgets/discountcoupon1_item_widget.dart';
+import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
+
+import '../collecting_points/collecting_points.dart';
 
 class RefundableItemPointScreen extends StatelessWidget {
   const RefundableItemPointScreen({Key? key}) : super(key: key);
@@ -19,21 +22,10 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
       textDirection: textDirection,
       child: SafeArea(
       child: Scaffold(
-        appBar: CustomAppBar(
-          height: 117.v,
-          leadingWidth: 66.h,
-          leading: AppbarImage1(
-            svgPath: ImageConstant.imgArrowleftOnprimary,
-            margin: EdgeInsets.only(left: 42.h, top: 4.v, bottom: 4.v),
-            onTap: () {
-              onTapArrowleft(context);
-            },
-          ),
-          title: AppbarTitle(
-            text: "msg47".tr,
-            margin: EdgeInsets.only(left: 25.h),
-          ),
-        ),
+        appBar:buildAppBar(context,"msg47"),
+        
+        
+        
         body: SingleChildScrollView(
           child: Column(
             children: [

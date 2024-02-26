@@ -2,6 +2,9 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
+
+
+
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/text_controller.dart';
 import 'package:my_eco_print/controller/user.dart';
@@ -18,7 +21,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isCheckmarkVisible = false;
-  bool isVisiblePassword = false;
+  bool isVisiblePassword1 = false;
   bool isVisiblePassword2 = false;
   final textControllers = TextControllers();
 
@@ -30,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void toggleIconEye() {
     setState(() {
-      isVisiblePassword = !isVisiblePassword;
+      isVisiblePassword1 = !isVisiblePassword1;
     });
   }
 
@@ -89,34 +92,38 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                   buildTextFormField(
                     controller: textControllers.personalnameController,
                     hintText: "msg7".tr,
-                    suffix: buildUserIcon(),
+                    suffix: buildUserIcon(), onTap: () {  },
                   ),
                   buildTextFormField(
                     controller: textControllers.emailaddressController,
                     hintText: "msg3".tr,
-                    suffix: buildCheckmarkIcon(),
+                    suffix: buildCheckmarkIcon(), onTap: () {  },
                   ),
                   buildTextFormField(
                     controller: textControllers.phonenumberoneController,
                     hintText: "lbl6".tr,
-                    suffix: buildCallIcon(),
+                    suffix: buildCallIcon(), onTap: () {  },
                   ),
-                  buildTextFormField(
-                    controller: textControllers.passwordplacehoController,
-                    hintText: "lbl2".tr,
-                    textInputAction: TextInputAction.done,
-                    textInputType: TextInputType.visiblePassword,
-                    prefix: buildVisibilityIcon(toggleIconEye, isVisiblePassword),
-                    suffix: buildLockIcon(),
-                  ),
-                  buildTextFormField(
-                    controller: textControllers.confirmpasswordController,
-                    hintText: "lbl2".tr,
-                    textInputAction: TextInputAction.done,
-                    textInputType: TextInputType.visiblePassword,
-                    prefix: buildVisibilityIcon(toggleIVisibleEye, isVisiblePassword2),
-                    suffix: buildLockIcon(),
-                  ),
+                 buildTextFormField(
+          controller: textControllers.passwordplacehoController,
+          hintText: "lbl2".tr,
+          textInputAction: TextInputAction.done,
+          textInputType: TextInputType.visiblePassword,
+          prefix: buildVisibilityIcon(toggleIconEye, isVisiblePassword1), // Pass toggleIconEye and isVisiblePassword1
+          suffix: buildLockIcon(),
+          isVisiblePassword: isVisiblePassword1, // Pass isVisiblePassword1
+          onTap: toggleIconEye, // Pass toggleIconEye
+        ),
+                 buildTextFormField(
+          controller: textControllers.confirmpasswordController,
+          hintText: "lbl2".tr,
+          textInputAction: TextInputAction.done,
+          textInputType: TextInputType.visiblePassword,
+          prefix: buildVisibilityIcon(toggleIVisibleEye, isVisiblePassword2), // Pass toggleIVisibleEye and isVisiblePassword2
+          suffix: buildLockIcon(),
+          isVisiblePassword: isVisiblePassword2, // Pass isVisiblePassword2
+          onTap: toggleIVisibleEye, // Pass toggleIVisibleEye
+        ),
                   buildTermsAndConditionsRow(),
                   buildElevatedButton(context),
                   buildLoginPrompt(),
@@ -137,35 +144,43 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
-  Widget buildTextFormField({
-    required TextEditingController controller,
-    required String hintText,
-    Widget? prefix,
-    Widget? suffix,  TextInputAction ?textInputAction, TextInputType? textInputType,
-  }) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: Padding(
-            padding: EdgeInsets.only(top: 22.v, right: 28.h),
-            child: Text(
-              hintText,
-              style: CustomTextStyles.titleSmallBahijTheSansArabicPrimary,
-            ),
+ Widget buildTextFormField({
+  required TextEditingController controller,
+  required String hintText,
+  Widget? prefix,
+  Widget? suffix,
+  TextInputAction? textInputAction,
+  TextInputType? textInputType,
+  bool isVisiblePassword = false, // Add a parameter to control visibility
+  required VoidCallback onTap, // Add a callback to toggle visibility
+}) {
+  return Column(
+    children: [
+      Align(
+        alignment: Alignment.centerRight,
+        child: Padding(
+          padding: EdgeInsets.only(top: 22.v, right: 28.h),
+          child: Text(
+            hintText,
+            style: CustomTextStyles.titleSmallBahijTheSansArabicPrimary,
           ),
         ),
-        CustomTextFormField(
-          controller: controller,
-          margin: EdgeInsets.only(left: 7.h, top: 3.v, right: 8.h),
-          hintText: hintText,
-          prefix: prefix,
-          suffix: suffix,
-          contentPadding: EdgeInsets.only(left: 30.h, top: 11.v, bottom: 11.v),
-        ),
-      ],
-    );
-  }
+      ),
+      CustomTextFormField(
+        controller: controller,
+        margin: EdgeInsets.only(left: 7.h, top: 3.v, right: 8.h),
+        hintText: hintText,
+        prefix: prefix,
+        suffix: suffix,
+        contentPadding: EdgeInsets.only(left: 30.h, top: 11.v, bottom: 11.v),
+        obscureText: textInputType == TextInputType.visiblePassword ? !isVisiblePassword : false,
+        // Update the obscureText property based on the visibility state
+      // Pass the onTap callback to handle visibility toggle
+      ),
+    ],
+  );
+}
+
 
   Widget buildUserIcon() {
     return Container(
@@ -307,34 +322,35 @@ Widget buildElevatedButton(BuildContext context) {
     text: "lbl11".tr,
     margin: EdgeInsets.only(left: 26.h, top: 56.v, right: 27.h),
     onTap: () async {
-      // Assuming `UserController` is accessible in this scope.
-      UserController userController = UserController();
-
      
+      UserController userController = UserController();
+      String password = textControllers.passwordplacehoController.text;
       User user = User(
         username: textControllers.personalnameController.text,
         email: textControllers.emailaddressController.text,
         image: '', 
         fullName: textControllers.personalnameController.text,
         phone: textControllers.phonenumberoneController.text,
+        password: textControllers.passwordplacehoController.text,
       );
 
       try {
+       
         var result = await userController.create(user);
 
       
         if (result != null) {
-        
           Navigator.pushReplacementNamed(context, '/login_screen');
         }
 
       } catch (e) {
-        // Handle errors if necessary
+       
         print("Error creating user: $e");
       }
     },
   );
 }
+
   Widget buildLoginPrompt() {
     return Column(
       children: [

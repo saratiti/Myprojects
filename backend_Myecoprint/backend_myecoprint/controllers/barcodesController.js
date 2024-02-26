@@ -4,11 +4,12 @@ const Branche = require('../models/branche');
 const Offer = require('../models/offer');
 const Store = require('../models/store');
 const User = require('../models/user');
+const jimp = require('jimp');
 const Point=require('../models/point');
 const qrcode = require('qrcode');
-const { v4: uuidv4 } = require('uuid');
-const { Op } = require('sequelize');
-const { promisify } = require('util');
+
+const path = require('path');
+
 const fs = require('fs');
 exports.createBarcode = async (req, res) => {
   try {
@@ -195,7 +196,7 @@ exports.generateBarcode = async (req, res) => {
       return res.status(404).json({ message: 'Store not found' });
     }
 
-    const barcodeValue = '#' + generateRandomString(11); // Start with #
+    const barcodeValue = '#' + generateRandomString(11); 
 
     const barcodeData = {
       store_id,
@@ -316,8 +317,41 @@ async function getBarcodeInformation(scannedBarcode, offerId, storeId) {
 exports.generateBarcodeOfferStore = async (req, res) => {
   try {
     const { storeId, offerId } = req.body;
+    const user = req.user;
     const userId = req.user.user_id;
+    if (!storeId || !offerId) {
+      return res.status(400).json({ message: 'Store ID and offer ID are required' });
+    }
 
+   
+    const existingBarcode = await Barcode.findOne({
+      where: {
+        store_id: storeId,
+        offer_id: offerId,
+        user_id: user.user_id,
+      },
+    });
+
+    if (existingBarcode && existingBarcode.image_path) {
+    
+      console.log('Barcode already exists for the user and offer');
+      const imagePath = existingBarcode.image_path;
+      const imageStream = fs.createReadStream(imagePath);
+      return imageStream.pipe(res);
+    }
+
+   
+    const barcodeImagePath = path.join(__dirname, '../barcode_images', `${storeId}_${offerId}_${user.user_id}.png`);
+
+    if (fs.existsSync(barcodeImagePath)) {
+     
+      console.log('Barcode image already exists');
+      const imageStream = fs.createReadStream(barcodeImagePath);
+      imageStream.pipe(res);
+      return;
+    }
+
+   
     const offer = await Offer.findByPk(offerId);
 
     if (!offer) {
@@ -325,13 +359,53 @@ exports.generateBarcodeOfferStore = async (req, res) => {
       return res.status(404).json({ message: 'Offer not found' });
     }
 
+    
+    const store = await Store.findByPk(storeId);
+
+    if (!store) {
+      console.error('Store not found for the given store_id:', storeId);
+      return res.status(404).json({ message: 'Store not found' });
+    }
+
     const currentNumberPoint = offer.number_point;
     const randomString = generateRandomString(12);
 
-
-    
     const barcodeValue = `#${randomString}#${storeId}#${offerId}#${currentNumberPoint}#${userId}`;
 
+  
+    const qrCodeBuffer = await qrcode.toBuffer(barcodeValue);
+
+    if (!qrCodeBuffer) {
+      console.error('Failed to generate QR code buffer');
+      return res.status(500).json({ message: 'Failed to generate QR code buffer' });
+    }
+
+  
+    const imageDirectory = path.join(__dirname, '../barcode_images');
+    fs.mkdirSync(imageDirectory, { recursive: true });
+
+    // Write QR code buffer to file system
+    fs.writeFileSync(barcodeImagePath, qrCodeBuffer);
+
+    // Load the barcode image using jimp
+    const barcodeImage = await jimp.read(barcodeImagePath);
+
+    // Modify the barcode image: Set black color to light green
+    barcodeImage.scan(0, 0, barcodeImage.bitmap.width, barcodeImage.bitmap.height, (x, y, idx) => {
+      const red = barcodeImage.bitmap.data[idx];
+      const green = barcodeImage.bitmap.data[idx + 1];
+      const blue = barcodeImage.bitmap.data[idx + 2];
+
+      // Check if the pixel is black, and change it to light green
+      if (red === 0 && green === 0 && blue === 0) {
+        barcodeImage.setPixelColor(jimp.cssColorToHex('#99CA3C'), x, y); // Light green for black
+      }
+    });
+
+    // Save the modified barcode image
+    await barcodeImage.writeAsync(barcodeImagePath);
+
+  
     const newBarcode = await Barcode.create({
       store_id: storeId,
       offer_id: offerId,
@@ -339,26 +413,62 @@ exports.generateBarcodeOfferStore = async (req, res) => {
       barcode_status: 'active',
       barcode_date: new Date(),
       number_point: currentNumberPoint,
-      user_id: userId,
+      user_id: user.user_id,
+      image_path: barcodeImagePath,
     });
 
+  
+    const imageStream = fs.createReadStream(barcodeImagePath);
+    imageStream.pipe(res);
 
-    res.writeHead(200, {
-      'Content-Type': 'image/png',
-      'Content-Disposition': `inline; filename="${barcodeValue}.png"`,
-    });
-
-    
-    
-    const qrCodeBuffer = await qrcode.toBuffer(barcodeValue);
-
-
-    
-    res.end(qrCodeBuffer);
-
-    console.log('Barcode and QR code generated successfully');
+    console.log('New barcode and QR code generated successfully');
   } catch (error) {
     console.error('Error generating barcode and QR code:', error);
     res.status(500).json({ message: 'Error generating barcode and QR code' });
   }
 };
+
+exports.getBarcodeByStoreAndOfferId = async (req, res) => {
+  const storeId = req.params.storeId;
+  const offerId = req.params.offerId;
+  const user = req.user;
+  try {
+    const barcode = await Barcode.findOne({
+      where: {
+        offer_id: offerId,
+        store_id: storeId,
+        user_id: user.user_id,
+      },
+      include: [
+        { model: Store, as: 'stores' },
+        { model: Offer, as: 'offers' }
+      ]
+    });
+
+    if (!barcode) {
+      console.log('Barcode not found');
+      return res.status(404).json({ error: 'Barcode not found' });
+    }
+
+    const store = barcode.stores && barcode.stores.length > 0 ? barcode.stores[0].toJSON() : null;
+    const offer = barcode.offers && barcode.offers.length > 0 ? barcode.offers[0].toJSON() : null;
+    
+    const barcodeStatus = barcode.barcode_status;
+
+    const formattedData = {
+      barcode: barcode.toJSON(),
+      store: store,
+      offer: offer,
+      barcode_status: barcodeStatus
+    };
+
+    console.log('Barcode with associated store and offer for store ID', storeId, 'and offer ID', offerId, ':', formattedData);
+    return res.status(200).json({ data: formattedData });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+

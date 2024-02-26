@@ -1,13 +1,15 @@
+import 'dart:typed_data';
+
 class Barcodes {
   int? barcodeId;
   int? storeId;
   int? offerId;
-  String? barcodeValue;
+ final String? barcodeValue;
   String? barcodeStatus;
   //int? branchId;
   int? userId;
   DateTime? barcodeDate;
-
+final Uint8List? imageBytes;
   Barcodes({
     this.barcodeId,
     this.storeId,
@@ -17,6 +19,7 @@ class Barcodes {
    // this.branchId,
     this.userId,
     this.barcodeDate,
+    this.imageBytes,
   });
 
   factory Barcodes.fromJson(Map<String, dynamic> json) {

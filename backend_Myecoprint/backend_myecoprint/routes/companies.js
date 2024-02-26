@@ -7,6 +7,7 @@ router.get('/', companyController.getAllCompanies);
 router.get('/company/:id', companyController.getCompanyById);
 router.put('/company/:id', companyController.updateCompany);
 router.delete('/company/:id', companyController.deleteCompany);
+router.get('/:companyId', companyController.getCompanyImage);
 
 module.exports = router;
 

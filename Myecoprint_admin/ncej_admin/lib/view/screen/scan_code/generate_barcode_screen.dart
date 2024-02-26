@@ -5,8 +5,12 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ncej_admin/controller/api_helper.dart';
+import 'package:ncej_admin/controller/provider/company_provider.dart';
+import 'package:ncej_admin/controller/store_controller.dart';
+import 'package:ncej_admin/data/module/store.dart';
 import 'package:ncej_admin/view/screen/barcode/barcode_read.dart';
 import 'package:ncej_admin/view/screen/scan_code/scan_barcode_read_screen.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/app_export.dart';
 
@@ -19,17 +23,36 @@ class BarcodeGenerator extends StatefulWidget {
 }
 
 class _BarcodeGeneratorState extends State<BarcodeGenerator> {
-  String barcodeData = '';
+ String barcodeData = '';
   bool isBarcodeVisible = false;
   Image? qrCodeImage;
 
-  int enteredNumberOfPoints = 1; // Default value
-  int selectedStoreId = 1; // Default value
+  int enteredNumberOfPoints = 1;
+late int selectedCompanyId;
+  int selectedStoreId = 1;
 
-  // Dropdown items
-  List<int> storeIds = [1, 2, 3, 4, 5];
-  List<int> numberOfPointsOptions = [1, 2, 3, 4, 5];
+  List<int> storeIds = []; 
+ 
 
+  @override
+  void initState() {
+    super.initState();
+     selectedCompanyId = Provider.of<CompanyProvider>(context, listen: false).companyId;
+    fetchStoreIdsByCompanyId(selectedCompanyId); // Fetch storeIds initially
+  }
+
+Future<void> fetchStoreIdsByCompanyId(int companyId) async {
+  try {
+    List<Store> stores = await StoreController().getStoresByCompanyId(companyId);
+    setState(() {
+     
+      storeIds = stores.map((store) => store.id ?? 0).toList();
+      selectedStoreId = storeIds.isNotEmpty ? storeIds.first : 0; 
+    });
+  } catch (error) {
+    print("Error fetching storeIds: $error");
+  }
+}
 
   void showSuccessSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -73,7 +96,7 @@ class _BarcodeGeneratorState extends State<BarcodeGenerator> {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: buildAppBar(context),
+    appBar: buildAppBar(context,"lbl34"),
     body: 
       Center(
          child: SingleChildScrollView(
@@ -91,30 +114,30 @@ Widget build(BuildContext context) {
             ),
           const SizedBox(height: 20.0),
           
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Select Store:',
-                style: TextStyle(fontSize: 16.0),
+         Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Select Store:',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  const SizedBox(width: 20.0),
+                  DropdownButton<int>(
+                    value: selectedStoreId,
+                    onChanged: (int? newValue) {
+                      setState(() {
+                        selectedStoreId = newValue!;
+                      });
+                    },
+                    items: storeIds.map((int value) {
+                      return DropdownMenuItem<int>(
+                        value: value,
+                        child: Text(value.toString()),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-              const SizedBox(width: 20.0),
-              DropdownButton<int>(
-                value: selectedStoreId,
-                onChanged: (int? newValue) {
-                  setState(() {
-                    selectedStoreId = newValue!;
-                  });
-                },
-                items: storeIds.map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value.toString()),
-                  );
-                }).toList(),
-              ),
-            ],
-          ),
           const SizedBox(height: 10.0),
           
           Row(
@@ -268,29 +291,3 @@ class ScanElevatedButton extends StatelessWidget {
   }
 }
 
-CustomAppBar buildAppBar(BuildContext context) {
-  final localization = AppLocalizationController.to;
-  final textDirection = localization.locale.languageCode == 'ar'
-      ? TextDirection.rtl
-      : TextDirection.ltr;
-
-  return CustomAppBar(
-    height: 50.v,
-    leadingWidth: 52.h,
-    leading: CustomImageView(
-      svgPath: (textDirection == TextDirection.rtl)
-          ? ImageConstant.imgArrowright
-          : ImageConstant.imgArrowleftOnprimary,
-      height: 24.0,
-      width: 24.0,
-      margin: const EdgeInsets.only(top: 15.0, bottom: 10.0),
-      onTap: () => onTapArrowleft(context),
-    ),
-    centerTitle: true,
-    title: AppbarTitle(text: "Barcode".tr),
-  );
-}
-
-void onTapArrowleft(BuildContext context) {
-  Navigator.pop(context);
-}
