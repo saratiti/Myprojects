@@ -384,5 +384,5 @@ Widget buildUserDetails(BuildContext context) {
     ));
   }
   
-  getImageUrlFromDatabase() {}
+ 
 }

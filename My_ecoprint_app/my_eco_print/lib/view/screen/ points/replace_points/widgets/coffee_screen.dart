@@ -33,10 +33,10 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
 
   void _fetchOffers() {
     if (widget.selectedButton == "lbl45") {
-      // Fetch offers based on the selected button
-      _offersFuture = StoreController().getStoresWithOffers(0); // Pass the appropriate type ID or other necessary parameters
+     
+      _offersFuture = StoreController().getStoresWithOffers(0); 
     } else if (widget.typeId != null) {
-      // Fetch offers based on the selected type
+      
       _offersFuture = StoreController().getStoresWithOffers(widget.typeId!);
     }
   }
@@ -243,7 +243,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
           child: Container(
             width: 150,
             height: 150,
-            color: Colors.grey, // Placeholder color
+            color: Colors.grey,
             child: Center(
               child: Icon(
                 Icons.image_not_supported,

@@ -35,7 +35,7 @@ class AppRoutes {
   static const String popDialog = '/resturant_screen';
   static const String updateUser = '/edit_user';
   static const String readCode = '/scan_barcode_read_screen';
-    static const String storePage= '/store_page';
+  static const String storePage= '/store_page';
 
   
   // static Map<String, WidgetBuilder> routes = {

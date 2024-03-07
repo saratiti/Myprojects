@@ -396,13 +396,13 @@ exports.generateBarcodeOfferStore = async (req, res) => {
       const green = barcodeImage.bitmap.data[idx + 1];
       const blue = barcodeImage.bitmap.data[idx + 2];
 
-      // Check if the pixel is black, and change it to light green
+    
       if (red === 0 && green === 0 && blue === 0) {
         barcodeImage.setPixelColor(jimp.cssColorToHex('#99CA3C'), x, y); // Light green for black
       }
     });
 
-    // Save the modified barcode image
+   
     await barcodeImage.writeAsync(barcodeImagePath);
 
   

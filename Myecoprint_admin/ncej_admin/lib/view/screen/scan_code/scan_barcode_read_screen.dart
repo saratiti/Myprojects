@@ -315,9 +315,9 @@ Future<void> scanBarcode(BuildContext context) async {
     Navigator.of(context).pop();
   },
   style: ButtonStyle(
-    backgroundColor: MaterialStateProperty.all<Color>(Colors.grey), // Change the button color
-    foregroundColor: MaterialStateProperty.all<Color>(Colors.white), // Change the text color
-    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(15.0)), // Change the button padding
+    backgroundColor: MaterialStateProperty.all<Color>(Colors.grey), 
+    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+    padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.all(15.0)), 
     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20.0), 
@@ -493,11 +493,11 @@ Future<void> scanBarcode(BuildContext context) async {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: successMessage, // Success message
+                                text: successMessage, 
                                 style: theme.textTheme.titleMedium,
                               ),
                               TextSpan(
-                                text: " Points Redeemed: $redeemedPoints", // Redeemed points
+                                text: " Points Redeemed: $redeemedPoints", 
                                 style: CustomTextStyles.titleMediumLightgreen500,
                               ),
                             ],
@@ -712,7 +712,7 @@ Map<String, dynamic> parseBarcodeData(String barcodeValue) {
     },
   );
   
-  // Show a snackbar with the points redeemed message
+  
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text('Redeemed $pointsRedeemed points successfully!'),

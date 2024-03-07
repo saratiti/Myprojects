@@ -43,18 +43,18 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   Future<int> collectDaily() async {
     try {
-      // Retrieve the user
+   
       User user = await UserController().getUser();
 
-      // Check if the user is not null and has a valid ID
+  
       if (user != null && user.id!= null) {
-        // Collect daily points
+       
         var dailyPoints = await PointController().collectDailyPoints();
 
-        // Update total points for the user
+    
         Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(dailyPoints);
         
-        // Store collected dates using the user's ID
+
         _storeCollectedDates(user.id!);
 
         return dailyPoints;
