@@ -1,9 +1,32 @@
 class ImageConstant {
-  
+  // Image folder path
   static String imagePath = 'assets/images';
 
- 
-  static String imgVector = '$imagePath/img_vector.svg';
+  // iPhone 14 & 15 Pro Max - One One images
+  static String imgUploadIconPrimary = '$imagePath/img_upload_icon_primary.svg';
+
+  // iPhone 14 & 15 Pro Max - One Two images
+  static String imgGroup638 = '$imagePath/img_group_638.svg';
+
+  static String imgReceipt = '$imagePath/img_receipt.png';
+
+  static String imgUploadIcon = '$imagePath/img_upload_icon.svg';
+
+  // iPhone 14 & 15 Pro Max - One images
+  static String imgEllipse1279x314 = '$imagePath/img_ellipse_1_279x314.png';
+
+  static String imgPhGoogleLogoBold = '$imagePath/img_ph_google_logo_bold.svg';
+
+  static String imgIcSharpFacebook = '$imagePath/img_ic_sharp_facebook.svg';
+
+  static String imgIcBaselineApple = '$imagePath/img_ic_baseline_apple.svg';
+
+  // iPhone 14 & 15 Pro Max - One Four images
+  static String imgBronzeMedal = '$imagePath/img_bronze_medal.png';
+
+  static String imgGoldMedal = '$imagePath/img_gold_medal.png';
+
+  static String imgSilverMedal = '$imagePath/img_silver_medal.png';
 
   static String imgRectangle45 = '$imagePath/img_rectangle_45.png';
 
@@ -13,7 +36,7 @@ class ImageConstant {
 
   static String imgSignalAmber300 = '$imagePath/img_signal_amber_300.svg';
 
-
+  // iPhone 14 & 15 Pro Max - One One images
   static String imgRectangle24 = '$imagePath/img_rectangle_24.png';
 
   static String imgImg383x388 = '$imagePath/img_img_383x388.png';
@@ -33,7 +56,7 @@ class ImageConstant {
 
   static String imgPlus = '$imagePath/img_plus.svg';
 
- 
+  // iPhone 14 & 15 Pro Max - One Two images
   static String imgImg278x429 = '$imagePath/img_img_278x429.png';
 
   static String imgRectangle3 = '$imagePath/img_rectangle_3.png';
@@ -44,19 +67,19 @@ class ImageConstant {
 
   static String imgEllipse361x57 = '$imagePath/img_ellipse_3_61x57.png';
 
-  static String imgGroup263 = '$imagePath/img_group_263.svg';
+  static String imgGroup619 = '$imagePath/img_group_619.svg';
 
   static String imgPlusWhiteA700 = '$imagePath/img_plus_white_a700.svg';
 
-  
+  // iPhone 14 & 15 Pro Max - One Three images
   static String imgRectangle34 = '$imagePath/img_rectangle_34.png';
 
   static String imgRectangle35 = '$imagePath/img_rectangle_35.png';
 
-  
+  // iPhone 14 & 15 Pro Max - One Two images
   static String imgImg278x430 = '$imagePath/img_img_278x430.png';
 
- 
+  // Common images
   static String imgMegaphone = '$imagePath/img_megaphone.svg';
 
   static String imgBell = '$imagePath/img_bell.svg';
@@ -88,6 +111,8 @@ class ImageConstant {
   static String imgNavOffers = '$imagePath/img_nav_offers.svg';
 
   static String imgNavOrder = '$imagePath/img_nav_order.svg';
+
+  static String imgVector = '$imagePath/img_vector.svg';
 
   static String imgRectangle39 = '$imagePath/img_rectangle_39.png';
 

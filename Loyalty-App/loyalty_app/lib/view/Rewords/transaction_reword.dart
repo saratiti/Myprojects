@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/view/Rewords/widgets/points_item_widget.dart';
+import 'package:loyalty_app/view/rewords/widgets/points_item_widget.dart';
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 

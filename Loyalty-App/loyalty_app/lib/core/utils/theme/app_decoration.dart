@@ -8,14 +8,17 @@ class AppDecoration {
   static BoxDecoration get fillBlueGray => BoxDecoration(
         color: appTheme.blueGray100,
       );
-  static BoxDecoration get fillDeepOrange => BoxDecoration(
-        color: appTheme.deepOrange800,
-      );
   static BoxDecoration get fillGray => BoxDecoration(
         color: appTheme.gray100,
       );
+  static BoxDecoration get fillGray200 => BoxDecoration(
+        color: appTheme.gray200,
+      );
   static BoxDecoration get fillGrayCc => BoxDecoration(
         color: appTheme.gray500Cc,
+      );
+  static BoxDecoration get fillPrimary => BoxDecoration(
+        color: theme.colorScheme.primary,
       );
   static BoxDecoration get fillWhiteA => BoxDecoration(
         color: appTheme.whiteA700,
@@ -62,9 +65,13 @@ class AppDecoration {
           ),
         ],
       );
-  static BoxDecoration get outlineDeepOrange => BoxDecoration(
+  static BoxDecoration get outlinePrimary => BoxDecoration(
+  color: Colors.deepOrange.withOpacity(0.40),
+);
+
+  static BoxDecoration get outlinePrimary1 => BoxDecoration(
         border: Border.all(
-          color: appTheme.deepOrange800,
+          color: theme.colorScheme.primary,
           width: 1.h,
         ),
       );
@@ -77,6 +84,11 @@ class BorderRadiusStyle {
       );
   static BorderRadius get circleBorder27 => BorderRadius.circular(
         27.h,
+      );
+
+  // Custom borders
+  static BorderRadius get customBorderTL6 => BorderRadius.horizontal(
+        left: Radius.circular(6.h),
       );
 
   // Rounded borders
@@ -94,6 +106,9 @@ class BorderRadiusStyle {
       );
   static BorderRadius get roundedBorder37 => BorderRadius.circular(
         37.h,
+      );
+  static BorderRadius get roundedBorder4 => BorderRadius.circular(
+        4.h,
       );
   static BorderRadius get roundedBorder40 => BorderRadius.circular(
         40.h,

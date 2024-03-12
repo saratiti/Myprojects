@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/view/Rewords/challenge_reword.dart';
-import 'package:loyalty_app/view/Rewords/reword_page_content.dart';
-import 'package:loyalty_app/view/Rewords/transaction_reword.dart';
+import 'package:loyalty_app/view/rewords/challenge_reword.dart';
+import 'package:loyalty_app/view/rewords/reword_page_content.dart';
+import 'package:loyalty_app/view/rewords/transaction_reword.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class RewordPage extends StatefulWidget {

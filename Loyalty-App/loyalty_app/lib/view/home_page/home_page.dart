@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/view/home_page/widgets/subCategory_item_widget.dart';
 import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
-import 'package:loyalty_app/widgets/app_bar/bottom_bar.dart';
-import 'package:loyalty_app/widgets/app_bar/circle_progress_bar.dart';
+
 import 'package:loyalty_app/widgets/app_bar/custom_bottom_bar.dart';
 
 import 'package:loyalty_app/widgets/custom_image_view.dart';
@@ -124,7 +123,7 @@ Widget _buildappBar(BuildContext context) {
     alignment: Alignment.topCenter,
     child: Container(
       padding: EdgeInsets.symmetric(vertical: 15.v), 
-      decoration: AppDecoration.fillDeepOrange.copyWith(
+      decoration: AppDecoration.fillBlueGray.copyWith(
         borderRadius: BorderRadiusStyle.roundedBorder15,
       ),
       child: Column(
@@ -162,7 +161,7 @@ Widget _buildappBar(BuildContext context) {
             child: Column(
               children: [
             
-                SizedBox(height: 10.v), // Add spacing between the text and the CircularPercentIndicator
+                SizedBox(height: 10.v), 
                 CircularPercentIndicator(
                   radius: 80.v,
                   lineWidth: 8.0,
@@ -270,10 +269,15 @@ Widget _buildappBar(BuildContext context) {
               top: 5.v,
               bottom: 7.v,
             ),
-            child: Text(
-              "See all",
-              style: CustomTextStyles.bodyMediumMerriweatherBlack90001,
-            ),
+            child: GestureDetector(
+        onTap: () {
+          Navigator.pushNamed(context, AppRoutes.categoryScreen);
+        },
+        child: Text(
+          "See all",
+          style: CustomTextStyles.bodyMediumMerriweatherBlack90001,
+        ),
+      ),
           ),
         ],
       ),
@@ -302,11 +306,7 @@ Widget _buildCardWidget(BuildContext context) {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildCircleContainer(
-            icon: Icons.photo_camera,
-            text: 'Camera',
-            onTap: () {},
-          ),
+        
           _buildCircleContainer(
             icon: Icons.qr_code,
             text: 'QR Code',
@@ -315,7 +315,12 @@ Widget _buildCardWidget(BuildContext context) {
           _buildCircleContainer(
             icon: Icons.receipt, 
             text: 'Receipt Voucher', 
-            onTap: () {},
+            onTap: () {
+
+          Navigator.pushNamed(context, AppRoutes.receiptScreen);
+        
+
+            },
           ),
           _buildCircleContainer(
             icon: Icons.group, 
