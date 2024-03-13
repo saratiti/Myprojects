@@ -26,7 +26,7 @@ Widget build(BuildContext context) {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center, // Centering the content horizontally
+            crossAxisAlignment: CrossAxisAlignment.center, 
             children: [
               Expanded(
                 child: Padding(
@@ -46,7 +46,7 @@ Widget build(BuildContext context) {
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center, // Centering the content horizontally
+                        crossAxisAlignment: CrossAxisAlignment.center, 
                         children: [
                           CustomImageView(
                             imagePath: ImageConstant.imgUploadIconPrimary,

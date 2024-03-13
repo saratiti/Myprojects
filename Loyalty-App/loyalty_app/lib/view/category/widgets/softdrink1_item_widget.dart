@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/widgets/custom_icon_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
@@ -22,7 +23,7 @@ class Softdrink1ItemWidget extends StatelessWidget {
               softDrink: "SoftDrink 1",
               cafenioRestaurant: "Restaurant 1",
               price: "40",
-              rating: 4.5, // Example rating
+              rating: 4.5,
             ),
             SizedBox(width: 40),
             _buildProduct02(
@@ -30,7 +31,7 @@ class Softdrink1ItemWidget extends StatelessWidget {
               softDrink: "SoftDrink 2",
               cafenioRestaurant: "Restaurant 2",
               price: "60",
-              rating: 3.8, // Example rating
+              rating: 3.8, 
             ),
           ],
         ),
@@ -39,13 +40,17 @@ class Softdrink1ItemWidget extends StatelessWidget {
   }
 
   Widget _buildProduct02(
-    BuildContext context, {
-    required String softDrink,
-    required String cafenioRestaurant,
-    required String price,
-    required double rating,
-  }) {
-    return SizedBox(
+  BuildContext context, {
+  required String softDrink,
+  required String cafenioRestaurant,
+  required String price,
+  required double rating,
+}) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, AppRoutes.productDetailsScreen);
+    },
+    child: SizedBox(
       height: 190.v,
       width: 166.h,
       child: Container(
@@ -139,6 +144,7 @@ class Softdrink1ItemWidget extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

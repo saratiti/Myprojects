@@ -18,7 +18,7 @@ class AppDecoration {
         color: appTheme.gray500Cc,
       );
   static BoxDecoration get fillPrimary => BoxDecoration(
-        color: theme.colorScheme.primary,
+        color: appTheme.deepOrange800
       );
   static BoxDecoration get fillWhiteA => BoxDecoration(
         color: appTheme.whiteA700,

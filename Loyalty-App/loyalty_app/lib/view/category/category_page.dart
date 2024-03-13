@@ -6,6 +6,7 @@ import 'package:loyalty_app/view/category/widgets/softdrink1_item_widget.dart';
 import 'package:loyalty_app/view/category/widgets/softdrink_item_widget.dart';
 import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
 import 'package:loyalty_app/widgets/app_bar/custom_app_bar.dart';
+import 'package:loyalty_app/widgets/custom_icon_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class CategoryPage extends StatelessWidget {
@@ -54,15 +55,19 @@ PreferredSizeWidget _buildAppBar(BuildContext context) {
       ),
       child: Padding(
         padding: const EdgeInsets.only(left: 1,right: 1,top: 1), 
-        child: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        child:                                GestureDetector(
+  onTap: () {
+    Navigator.of(context).pop();
+  },
+  child: CustomIconButton(
+    height: 35.adaptSize,
+    width: 35.adaptSize,
+    padding: EdgeInsets.all(6.h),
+    child: CustomImageView(
+      imagePath: ImageConstant.imgArrowLeft,
+    ),
+  ),
+),
       ),
     ),
   ));
