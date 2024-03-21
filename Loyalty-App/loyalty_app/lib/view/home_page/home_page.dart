@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/view/home_page/widgets/subCategory_item_widget.dart';
 import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
+import 'package:loyalty_app/view/navigation/navigation.dart';
 import 'package:loyalty_app/widgets/app_bar/custom_bottom_bar.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -135,6 +136,11 @@ Widget _buildAppBar(BuildContext context) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                      GestureDetector(
+          onTap: () {
+            _showNavigationMenu(context);
+          },
+          child:
                 CustomImageView(
                   imagePath: ImageConstant.imgMegaphone,
                   height: 30.v,
@@ -145,7 +151,7 @@ Widget _buildAppBar(BuildContext context) {
                   ),
                   color: Colors.white,
                   // Add additional styling here if needed
-                ),
+                      )),
                 CustomImageView(
                   imagePath: ImageConstant.imgBell,
                   height: 38.v,
@@ -306,7 +312,7 @@ Widget _buildAppBar(BuildContext context) {
             _buildCircleContainer(
               icon: Icons.qr_code,
               text: 'QR Code',
-              onTap: () {},
+              onTap: () { Navigator.pushNamed(context, AppRoutes.scannerScreen);},
             ),
             _buildCircleContainer(
               icon: Icons.receipt,
@@ -381,11 +387,30 @@ Widget _buildAppBar(BuildContext context) {
       ),
     );
   }
+  void _showNavigationMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return CircularNavigationMenu(
+          onProfilePressed: () {
+          
+          },
+          onInvitePressed: () {
+            
+          },
+          onLogoutPressed: () {
+           
+          },
+        );
+      },
+    );
+  }
+
 
   void handleBottomNavChange(BuildContext context, BottomBarEnum selectedType) {
     switch (selectedType) {
       case BottomBarEnum.Home:
-        navigateToRewordScreen(context);
+        navigateToHomeScreen(context);
         break;
       case BottomBarEnum.Scanpay:
         navigateToScanCodeScreen(context);
@@ -394,21 +419,23 @@ Widget _buildAppBar(BuildContext context) {
         navigateToRewordScreen(context);
         break;
       case BottomBarEnum.Order:
-        navigateToLoginScreen(context);
+        navigateToOrderScreen(context);
         break;
       default:
     }
   }
-
+  void navigateToHomeScreen(BuildContext context) {
+    Navigator.of(context).pushNamed(AppRoutes.homeScreen);
+  }
   void navigateToRewordScreen(BuildContext context) {
     Navigator.of(context).pushNamed(AppRoutes.rewordScreen);
   }
 
   void navigateToScanCodeScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(AppRoutes.homeScreen);
+    Navigator.of(context).pushNamed(AppRoutes.scannerScreen);
   }
 
-  void navigateToLoginScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(AppRoutes.homeScreen);
+  void navigateToOrderScreen(BuildContext context) {
+    Navigator.of(context).pushNamed(AppRoutes.orderScreen);
   }
 }

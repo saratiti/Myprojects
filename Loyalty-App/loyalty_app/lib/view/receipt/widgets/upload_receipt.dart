@@ -17,6 +17,7 @@ class uploadReceipt extends StatelessWidget {
 Widget build(BuildContext context) {
   return SafeArea(
     child: Scaffold(
+      appBar: _buildAppBar(context),
       body: Center(
         child: Container(
           width: double.infinity,
@@ -95,6 +96,41 @@ Widget build(BuildContext context) {
           ),
         ),
       ),
+    ),
+  );
+}
+PreferredSizeWidget _buildAppBar(BuildContext context) {
+  return PreferredSize(
+    preferredSize: Size.fromHeight(kToolbarHeight),
+    child: AppBar(
+      elevation: 0,
+      leadingWidth: 40.0,
+      leading: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          width: 40.0,
+          height: 40.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: appTheme.deepOrange800,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ),
+      ),
+      title: Text(
+        "Upload Receipts",
+        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+      ),
+      centerTitle: true,
+      backgroundColor: Colors.transparent,
     ),
   );
 }

@@ -1,4 +1,4 @@
-// controllers/UserController.js
+
 
 const User = require('../models/user');
 const Company = require('../models/company');
@@ -60,7 +60,7 @@ exports.createUser = async (req, res) => {
     const user = await User.create({
       username: req.body.username,
       email: req.body.email,
-      password: hashedPassword, // Use the hashed password
+      password: hashedPassword,
       full_name: req.body.full_name,
       user_type: req.body.user_type,
       profile_picture: req.body.profile_picture,
@@ -81,7 +81,7 @@ exports.sendRandomCode = async (req, res) => {
     const { email } = req.body;
     const code = generateRandomCode();
 
-    // Store the hashed code in your otpStorage
+   
     otpStorage[email] = await hashOtp(code);
 
     const emailSent = await sendRandomCodeEmail(email, code);
@@ -102,7 +102,7 @@ exports.validatePin = async (req, res) => {
   const recipientEmail = req.body.email;
 
   try {
-    // Retrieve hashed PIN from otpStorage
+   
     const storedHashedPins = otpStorage[recipientEmail];
 
     console.log('Entered PIN:', enteredPin);
@@ -282,9 +282,9 @@ exports.update = async (req, res) => {
       const newPath = path.join(__dirname, '..', 'uploads', newFileName);
       await fs.rename(profilePicturePath, newPath);
 
-      // Check if the user is a company
+      
       if (user.user_type === 'company') {
-        // Save the profile picture path to the Company table
+       table
         const company = await Company.findOne({ where: { company_id: user.company_id } });
         if (company) {
           company.image = newPath;
@@ -293,7 +293,7 @@ exports.update = async (req, res) => {
           return res.status(404).json({ error: 'Company not found' });
         }
       } else {
-        // For individual users, save the profile picture path to the User table
+       
         user.profile_picture = newPath;
       }
     }
@@ -319,7 +319,6 @@ exports.getProfilePicture = async (req, res) => {
 
     let imagePath;
 
-    // Check if the user is a company
     if (user.user_type === 'company') {
      
       const company = await Company.findOne({ where: { company_id: user.company_id } });

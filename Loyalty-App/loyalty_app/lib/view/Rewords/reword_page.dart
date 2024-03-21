@@ -26,6 +26,7 @@ class _RewordPageState extends State<RewordPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        
         body: SingleChildScrollView(
           child: SizedBox(
             width: double.maxFinite,
@@ -44,40 +45,65 @@ class _RewordPageState extends State<RewordPage> {
   }
 
   Widget _buildMegaphone(BuildContext context) {
-    return Container(
-      height: 278.v,
-      width: double.maxFinite,
-      color: Colors.black.withOpacity(0.5),
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          CustomImageView(
-            imagePath: ImageConstant.imgImg383x388,
-            height: 278.v,
-            width: double.maxFinite,
-            fit: BoxFit.cover,
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
+  return Container(
+    height: 278.v,
+    width: double.maxFinite,
+    color: Colors.black.withOpacity(0.5),
+    child: Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        CustomImageView(
+          imagePath: ImageConstant.imgImg383x388,
+          height: 278.v,
+          width: double.maxFinite,
+          fit: BoxFit.cover,
+        ),
+        Positioned(
+          top: 20.0, 
+          left: 20.0, 
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
             child: Container(
-              height: 50,
-              color: Colors.black.withOpacity(0.5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildTabBarItem("Available Rewards", 0),
-                  _buildTabBarItem("Challenges", 1),
-                  _buildTabBarItem("Transactions", 2),
-                ],
+              width: 40.0,
+              height: 40.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: appTheme.deepOrange800,
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          child: Container(
+            height: 50,
+            color: Colors.black.withOpacity(0.5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildTabBarItem("Available Rewards", 0),
+                _buildTabBarItem("Challenges", 1),
+                _buildTabBarItem("Transactions", 2),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildTabBarItem(String title, int index) {
     return GestureDetector(

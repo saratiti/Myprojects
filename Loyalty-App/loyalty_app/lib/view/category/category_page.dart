@@ -14,7 +14,7 @@ class CategoryPage extends StatelessWidget {
       : super(
           key: key,
         );
-int userPoints=200;
+int userPoints=2000;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -42,37 +42,40 @@ int userPoints=200;
   }
 
 PreferredSizeWidget _buildAppBar(BuildContext context) {
-  return CustomAppBar(
-    leadingWidth: 40.0,
-    leading: 
-    Padding(padding:const EdgeInsets.only(left: 5,right: 5,top: 5) ,
-    child:Container(
-      width: 40.0,
-      height: 40.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: appTheme.deepOrange800,
+  return PreferredSize(
+    preferredSize: Size.fromHeight(kToolbarHeight),
+    child: AppBar(
+      elevation: 0,
+      leadingWidth: 40.0,
+      leading: GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          width: 40.0,
+          height: 40.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: appTheme.deepOrange800,
+          ),
+          child: Center(
+            child: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 1,right: 1,top: 1), 
-        child:                                GestureDetector(
-  onTap: () {
-    Navigator.of(context).pop();
-  },
-  child: CustomIconButton(
-    height: 35.adaptSize,
-    width: 35.adaptSize,
-    padding: EdgeInsets.all(6.h),
-    child: CustomImageView(
-      imagePath: ImageConstant.imgArrowLeft,
-    ),
-  ),
-),
+      title: Text(
+        "Category",
+        style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
       ),
+      centerTitle: true,
+      backgroundColor: Colors.transparent,
     ),
-  ));
+  );
 }
-
 
 Widget _buildSlider(BuildContext context) {
   int sliderIndex = 1; 

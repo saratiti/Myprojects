@@ -4,10 +4,7 @@ import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 // ignore: must_be_immutable
 class SubCategoryWidget extends StatelessWidget {
-  const SubCategoryWidget({Key? key})
-      : super(
-          key: key,
-        );
+  const SubCategoryWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +14,11 @@ class SubCategoryWidget extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 16.v),
         child: Column(
           children: [
-            CustomImageView(
-              imagePath: ImageConstant.imgImg,
-              height: 120.adaptSize,
-              width: 120.adaptSize,
-              radius: BorderRadius.circular(
-                8.h,
+            ClipOval(
+              child: CustomImageView(
+                imagePath: ImageConstant.imgImg,
+                height: 120.adaptSize,
+                width: 120.adaptSize,
               ),
             ),
             SizedBox(height: 7.v),

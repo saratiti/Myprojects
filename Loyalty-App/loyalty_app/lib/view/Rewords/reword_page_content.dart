@@ -110,9 +110,9 @@ int userPoints = 60;
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CustomImageView(
-                        imagePath: ImageConstant.imgEllipse161x57,
-                        height: 61,
-                        width: 57,
+                        imagePath: ImageConstant.imgBronzeMedal,
+                        height: 70,
+                        width: 60,
                         radius: BorderRadius.circular(30),
                       ),
                       SizedBox(width: 10),
@@ -126,9 +126,9 @@ int userPoints = 60;
                         ),
                       ),
                       CustomImageView(
-                        imagePath: ImageConstant.imgEllipse261x57,
-                        height: 61,
-                        width: 57,
+                        imagePath: ImageConstant.imgSilverMedal,
+                        height: 70,
+                        width: 60,
                         radius: BorderRadius.circular(30),
                       ),
                       SizedBox(width: 10),
@@ -142,9 +142,9 @@ int userPoints = 60;
                         ),
                       ),
                       CustomImageView(
-                        imagePath: ImageConstant.imgEllipse361x57,
-                        height: 61,
-                        width: 57,
+                        imagePath: ImageConstant.imgGoldMedal,
+                        height: 70,
+                        width: 60,
                         radius: BorderRadius.circular(30),
                       ),
                     ],

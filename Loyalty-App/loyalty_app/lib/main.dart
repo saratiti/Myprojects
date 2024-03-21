@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         fallbackLocale: const Locale('en', ''),
         title: 'Loyality_app',
         debugShowCheckedModeBanner: false,
-        initialRoute: AppRoutes.homeScreen,
+        initialRoute: AppRoutes.loginScreen,
         getPages: AppRoutes.routes,
       );
   

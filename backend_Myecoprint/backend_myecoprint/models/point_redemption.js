@@ -21,7 +21,7 @@ const PointRedemption = sequelize.define('PointRedemption', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  offer_id: { // Add the foreign key to the Offer table
+  offer_id: { 
     type: DataTypes.INTEGER,
     allowNull: false,
   },
