@@ -1,6 +1,6 @@
 
 
-const UserChallenge = require('../models/UserChallenge');
+const UserChallenge = require('../models/userChallenge');
 
 exports.createUserChallenge = async (req, res) => {
   try {

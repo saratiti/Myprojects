@@ -1,7 +1,7 @@
 
 
-const OptionalMenu = require('../models/OptionalMenu');
-
+const OptionalMenu = require('../models/optionalMenu');
+const Product=require('../models/product')
 exports.getAllOptionalMenus = async (req, res) => {
   try {
     const optionalMenus = await OptionalMenu.findAll();
@@ -19,5 +19,26 @@ exports.createOptionalMenu = async (req, res) => {
   } catch (error) {
     console.error('Error creating optional menu:', error.message);
     res.status(500).send('Server Error');
+  }
+};
+exports.getOptionalMenuByProductId = async (req, res) => {
+  const productId = req.params.productId;
+
+  try {
+    // Find the product by ID
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    // Retrieve optional menu items associated with the product
+    const optionalMenuItems = await OptionalMenu.findAll({
+      where: { product_id: productId }
+    });
+
+    return res.status(200).json(optionalMenuItems);
+  } catch (error) {
+    console.error('Error retrieving optional menu items:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

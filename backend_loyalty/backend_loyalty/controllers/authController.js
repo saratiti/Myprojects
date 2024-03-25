@@ -26,14 +26,14 @@ exports.login = (req, res) => {
               user_id: user.user_id,
               username: user.username,
               email: user.email,
-              full_name: user.full_name,
+              //full_name: user.full_name,
               phone: user.phone,
-              user_type: user.user_type,
-              company_id: user.company_id,
+              // user_type: user.user_type,
+              // company_id: user.company_id,
             };
 
             const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET);
-            res.status(200).json({ accessToken, company_id: user.company_id });
+            res.status(200).json({ accessToken });
           } else {
             res.status(401).json({ message: 'Invalid credentials' });
           }
@@ -56,11 +56,12 @@ exports.register = async (req, res) => {
   }
   const hashedPassword = await bcryptUtil.createHash(req.body.password);
   const userData = {
-    name: req.body.name,
+   // name: req.body.name,
     username: req.body.username,
     email: req.body.email, 
-    full_name:req.body.full_name,
+   full_name:req.body.full_name,
     password: hashedPassword,
+    phone:req.body.phone,
   };
 
   const user = await AuthService.createUser(userData);

@@ -14,7 +14,7 @@ exports.findUserByusername = (username) => {
 }
 exports.findUserById = (id) => {
     return UserModel.findByPk(id, {
-      attributes: ['username', 'email', 'full_name', 'profile_picture'],
+      attributes: ['username', 'email', 'profile_picture'],
     });
   };
 

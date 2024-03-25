@@ -46,7 +46,7 @@ function authenticateToken(req, res, next) {
     try {
         const decoded = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
         req.user = decoded;
-        req.user_id = decoded.user_id; // Assuming user_id is included in your JWT payload
+        req.user_id = decoded.user_id; 
         next();
     } catch (error) {
         return res.status(401).json({ message: 'Unauthorized' });

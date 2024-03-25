@@ -1,7 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
-const userChallengeController = require('../controllers/userChallengeController');
+const userChallengeController = require('../controllers/userChallegeController');
 
 
 router.post('/', userChallengeController.createUserChallenge);

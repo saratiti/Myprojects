@@ -20,24 +20,24 @@ const User = sequelize.define('User', {
     allowNull: false,
  
   },
-  full_name: {
-    type: DataTypes.STRING,
-  },
+  // full_name: {
+  //   type: DataTypes.STRING,
+  // },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  user_type: {
+  role: {
     type: DataTypes.STRING,
     allowNull: true,
    
   },
-  profile_picture: {
-    type: DataTypes.STRING,
-  },
+  // profile_picture: {
+  //   type: DataTypes.STRING,
+  // },
   phone: {
     type: DataTypes.STRING,
-    allowNull: false,
+    
    
   },
   
