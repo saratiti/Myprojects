@@ -11,7 +11,7 @@ const Loyalty = sequelize.define('Loyalty', {
     autoIncrement: true
   },
   loyalty_point: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   loyalty_level: {

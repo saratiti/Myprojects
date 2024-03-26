@@ -22,7 +22,7 @@ const UserChallenge = sequelize.define('UserChallenge', {
     type: DataTypes.INTEGER,
     
   },
-  challeng_id: {
+  challenge_id: {
     type: DataTypes.INTEGER,
     
   },

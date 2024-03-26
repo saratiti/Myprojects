@@ -5,7 +5,7 @@ const AuthService = require('../services/auth.service');
 const jwtConfig = require('../config/jwt');
 const bcryptUtil = require('../utils/ bcrypt');
 const jwtUtil = require('../utils/jwt.util');
-
+const Loyalty = require('../models/loyalty');
 
 exports.login = (req, res) => {
   const { email, password } = req.body;
@@ -50,28 +50,39 @@ exports.login = (req, res) => {
 
 
 exports.register = async (req, res) => {
-  const isExist = await AuthService.findUserByusername(req.body.username);
-  if (isExist) {
-    return res.status(400).json({ message: 'Username already exists.' });
+  try {
+    const isExist = await AuthService.findUserByusername(req.body.username);
+    if (isExist) {
+      return res.status(400).json({ message: 'Username already exists.' });
+    }
+
+    const hashedPassword = await bcryptUtil.createHash(req.body.password);
+    const userData = {
+      username: req.body.username,
+      email: req.body.email, 
+      full_name: req.body.full_name,
+      password: hashedPassword,
+      phone: req.body.phone,
+    };
+
+    const user = await AuthService.createUser(userData);
+
+  
+    await Loyalty.create({
+      loyalty_point: 0, 
+      loyalty_level: 'Bronze',
+      user_id: user.user_id
+    });
+
+    return res.json({
+      data: user,
+      message: 'User registered successfully.',
+    });
+  } catch (error) {
+    console.error('Error registering user:', error.message);
+    return res.status(500).json({ message: 'Server Error' });
   }
-  const hashedPassword = await bcryptUtil.createHash(req.body.password);
-  const userData = {
-   // name: req.body.name,
-    username: req.body.username,
-    email: req.body.email, 
-   full_name:req.body.full_name,
-    password: hashedPassword,
-    phone:req.body.phone,
-  };
-
-  const user = await AuthService.createUser(userData);
-  return res.json({
-    data: user,
-    message: 'User registered successfully.',
-  });
 };
-
-
 
 
 exports.logout = async (req, res) => {

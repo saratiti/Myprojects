@@ -1,28 +1,27 @@
 
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const ChallengeType = require('./challengeType');
 
-const Challenge = sequelize.define('Challenge', {
+const ChallengeType = sequelize.define('ChallengeType ', {
 
-  challenge_id: {
+  challengType_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  challenge_name: {
+  type_name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  challenge_description: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  challengType_id:{
+  required_count: {
     type: DataTypes.INTEGER,
-    allowNull: false, 
+    allowNull: false,
   },
+  points: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  
   createdAt: {
     type: DataTypes.DATE,
     allowNull: true,
@@ -36,12 +35,10 @@ const Challenge = sequelize.define('Challenge', {
     allowNull: true,
   }
 
-
 }, {
   timestamps: false, 
   paranoid: true,
-  tableName: 'challenges',
+  tableName: 'challenge_types',
 });
-Challenge.belongsTo(ChallengeType, { foreignKey: 'challengType_id', as: 'challengeTypes', onDelete: 'CASCADE' });
 
-module.exports = Challenge;
+module.exports = ChallengeType;

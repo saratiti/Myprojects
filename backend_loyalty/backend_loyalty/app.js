@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 
 const categoriesRoutes = require('./routes/categories');
 const usersRoutes = require('./routes/users');
+const loyaltiesRouted=require('./routes/loyalty');
 const authRoutes = require('./routes/auth');
 const challengesRoutes = require('./routes/challenges');
 const invitePersonRoutes = require('./routes/invitePersons');
@@ -38,6 +39,7 @@ app.use('/api/product', productRoutes );
 app.use('/api/orderProduct',orderProductRoutes);
 app.use('/api/review',reviewRoutes);
 app.use('/api/transactions', transactionsRouter);
+app.use('/api/loyality', loyaltiesRouted);
 app.use('/api/userChallenge', userChallengesRouter);
 sequelize.sync()
   .then(() => {
