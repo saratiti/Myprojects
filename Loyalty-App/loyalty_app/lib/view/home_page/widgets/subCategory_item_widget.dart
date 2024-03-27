@@ -1,34 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/model/category.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 // ignore: must_be_immutable
+// class SubCategoryWidget extends StatelessWidget {
+//   SubCategoryWidget({Key? key}) : super(key: key);
+
+//   final CategoryController _categoryController = CategoryController();
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return FutureBuilder<List<Category>>(
+//       future: _categoryController.getFirstThree(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.waiting) {
+//           return Center(child: CircularProgressIndicator());
+//         } else if (snapshot.hasError) {
+//           return Center(child: Text('Error: ${snapshot.error}'));
+//         } else {
+//           List<Category>? categories = snapshot.data;
+//           return Container(
+//             height: MediaQuery.of(context).size.height * 0.8,
+//             width: MediaQuery.of(context).size.width, // Ensure bounded width
+//             child: ListView.builder(
+//               itemCount: categories!.length,
+//               itemBuilder: (context, index) {
+//                 Category category = categories[index];
+//                 return Padding(
+//                   padding: EdgeInsets.only(bottom: 16.0),
+//                   child: Column(
+//                     children: [
+//                       ClipOval(
+//                         child: CustomImageView(
+//                 imagePath: ImageConstant.imgImg,
+//                 height: 120.adaptSize,
+//                 width: 120.adaptSize,
+//               ),
+//                       ),
+//                       SizedBox(height: 7.0),
+//                       Text(
+//                         category.nameEnglish,
+//                         style: CustomTextStyles.labelLargeProximaNovaBluegray900,
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ),
+//           );
+//         }
+//       },
+//     );
+//   }
+// }
+
 class SubCategoryWidget extends StatelessWidget {
-  const SubCategoryWidget({Key? key}) : super(key: key);
+  SubCategoryWidget({Key? key}) : super(key: key);
+
+  final CategoryController _categoryController = CategoryController();
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 120.h,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: 16.v),
-        child: Column(
-          children: [
-            ClipOval(
-              child: CustomImageView(
+    return FutureBuilder<List<Category>>(
+      future: _categoryController.getFirstThree(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          List<Category>? categories = snapshot.data;
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            width: MediaQuery.of(context).size.width,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: categories!.map((category) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 16.0), // Adjust spacing as needed
+                  child: Column(
+                    children: [
+                      ClipOval(
+                        child: CustomImageView(
                 imagePath: ImageConstant.imgImg,
                 height: 120.adaptSize,
                 width: 120.adaptSize,
               ),
+                      ),
+                      SizedBox(height: 7.0),
+                      Text(
+                        category.nameEnglish,
+                        style: CustomTextStyles.labelLargeProximaNovaBluegray900,
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
-            SizedBox(height: 7.v),
-            Text(
-              "Halloween Treats",
-              style: CustomTextStyles.labelLargeProximaNovaBluegray900,
-            ),
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 }

@@ -27,24 +27,23 @@ exports.getLoyaltyLevelByUser = async (req, res) => {
     const userId = req.user;
     const loyalty = await Loyalty.findOne({ where: { user_id: userId.user_id } });
 
-    // If loyalty record is not found, return an error
     if (!loyalty) {
       return res.status(404).json({ error: 'Loyalty record not found for the user' });
     }
 
-    // Calculate the new loyalty level based on loyalty points
     const newLevel = calculateLoyaltyLevel(loyalty.loyalty_point);
 
-    // Update the loyalty level in the database (optional)
+    // Update loyalty_level and loyalty_point
     await loyalty.update({ loyalty_level: newLevel });
 
-    // Send the loyalty level in the response
-    res.json({ loyalty_level: newLevel });
+    // Send response with loyalty level and loyalty point
+    res.json({ loyalty_level: newLevel, loyalty_point: loyalty.loyalty_point });
   } catch (error) {
     console.error('Error retrieving loyalty level:', error.message);
     res.status(500).json({ error: 'Server Error' });
   }
 };
+
 const calculateLoyaltyLevel = (loyaltyPoint) => {
   if (loyaltyPoint >= 2000) {
     return 'Gold';

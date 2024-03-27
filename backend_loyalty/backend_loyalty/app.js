@@ -39,7 +39,7 @@ app.use('/api/product', productRoutes );
 app.use('/api/orderProduct',orderProductRoutes);
 app.use('/api/review',reviewRoutes);
 app.use('/api/transactions', transactionsRouter);
-app.use('/api/loyality', loyaltiesRouted);
+app.use('/api/loyalty', loyaltiesRouted);
 app.use('/api/userChallenge', userChallengesRouter);
 sequelize.sync()
   .then(() => {

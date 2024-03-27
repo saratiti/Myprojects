@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:loyalty_app/controller/loyalty.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/view/home_page/widgets/subCategory_item_widget.dart';
 import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
@@ -81,7 +82,7 @@ class HomePage extends StatelessWidget {
                       SizedBox(height: 17.v),
                       _buildTextCategory(context),
                       SizedBox(height: 19.v),
-                      _buildCategory(context),
+                     SubCategoryWidget(),
                     ],
                   ),
                 ),
@@ -95,113 +96,120 @@ class HomePage extends StatelessWidget {
   }
 
 Widget _buildAppBar(BuildContext context) {
-  Color userLevelColor = Colors.grey;
-  double progress = (userPoints / 1000.0).clamp(0.0, 1.0);
+  return FutureBuilder<Map<String, dynamic>>(
+    future:LoyaltyController().getLoyaltyDataByUser(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) { 
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      } else {
+        
+        String loyaltyLevel = snapshot.data?['loyaltyLevel'] ?? '';
+        int userPoints = snapshot.data?['loyaltyPoint'] ?? 0;
+        Color userLevelColor = snapshot.data?['userLevelColor'] ?? Colors.grey;
 
-  if (userPoints >= 1000) {
-    userLevelColor = Colors.amber;
-  } else if (userPoints >= 500) {
-    userLevelColor = Colors.grey;
-  } else if (userPoints <= 500) {
-    userLevelColor = Colors.brown;
-  }
+        double progress = (userPoints / 1000.0).clamp(0.0, 1.0);
 
-  return Align(
-    alignment: Alignment.topCenter,
-    child: Container(
-      padding: EdgeInsets.symmetric(vertical: 15.v),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.deepOrange[700]!, 
-            Colors.deepOrange[900]!, 
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 6,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 5.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                      GestureDetector(
-          onTap: () {
-            _showNavigationMenu(context);
-          },
-          child:
-                CustomImageView(
-                  imagePath: ImageConstant.imgMegaphone,
-                  height: 30.v,
-                  width: 38.h,
-                  margin: EdgeInsets.only(
-                    top: 5.v,
-                    bottom: 1.v,
-                  ),
-                  color: Colors.white,
-                  // Add additional styling here if needed
-                      )),
-                CustomImageView(
-                  imagePath: ImageConstant.imgBell,
-                  height: 38.v,
-                  width: 54.h,
-                  color: Colors.white,
-                  // Add additional styling here if needed
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 15.v),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.deepOrange[700]!, 
+                  Colors.deepOrange[900]!, 
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
-          ),
-          SizedBox(height: 20.v),
-          Container(
-            margin: EdgeInsets.only(
-              left: 5.h,
-              right: 7.h,
-            ),
-            padding: EdgeInsets.symmetric(vertical: 8.v),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 10.v),
-                CircularPercentIndicator(
-                  radius: 80.v,
-                  lineWidth: 8.0,
-                  percent: progress,
-                  backgroundColor: Colors.grey,
-                  progressColor: userLevelColor,
-                  center: Text(
-                    userPoints >= 1000 ? 'Gold Level' : 'Silver Level',
-                    style: TextStyle(
-                      color: userLevelColor,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Padding(
+                  padding: EdgeInsets.only(left: 5.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _showNavigationMenu(context);
+                        },
+                        child: CustomImageView(
+                          imagePath: ImageConstant.imgMegaphone,
+                          height: 30.v,
+                          width: 38.h,
+                          margin: EdgeInsets.only(
+                            top: 5.v,
+                            bottom: 1.v,
+                          ),
+                          color: Colors.white,
+                        ),
+                      ),
+                      CustomImageView(
+                        imagePath: ImageConstant.imgBell,
+                        height: 38.v,
+                        width: 54.h,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 8.v),
-                Text(
-                  'Currently you have $userPoints points ${userPoints >= 1000 ? 'Gold' : 'Silver'} Level',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
+                SizedBox(height: 20.v),
+                Container(
+                  margin: EdgeInsets.only(
+                    left: 5.h,
+                    right: 7.h,
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 8.v),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10.v),
+                      CircularPercentIndicator(
+                        radius: 80.v,
+                        lineWidth: 8.0,
+                        percent: progress,
+                        backgroundColor: Colors.grey,
+                        progressColor: userLevelColor,
+                        center: Text(
+                          loyaltyLevel.isNotEmpty ? '$loyaltyLevel Level' : 'No Level',
+                          style: TextStyle(
+                            color: userLevelColor,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8.v),
+                      Text(
+                        loyaltyLevel.isNotEmpty
+                            ? 'Currently you have $userPoints points $loyaltyLevel Level'
+                            : 'No loyalty data available',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
-    ),
+        );
+      }
+    },
   );
 }
 
@@ -366,27 +374,7 @@ Widget _buildAppBar(BuildContext context) {
     );
   }
 
-  Widget _buildCategory(BuildContext context) {
-    return SizedBox(
-      height: 159.v,
-      child: ListView.separated(
-        padding: EdgeInsets.only(right: 13.h),
-        scrollDirection: Axis.horizontal,
-        separatorBuilder: (
-          context,
-          index,
-        ) {
-          return SizedBox(
-            width: 1.h,
-          );
-        },
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return SubCategoryWidget();
-        },
-      ),
-    );
-  }
+
   void _showNavigationMenu(BuildContext context) {
     showModalBottomSheet(
       context: context,

@@ -1,9 +1,16 @@
 
 
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:loyalty_app/controller/auth.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
+import 'package:loyalty_app/model/login.dart';
+import 'package:loyalty_app/view/home_page/home_page.dart';
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 import 'package:loyalty_app/widgets/custom_text_form_field.dart';
@@ -15,11 +22,48 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
+   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obscureText = true;
+
+  void _handleSignInAction(BuildContext context) async {
+    EasyLoading.show(status: "Loading");
+
+    String enteredEmail = emailController.text;
+    String enteredPassword = passwordController.text;
+
+    AuthController()
+        .login(enteredEmail, enteredPassword)
+        .then((Login? value) async {
+      EasyLoading.dismiss();
+      await const FlutterSecureStorage().write(key: "token", value: "${value!.accessToken}");
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()), // Replace HomeScreen with your actual home screen widget
+      );
+    })
+    .catchError((ex) {
+      EasyLoading.dismiss();
+
+      if (ex is SocketException) {
+        EasyLoading.showError("No internet connection");
+      } else {
+        String errorMessage = ex.toString();
+        if (errorMessage.contains("Invalid email or password")) {
+          errorMessage = "Invalid email or password";
+        } else {
+          errorMessage = "Invalid email or password. Please try again.";
+        }
+        EasyLoading.showError(errorMessage);
+      }
+    });
+  }
+
+
+class _LoginPageState extends State<LoginPage> {
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -224,11 +268,12 @@ Widget _buildPassword(BuildContext context) {
 }
 
 
-  /// Section Widget
+ 
 Widget _buildSignIn(BuildContext context) {
   return CustomElevatedButton(
     onPressed: () {
-      Navigator.pushNamed(context, AppRoutes.homeScreen);
+      _handleSignInAction(context);
+     
     },
     height: 60.v,
     text: "Sign in",
