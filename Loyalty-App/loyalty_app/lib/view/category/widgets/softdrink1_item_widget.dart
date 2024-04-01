@@ -17,7 +17,7 @@ class Softdrink1ItemWidget extends StatefulWidget {
 }
 
 class _Softdrink1ItemWidgetState extends State<Softdrink1ItemWidget> {
-  late Future<List<Product>> _productsFuture;
+  late Future<List<Product>> _productsFuture = Future.value([]);
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ Widget build(BuildContext context) {
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-        return Center(child: Text('No products available for this category'));
+        return Center();
       } else {
         return SingleChildScrollView(
   child: GridView.builder(
@@ -79,7 +79,14 @@ Widget build(BuildContext context) {
 }
 
   Widget _buildProduct(BuildContext context, Product product) {
-    return Container(
+    return  GestureDetector(
+    onTap: () {
+      _navigateToProductDetails(product.id); // Pass the product id to the method
+    },
+    child:
+    
+    
+    Container(
       width: 166.0,
       margin: EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
@@ -166,6 +173,10 @@ Widget build(BuildContext context) {
           // ),
         ],
       ),
-    );
+     ) );
   }
+  void _navigateToProductDetails(int productId) {
+  Navigator.of(context).pushNamed(AppRoutes.productDetailsScreen, arguments: productId);
+}
+
 }

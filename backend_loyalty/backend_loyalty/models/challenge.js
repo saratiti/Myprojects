@@ -2,7 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const ChallengeType = require('./challengeType');
+const ChallengeType = require('./challengeType'); 
 
 const Challenge = sequelize.define('Challenge', {
 

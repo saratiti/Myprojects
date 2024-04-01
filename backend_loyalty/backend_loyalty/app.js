@@ -32,7 +32,7 @@ app.use('/api/challenges', challengesRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/invite_person', invitePersonRoutes);
-app.use('/api/invoice', invoiceRoutes);
+app.use('/api/invoices', invoiceRoutes);
 app.use('/api/optionMenue', optionMenueRoutes );
 app.use('/api/order', orderRoutes );
 app.use('/api/product', productRoutes );

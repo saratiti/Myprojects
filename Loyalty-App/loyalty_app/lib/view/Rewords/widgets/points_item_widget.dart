@@ -1,15 +1,12 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/model/transaction.dart'; // Import your Transaction model
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class PointsItemWidget extends StatelessWidget {
-  const PointsItemWidget({Key? key})
-      : super(
-          key: key,
-        );
+  final Transaction transaction; // Define a named parameter for the Transaction object
+  const PointsItemWidget({Key? key, required this.transaction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +47,13 @@ class PointsItemWidget extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.only(left: 4.h),
                             child: Text(
-                              "SOftDrink",
+                              transaction.transactionType, // Access properties of the Transaction object
                               style: CustomTextStyles.labelLargeBlack900,
                             ),
                           ),
                           SizedBox(height: 14.v),
                           Text(
-                            "You just earned 50 points!",
+                            "You just earned ${transaction.points} points!", // Access properties of the Transaction object
                             style: CustomTextStyles.labelLargeGray600,
                           ),
                         ],
@@ -67,15 +64,14 @@ class PointsItemWidget extends StatelessWidget {
               ),
             ),
             Positioned(
-          top: 0,
-          right: 0,
-          child: CustomElevatedButton(
-          width: 160.h,
-          text: "+50points",
-         
-          alignment: Alignment.topRight,
-        ),
-        ),
+              top: 0,
+              right: 0,
+              child: CustomElevatedButton(
+                width: 160.h,
+                text: "+${transaction.points} points", // Access properties of the Transaction object
+                alignment: Alignment.topRight,
+              ),
+            ),
           ],
         ),
       ),

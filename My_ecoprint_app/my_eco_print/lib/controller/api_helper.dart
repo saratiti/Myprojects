@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class ApiHelper {
-  final String DOMAIN = "192.168.1.148:3000";
+  final String DOMAIN = "185.203.117.38:3000";
 
   Future<String> getToken() async {
     var storage = const FlutterSecureStorage();

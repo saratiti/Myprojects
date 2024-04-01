@@ -1,63 +1,109 @@
-import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
+
+
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+import 'package:loyalty_app/controller/invoice.dart';
+import 'package:loyalty_app/model/invoice.dart';
 
-
-// ignore: must_be_immutable
-class ReceiptoneItemWidget extends StatelessWidget {
+class ReceiptoneItemWidget extends StatefulWidget {
   const ReceiptoneItemWidget({Key? key}) : super(key: key);
 
-   @override
+  @override
+  _ReceiptoneItemWidgetState createState() => _ReceiptoneItemWidgetState();
+}
+
+class _ReceiptoneItemWidgetState extends State<ReceiptoneItemWidget> {
+  final InvoiceController _invoiceController = InvoiceController();
+  late Future<List<Invoice>> _invoicesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _invoicesFuture = _invoiceController.getUserInvoice();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 317.h,
-      padding: EdgeInsets.symmetric(
-        horizontal: 23.h,
-        vertical: 14.v,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white, // Background color
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30.h), // Adjust border radius for custom shape
-          bottomRight: Radius.circular(30.h), // Adjust border radius for custom shape
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3), // Shadow color
-            spreadRadius: 2.h,
-            blurRadius: 5.h,
-            offset: Offset(0, 3.h), // Shadow offset
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CustomImageView(
-            imagePath: ImageConstant.imgReceipt,
-            height: 90.v,
-            width: 76.h,
-            radius: BorderRadius.horizontal(
-              left: Radius.circular(6.h),
+    return FutureBuilder<List<Invoice>>(
+      future: _invoicesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(child: Text('No invoices available'));
+        } else {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.data!.length,
+                  itemExtent: 150,
+                  itemBuilder: (context, index) {
+                    Invoice invoice = snapshot.data![index];
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5),
+                      child: Container(
+                        width: 317,
+                        padding: EdgeInsets.symmetric(horizontal: 23, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            if (invoice.imageBytesList != null && index < invoice.imageBytesList!.length)
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.horizontal(left: Radius.circular(6)),
+                                  child: Image.memory(
+                                    invoice.imageBytesList![index],
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Text('Error loading image');
+                                    },
+                                  ),
+                                ),
+                              ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Upload Date: ${invoice.uploadDate}',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ),
-          SizedBox(width: 10.h), // Add spacing between image and text
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Receipt1",
-                style: theme.textTheme.titleLarge,
-              ),
-              Text(
-                "Ice Coffee",
-                style: CustomTextStyles.labelLargeBlack90001,
-              ),
-              // Add any other widgets you'd like here
-            ],
-          ),
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 }

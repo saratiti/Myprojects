@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:loyalty_app/view/receipt/widgets/upload_receipt.dart';
 
 
 
@@ -232,29 +233,30 @@ Future<dynamic> putRequest(String path, Map body) async {
     }
   }
 
-  Future<String> uploadProfilePicture(File profilePicture) async {
+Future<String> uploadInvoice(File invoiceFile) async {
   try {
     final dio = Dio();
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
 
-   
-    if (profilePicture.path.endsWith('.png') ||
-        profilePicture.path.endsWith('.jpeg') ||
-        profilePicture.path.endsWith('.jpg')) {
-     
-      String fileName =
-          "profile_picture.${profilePicture.path.split("/").last.split(".").last}";
+    if (invoiceFile.path.endsWith('.pdf') ||
+        invoiceFile.path.endsWith('.doc') ||
+        invoiceFile.path.endsWith('.docx') ||
+        invoiceFile.path.endsWith('.jpeg') ||
+        invoiceFile.path.endsWith('.jpg') ||
+        invoiceFile.path.endsWith('.png')) {
+      String fileName = "invoice.${invoiceFile.path.split("/").last}";
 
-      FormData formData = FormData.fromMap({
-        "profile_picture": await MultipartFile.fromFile(
-          profilePicture.path,
-          filename: fileName,
-        ),
-      });
+FormData formData = FormData.fromMap({
+  "invoice": await MultipartFile.fromFile(
+    invoiceFile.path,
+    filename: fileName,
+  ),
+});
 
-      Response response = await dio.put(
-        'http://$DOMAIN/api/users/updateProfile',
+
+      Response response = await dio.post(
+        'http://$DOMAIN/api/invoices/upload', 
         data: formData,
         options: Options(
           headers: headers,
@@ -264,37 +266,50 @@ Future<dynamic> putRequest(String path, Map body) async {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data.toString();
       } else {
-        throw "Failed to upload profile picture. Status code: ${response.statusCode}";
+        throw "Failed to upload invoice. Status code: ${response.statusCode}";
       }
     } else {
-      throw "Only PNG or JPEG files are allowed";
+      throw "Only PDF, DOC, DOCX, JPEG, PNG files are allowed";
     }
   } catch (e) {
-    throw "Error uploading profile picture: $e";
+    throw "Error uploading invoice: $e";
   }
 }
 
-Future<Uint8List?> getProfilePicture() async {
+Future<List<Uint8List>> getInvoiceImages(String imagePath) async {
   try {
     final dio = Dio();
     var token = await getToken();
     var headers = {"Authorization": "Bearer $token"};
 
     Response response = await dio.get(
-      'http://$DOMAIN/api/users/profilePicture',
+      'http://$DOMAIN/api/invoices/image',
       options: Options(
         headers: headers,
-        responseType: ResponseType.bytes,
+        responseType: ResponseType.json, // Set responseType to JSON
       ),
     );
 
     switch (response.statusCode) {
       case 200:
       case 201:
-        if (response.data is List<int>) {
-          return Uint8List.fromList(response.data);
+        // Check if the response contains the expected JSON structure
+        List<Uint8List> imageList = [];
+        Map<String, dynamic> responseData = response.data;
+        if (responseData.containsKey('images')) {
+          List<dynamic> images = responseData['images'];
+          for (var imageData in images) {
+            if (imageData.containsKey('dataUrl')) {
+              // Extract and decode the base64-encoded image data
+              String dataUrl = imageData['dataUrl'];
+              String base64Image = dataUrl.split(',').last;
+              Uint8List decodedImage = base64Decode(base64Image);
+              imageList.add(decodedImage);
+            }
+          }
+          return imageList;
         } else {
-          throw "Invalid image data received";
+          throw "Invalid response format";
         }
       case 400:
         throw "Bad Request";
@@ -305,18 +320,20 @@ Future<Uint8List?> getProfilePicture() async {
       case 403:
         throw "Forbidden";
       case 404:
-       
-        return null;
+        // No images found, return an empty list
+        return [];
       case 500:
         throw "Server Error :(";
       default:
         throw "Server Error :(";
     }
   } catch (e) {
-    print('Error fetching profile picture: $e');
-    return null; 
+    print('Error fetching invoice images: $e');
+    return []; // Return an empty list if there's an error fetching the images
   }
 }
+
+
 Future<Uint8List?> getProfilePictureCompany(String companyId) async {
   try {
     final dio = Dio();

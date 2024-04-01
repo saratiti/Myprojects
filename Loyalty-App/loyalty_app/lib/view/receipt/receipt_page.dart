@@ -36,7 +36,7 @@ class ReceiptPage extends StatelessWidget {
       child: ListView.separated(
         physics: BouncingScrollPhysics(),
         separatorBuilder: (context, index) => SizedBox(height: 24.v),
-        itemCount: 2,
+        itemCount: 1,
         itemBuilder: (context, index) => ReceiptoneItemWidget(),
       ),
     );
@@ -50,7 +50,7 @@ Widget _buildUploadButton(BuildContext context) {
       Navigator.pushNamed(context, AppRoutes.receiptUploadScreen);
     },
     leftIcon: Padding(
-      padding: EdgeInsets.only(right: 9.0), // Adjust the value as needed
+      padding: EdgeInsets.only(right: 9.0), 
       child: Icon(
         Icons.cloud_upload,
         color: Colors.white,

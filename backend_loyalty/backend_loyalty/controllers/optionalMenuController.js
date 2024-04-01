@@ -25,13 +25,12 @@ exports.getOptionalMenuByProductId = async (req, res) => {
   const productId = req.params.productId;
 
   try {
-    // Find the product by ID
+   
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    // Retrieve optional menu items associated with the product
     const optionalMenuItems = await OptionalMenu.findAll({
       where: { product_id: productId }
     });
