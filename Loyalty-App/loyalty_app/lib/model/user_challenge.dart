@@ -1,32 +1,33 @@
 import 'package:loyalty_app/model/challenge.dart';
 
 class UserChallenge {
-  final String status;
+  final String ?status;
   final DateTime? completeDate;
   final int? userId;
   final int? challengeId;
-  final int points;
-  final Challenge? challenge;
+  final int ?points;
+  final Challenge? challenges;
 
   UserChallenge({
-    required this.status,
-    required this.completeDate,
+  this.status,
+ this.completeDate,
     this.userId,
     this.challengeId,
-    required this.points,
-    this.challenge,
+    this.points,
+    this.challenges,
   });
 
-  factory UserChallenge.fromJson(Map<String, dynamic> json) {
+ factory UserChallenge.fromJson(Map<String, dynamic> json) {
   return UserChallenge(
-    status: json['status'] ?? '', // Provide default value if null
+    status: json['status'] ?? '',
     completeDate: json['complete_date'] != null ? DateTime.parse(json['complete_date']) : null,
-    userId: json['user_id'] ?? 0, // Provide default value if null
-    challengeId: json['challenge_id'] ?? 0, // Provide default value if null
-    points: json['points'] ?? 0, // Provide default value if null
-    challenge: json['challenge'] != null ? Challenge.fromJson(json['challenge']) : null, // Handle nested object
+    userId: json['user_id'] ?? 0,
+    challengeId: json['challenge_id'] ?? 0,
+    points: json['points'] ?? 0, 
+    challenges: json['challenges'] != null ? Challenge.fromJson(json['challenges']) : null,
   );
 }
+
 
   
 
@@ -37,7 +38,7 @@ class UserChallenge {
       'user_id': userId,
       'challenge_id': challengeId,
       'points': points,
-      'challenge': challenge?.toJson(),
+      'challenges': challenges?.toJson(),
     };
   }
 }

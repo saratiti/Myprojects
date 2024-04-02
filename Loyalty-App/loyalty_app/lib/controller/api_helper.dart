@@ -320,7 +320,7 @@ Future<List<Uint8List>> getInvoiceImages(String imagePath) async {
       case 403:
         throw "Forbidden";
       case 404:
-        // No images found, return an empty list
+
         return [];
       case 500:
         throw "Server Error :(";
@@ -329,7 +329,7 @@ Future<List<Uint8List>> getInvoiceImages(String imagePath) async {
     }
   } catch (e) {
     print('Error fetching invoice images: $e');
-    return []; // Return an empty list if there's an error fetching the images
+    return []; 
   }
 }
 
