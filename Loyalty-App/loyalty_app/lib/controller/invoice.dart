@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:loyalty_app/controller/api_helper.dart';
@@ -35,7 +36,31 @@ Future<List<Invoice>> getUserInvoice() async {
     throw Exception('Failed to fetch user invoices: $e');
   }
 }
-}
 
+Future<Map<String, dynamic>> processScannedData(Uint8List imageBytes) async {
+  try {
+    // Convert image bytes to base64 string
+    String base64Image = base64Encode(imageBytes);
 
+    // Send the base64 encoded image to the backend for scanning
+    var response = await _apiHelper.postDio(
+      "/api/invoices/scan",
+      {'image': base64Image},
+    );
 
+    // Check if the request was successful
+    if (response.statusCode == 200) {
+      // Decode the response body JSON string
+      Map<String, dynamic> result = json.decode(response.body);
+      return result;
+    } else {
+      // If the request was not successful, throw an exception
+      throw Exception('Failed to scan invoice: ${response.reasonPhrase}');
+    }
+  } catch (e) {
+    // Print the error message
+    print('Error scanning invoice: $e');
+    // Throw an exception to handle the error
+    throw Exception('Failed to scan invoice: $e');
+  }
+}}

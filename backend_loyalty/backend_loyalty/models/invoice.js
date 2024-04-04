@@ -1,7 +1,7 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./User'); 
+const User = require('./user'); 
 
 const Invoice = sequelize.define('Invoice', {
   invoice_id: {
@@ -15,6 +15,10 @@ const Invoice = sequelize.define('Invoice', {
   },
   file_path: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  total_amount: {
+    type: DataTypes.DOUBLE,
     allowNull: false,
   },
   user_id: {

@@ -1,0 +1,30 @@
+class OptionalMenu {
+  final int optionId;
+  final String? nameArabic;
+  final String? nameEnglish;
+  final double? price;
+
+  OptionalMenu({
+    required this.optionId,
+    this.nameArabic,
+    this.nameEnglish,
+    this.price,
+  });
+
+  factory OptionalMenu.fromJson(Map<String, dynamic> json) {
+    return OptionalMenu(
+      optionId: json['option_id'] != null ? json['option_id'] as int : 0,
+      nameArabic: json['name_arabic'] as String?,
+      nameEnglish: json['name_english'] as String?,
+      price: json['price'] != null ? json['price'].toDouble() : null,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        optionId,
+        nameArabic,
+        nameEnglish,
+        price,
+      ];
+}

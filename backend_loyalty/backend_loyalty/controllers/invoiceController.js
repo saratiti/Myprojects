@@ -1,7 +1,10 @@
 const Invoice = require('../models/invoice');
 const multer = require('multer');
-
+const ScannedInvoices=require('../models/scan_invoice')
+const Loyalty = require('../models/loyalty');
+const Transaction = require('../models/transaction');
 const fs = require('fs');
+const Tesseract = require('tesseract.js');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -31,13 +34,13 @@ exports.createInvoice = (req, res) => {
       const { originalname, filename, path: filePath, mimetype } = req.file;
       const uploadDate = new Date().toISOString();
 
-      // Resolve the absolute path
+     
       const fullPath = path.resolve(filePath);
 
       const newInvoice = await Invoice.create({
         user_id: userId,
         file_name: filename,
-        file_path: fullPath, // Use the resolved full path
+        file_path: fullPath,
         file_original_name: originalname,
         file_mime_type: mimetype,
         upload_date: uploadDate
@@ -56,20 +59,20 @@ exports.getAllInvoicesByUserId = async (req, res) => {
     const userId = req.user.user_id; 
     const invoices = await Invoice.findAll({ where: { user_id: userId } });
 
-    // Read file contents for each invoice
+   
     for (let i = 0; i < invoices.length; i++) {
       const invoice = invoices[i];
       const filePath = invoice.file_path;
 
-      // Construct full file path
+    
       const fullPath = path.join(__dirname, '..', 'uploads', filePath);
 
-      // Check if file exists
+     
       if (fs.existsSync(fullPath)) {
-        // Read file asynchronously
+     
         const fileContent = await readFileAsync(fullPath);
         
-        // Store file content in the invoice object
+       
         invoice.file_content = fileContent;
       } else {
         console.error('File not found:', fullPath);
@@ -83,7 +86,7 @@ exports.getAllInvoicesByUserId = async (req, res) => {
   }
 };
 
-// Helper function to read file asynchronously and return binary data
+
 function readFileAsync(filePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, (err, data) => {
@@ -99,14 +102,14 @@ function readFileAsync(filePath) {
 
 exports.getInvoiceImages = async (req, res) => {
   try {
-    const userId = req.user.user_id;  // Assuming user_id is passed in the request
+    const userId = req.user.user_id; 
     const invoices = await Invoice.findAll({ where: { user_id: userId } });
 
     if (!invoices || invoices.length === 0) {
       return res.status(404).json({ error: 'User not found or no invoices found' });
     }
 
-    const images = []; // Accumulate images
+    const images = []; 
 
     for (let i = 0; i < invoices.length; i++) {
       const invoice = invoices[i];
@@ -116,7 +119,7 @@ exports.getInvoiceImages = async (req, res) => {
         continue; 
       }
 
-      // Check if the file extension indicates an image
+    
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
       const ext = path.extname(imagePath).toLowerCase();
       if (!imageExtensions.includes(ext)) {
@@ -124,14 +127,14 @@ exports.getInvoiceImages = async (req, res) => {
         continue;
       }
 
-      // Read image file and convert it to base64
+     
       const imageBuffer = fs.readFileSync(imagePath);
       const base64Image = imageBuffer.toString('base64');
 
-      // Determine content type based on file extension
+    
       const contentType = getContentType(ext);
 
-      // Construct data URL with base64 encoded image and content type
+     
       const dataUrl = `data:${contentType};base64,${base64Image}`;
 
       images.push({ dataUrl });
@@ -155,6 +158,146 @@ function getContentType(fileExtension) {
     case '.gif':
       return 'image/gif';
     default:
-      return 'application/octet-stream'; // Default to binary data if extension is unknown
+      return 'application/octet-stream';
   }
+}
+
+// exports.scanInvoice = async (req, res) => {
+//   try {
+//     const userId = req.user.user_id; 
+//     const { totalAmount, invoiceId } = req.body; 
+
+    
+//     const hasScannedInvoice = await hasUserScannedInvoice(userId, invoiceId);
+
+//     if (hasScannedInvoice) {
+//       return res.status(200).json({ message: 'Loyalty points already earned for this invoice' });
+//     }
+
+  
+//     let loyalty = await Loyalty.findOne({ where: { user_id: userId } });
+
+//     if (!loyalty) {
+     
+//       loyalty = await Loyalty.create({
+//         user_id: userId,
+//         loyalty_point: totalAmount, 
+//         last_activity_date: new Date()
+//       });
+//     } else {
+     
+//       loyalty.loyalty_point = Number(loyalty.loyalty_point) + Number(totalAmount);
+//       loyalty.last_activity_date = new Date();
+//       await loyalty.save();
+//     }
+
+   
+//     await Transaction.create({
+//       user_id: userId,
+//       points: totalAmount,
+//       transaction_type: 'Invoice Scan',
+//       transaction_date: new Date()
+//     });
+
+    
+//     await markInvoiceAsScanned(userId, invoiceId);
+
+//     return res.status(200).json({ message: 'Loyalty points updated successfully', totalAmount });
+//   } catch (error) {
+//     console.error('Error scanning invoice:', error.message);
+//     res.status(500).json({ error: 'Internal server error', message: error.message });
+//   }
+// };
+
+
+
+exports.scanInvoice = async (req, res) => {
+  try {
+    const userId = req.user.user_id;
+    const { image } = req.body; // Assuming the image data is sent in the request body
+
+    // Check if image data is provided
+    if (!image) {
+      return res.status(400).json({ error: 'Image data is required' });
+    }
+
+    // Perform OCR on the scanned image to extract text
+    const extractedText = await performOCR(image);
+
+    // Parse the extracted text to find invoiceId and totalAmount
+    const [invoiceId, totalAmount] = parseTextForInvoiceDetails(extractedText);
+
+    // Check if the user has already earned loyalty points for the same invoice
+    const hasScannedInvoice = await hasUserScannedInvoice(userId, invoiceId);
+
+    if (hasScannedInvoice) {
+      return res.status(200).json({ message: 'Loyalty points already earned for this invoice' });
+    }
+
+    // Assume Loyalty and Transaction models are correctly implemented
+    let loyalty = await Loyalty.findOne({ where: { user_id: userId } });
+
+    if (!loyalty) {
+      loyalty = await Loyalty.create({
+        user_id: userId,
+        loyalty_point: totalAmount,
+        last_activity_date: new Date()
+      });
+    } else {
+      loyalty.loyalty_point += totalAmount;
+      loyalty.last_activity_date = new Date();
+      await loyalty.save();
+    }
+
+    await Transaction.create({
+      user_id: userId,
+      points: totalAmount,
+      transaction_type: 'Invoice Scan',
+      transaction_date: new Date()
+    });
+
+    await markInvoiceAsScanned(userId, invoiceId);
+
+    return res.status(200).json({ message: 'Loyalty points updated successfully', totalAmount });
+  } catch (error) {
+    console.error('Error scanning invoice:', error.message);
+    res.status(500).json({ error: 'Internal server error', message: error.message });
+  }
+};
+
+// Perform OCR on the scanned image to extract text
+async function performOCR(imageData) {
+  // Use Tesseract.js to perform OCR on the image data
+  const { data: { text } } = await Tesseract.recognize(imageData);
+  return text;
+}
+
+// Function to parse extracted text for invoice details
+function parseTextForInvoiceDetails(text) {
+  // Regular expression to match invoice ID (assuming it's a 3-digit number)
+  const invoiceIdRegex = /Invoice ID: (\d{3})/; // Update the regex pattern based on the actual format
+  
+  // Regular expression to match total amount (assuming it's a decimal number)
+  const totalAmountRegex = /Total Amount: (\d+\.\d+)/; // Update the regex pattern based on the actual format
+  
+  // Extract invoice ID using regex
+  const invoiceIdMatch = text.match(invoiceIdRegex);
+  const invoiceId = invoiceIdMatch ? invoiceIdMatch[1] : null; // Extract the captured group
+  
+  // Extract total amount using regex
+  const totalAmountMatch = text.match(totalAmountRegex);
+  const totalAmount = totalAmountMatch ? parseFloat(totalAmountMatch[1]) : null; // Extract the captured group and parse as float
+  
+  return [invoiceId, totalAmount];
+}
+
+// Function to check if the user has already scanned the invoice
+async function hasUserScannedInvoice(userId, invoiceId) {
+  const scannedInvoice = await ScannedInvoices.findOne({ where: { user_id: userId, invoice_id: invoiceId } });
+  return !!scannedInvoice;
+}
+
+// Function to mark the invoice as scanned by the user
+async function markInvoiceAsScanned(userId, invoiceId) {
+  await ScannedInvoices.create({ user_id: userId, invoice_id: invoiceId });
 }

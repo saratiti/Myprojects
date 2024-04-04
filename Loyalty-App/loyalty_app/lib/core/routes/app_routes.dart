@@ -29,7 +29,7 @@ class AppRoutes {
     GetPage(name: categoryScreen, page: () => CategoryPage()),
     GetPage(name: receiptScreen, page: () =>  ReceiptPage()),
     GetPage(name: receiptUploadScreen, page: () => const UploadReceipt()),
-    GetPage(name: productDetailsScreen, page: () => const ProductDetailsPage()),
+    GetPage(name: productDetailsScreen, page: () =>  ProductDetailsPage()),
     GetPage(name: inviteFriendsScreen, page: () => const InviteFriendsPage()),
      GetPage(name: scannerScreen , page: () => const ReceiptScannerPage ()),
      GetPage(name: orderScreen , page: () => const OrderPage ()),

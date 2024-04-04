@@ -14,14 +14,14 @@ class Product {
   late int quantity;
   late String description;
   late Category category;
- 
+
 
   
   late double tax = 16.0;
   int selectedQty = 0;
    
 Product.fromJson(Map<String, dynamic> json) {
-  id = json["id"] as int? ?? 0;
+  id = json["product_id"] as int? ?? 0;
   nameArabic = json["name_arabic"] ?? " ";
   nameEnglish = json["name_english"] ?? " ";
   categoryId = json["category_id"] as int? ?? 0;
@@ -74,7 +74,7 @@ Product.fromJson(Map<String, dynamic> json) {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "product_id": categoryId,
+        "category_id": categoryId,
       
         "quantity": selectedQty,
         "price":double.parse(price.toString()),

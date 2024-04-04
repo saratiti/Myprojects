@@ -32,11 +32,9 @@ exports.getLoyaltyLevelByUser = async (req, res) => {
     }
 
     const newLevel = calculateLoyaltyLevel(loyalty.loyalty_point);
-
-    // Update loyalty_level and loyalty_point
     await loyalty.update({ loyalty_level: newLevel });
 
-    // Send response with loyalty level and loyalty point
+   
     res.json({ loyalty_level: newLevel, loyalty_point: loyalty.loyalty_point });
   } catch (error) {
     console.error('Error retrieving loyalty level:', error.message);

@@ -1,7 +1,6 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Product = require('./Product'); 
 const OptionalMenu = sequelize.define('OptionalMenu', {
   option_id: {
     type: DataTypes.INTEGER,
@@ -21,10 +20,7 @@ const OptionalMenu = sequelize.define('OptionalMenu', {
     allowNull: true,
   
 },
-product_id: {
-  type: DataTypes.INTEGER,
-  
-},
+
 createdAt: {
   type: DataTypes.DATE,
   allowNull: true,
@@ -44,6 +40,5 @@ paranoid: true,
 tableName: 'optinoal_menu',
 
 });
-OptionalMenu.belongsTo(Product, { foreignKey: 'product_id', as: 'products', onDelete: 'CASCADE'  });
 
 module.exports = OptionalMenu;

@@ -81,7 +81,7 @@ Widget build(BuildContext context) {
   Widget _buildProduct(BuildContext context, Product product) {
     return  GestureDetector(
     onTap: () {
-      _navigateToProductDetails(product.id); // Pass the product id to the method
+      _navigateToProductDetails(context,product.id);
     },
     child:
     
@@ -175,8 +175,13 @@ Widget build(BuildContext context) {
       ),
      ) );
   }
-  void _navigateToProductDetails(int productId) {
-  Navigator.of(context).pushNamed(AppRoutes.productDetailsScreen, arguments: productId);
+void _navigateToProductDetails(BuildContext context, int productId) {
+  Navigator.of(context).pushNamed(
+    AppRoutes.productDetailsScreen,
+    arguments: {'productId': productId},
+  );
 }
+
+
 
 }

@@ -18,7 +18,7 @@ class _ScanCodeScreenRef1State extends State<ScanCodeScreenRef1> {
     return Center(
       child: SafeArea(
         child: Scaffold(
-          appBar: _buildAppBar(context, "msg50"), // Call the method to build the app bar
+          appBar: _buildAppBar(context, "msg50"), 
           body: Center(
             child: ScanCodeScreenRef(),
           ),
@@ -36,7 +36,7 @@ class _ScanCodeScreenRef1State extends State<ScanCodeScreenRef1> {
       preferredSize: Size.fromHeight(kToolbarHeight),
       child: Directionality(
         textDirection: textDirection,
-        child: buildAppBar(context, title), // Call buildAppBar with context and title
+        child: buildAppBar(context, title), 
       ),
     );
   }

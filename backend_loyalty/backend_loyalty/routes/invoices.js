@@ -10,4 +10,5 @@ router.get('/', authenticateToken,invoiceController.getAllInvoicesByUserId);
 
 router.post('/upload', authenticateToken, invoiceController.createInvoice);
 router.get('/image', authenticateToken,invoiceController.getInvoiceImages);
+router.post('/scan',  authenticateToken,invoiceController.scanInvoice);
 module.exports = router;
