@@ -37,7 +37,7 @@ app.use('/api/optionMenue', optionMenueRoutes );
 app.use('/api/order', orderRoutes );
 app.use('/api/product', productRoutes );
 app.use('/api/orderProduct',orderProductRoutes);
-app.use('/api/review',reviewRoutes);
+app.use('/api/reviews',reviewRoutes);
 app.use('/api/transactions', transactionsRouter);
 app.use('/api/loyalty', loyaltiesRouted);
 app.use('/api/userChallenge', userChallengesRouter);

@@ -21,12 +21,12 @@ class User {
     return User(
       
       id: json['user_id'] as int? ??0,
-      username: json['username']?? '',
-       email: json['email']?? '', 
-       image: json['profile_picture']?? '',
-       fullName: json['full_name']?? '',
-       password: json['password']?? '',
-        phone:json["phone"]?? '',);
+      username: json['username']as String? ?? '',
+       email: json['email']as String? ?? '',
+       image: json['profile_picture']as String? ?? '',
+       fullName: json['full_name']as String? ?? '',
+       password: json['password']as String? ?? '',
+        phone:json["phone"]as String? ?? '',);
         
   }
 

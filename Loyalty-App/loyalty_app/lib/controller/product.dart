@@ -42,20 +42,4 @@ Future<Map<String, dynamic>> getProductWithOptionalMenu(int productId) async {
 }
 
 
-    Future<List<Product>> getTopRatedProducts() async {
-    try {
-      List<Product> products = [];
-      var response = await ApiHelper().getRequest("/api/reviews/products");
-
-      if (response is List<dynamic>) {
-        response.forEach((v) {
-          products.add(Product.fromJson(v));
-        });
-      }
-
-      return products;
-    } catch (ex) {
-      rethrow;
-    }
-  }
 }

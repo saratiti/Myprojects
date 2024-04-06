@@ -9,7 +9,7 @@ class ProductProvider with ChangeNotifier {
   List<Product> get cartItems => selectedProducts;
   List<Product> selectedProducts = [];
   double total = 0;
-  double tax_amount = 0;
+  //double tax_amount = 0;
   double sub_total = 0;
   
   final keyForm = GlobalKey<FormState>();
@@ -89,10 +89,10 @@ void decrementQuantity(Product product) {
     generateTotal() {
     total = 0;
     sub_total = 0;
-    tax_amount= 0;
+   // tax_amount= 0;
     for (Product product in selectedProducts) {
       sub_total += product.subTotal;
-      tax_amount += product.tax_amount;
+     // tax_amount += product.tax_amount;
       total += product.total;
     }
 

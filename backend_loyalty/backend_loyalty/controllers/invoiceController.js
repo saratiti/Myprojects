@@ -214,27 +214,24 @@ function getContentType(fileExtension) {
 exports.scanInvoice = async (req, res) => {
   try {
     const userId = req.user.user_id;
-    const { image } = req.body; // Assuming the image data is sent in the request body
+    const { invoice_id } = req.body; 
 
-    // Check if image data is provided
-    if (!image) {
-      return res.status(400).json({ error: 'Image data is required' });
+    if (!invoice_id || isNaN(invoice_id)) {
+      return res.status(400).json({ error: 'Invalid Invoice ID' });
     }
 
-    // Perform OCR on the scanned image to extract text
-    const extractedText = await performOCR(image);
-
-    // Parse the extracted text to find invoiceId and totalAmount
-    const [invoiceId, totalAmount] = parseTextForInvoiceDetails(extractedText);
-
-    // Check if the user has already earned loyalty points for the same invoice
-    const hasScannedInvoice = await hasUserScannedInvoice(userId, invoiceId);
+    const hasScannedInvoice = await hasUserScannedInvoice(userId, invoice_id);
 
     if (hasScannedInvoice) {
       return res.status(200).json({ message: 'Loyalty points already earned for this invoice' });
     }
 
-    // Assume Loyalty and Transaction models are correctly implemented
+    const totalAmount = await getTotalAmountFromInvoiceId(invoice_id);
+
+    if (!totalAmount) {
+      return res.status(404).json({ error: 'Invoice not found or total amount not available' });
+    }
+
     let loyalty = await Loyalty.findOne({ where: { user_id: userId } });
 
     if (!loyalty) {
@@ -256,42 +253,33 @@ exports.scanInvoice = async (req, res) => {
       transaction_date: new Date()
     });
 
-    await markInvoiceAsScanned(userId, invoiceId);
+    await markInvoiceAsScanned(userId, invoice_id);
 
     return res.status(200).json({ message: 'Loyalty points updated successfully', totalAmount });
   } catch (error) {
     console.error('Error scanning invoice:', error.message);
-    res.status(500).json({ error: 'Internal server error', message: error.message });
+    return res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 };
 
+
 // Perform OCR on the scanned image to extract text
-async function performOCR(imageData) {
-  // Use Tesseract.js to perform OCR on the image data
-  const { data: { text } } = await Tesseract.recognize(imageData);
-  return text;
+async function getTotalAmountFromInvoiceId(invoiceId) {
+  try {
+   
+    const invoice = await Invoice.findOne({ where: { invoice_id: invoiceId } });
+    
+    if (invoice) {
+      return invoice.total_amount;
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    console.error('Error retrieving total amount from invoice ID:', error.message);
+    throw error; 
+  }
 }
 
-// Function to parse extracted text for invoice details
-function parseTextForInvoiceDetails(text) {
-  // Regular expression to match invoice ID (assuming it's a 3-digit number)
-  const invoiceIdRegex = /Invoice ID: (\d{3})/; // Update the regex pattern based on the actual format
-  
-  // Regular expression to match total amount (assuming it's a decimal number)
-  const totalAmountRegex = /Total Amount: (\d+\.\d+)/; // Update the regex pattern based on the actual format
-  
-  // Extract invoice ID using regex
-  const invoiceIdMatch = text.match(invoiceIdRegex);
-  const invoiceId = invoiceIdMatch ? invoiceIdMatch[1] : null; // Extract the captured group
-  
-  // Extract total amount using regex
-  const totalAmountMatch = text.match(totalAmountRegex);
-  const totalAmount = totalAmountMatch ? parseFloat(totalAmountMatch[1]) : null; // Extract the captured group and parse as float
-  
-  return [invoiceId, totalAmount];
-}
-
-// Function to check if the user has already scanned the invoice
 async function hasUserScannedInvoice(userId, invoiceId) {
   const scannedInvoice = await ScannedInvoices.findOne({ where: { user_id: userId, invoice_id: invoiceId } });
   return !!scannedInvoice;

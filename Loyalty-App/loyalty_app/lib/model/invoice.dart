@@ -5,14 +5,16 @@ class Invoice {
   final String uploadDate;
   String filePath;
   final int userId;
-  List<Uint8List>? imageBytesList; // Define imageBytesList field
+  final double totalAmount; 
+  List<Uint8List>? imageBytesList; 
 
   Invoice({
     required this.invoiceId,
     required this.uploadDate,
     required this.filePath,
     required this.userId,
-    this.imageBytesList, // Update field name
+    required this.totalAmount,
+    this.imageBytesList, 
   });
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class Invoice {
       uploadDate: json['upload_date'] as String? ?? '',
       filePath: json['file_path'] as String? ?? '',
       userId: json['user_id'] as int? ?? 0,
+       totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

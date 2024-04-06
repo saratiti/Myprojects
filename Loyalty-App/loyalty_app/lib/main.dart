@@ -5,9 +5,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:loyalty_app/controller/product_provider.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/core/utils/theme/theme_helper.dart';
+import 'package:provider/provider.dart';
 
 
 void main() async {
@@ -33,7 +35,13 @@ EasyLoading.instance
 class MyApp extends StatelessWidget {
  @override
   Widget build(BuildContext context) {
-    return 
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ProductProvider()),
+       
+         
+      ],
+      child:
       GetMaterialApp(
         translations: AppLocalization(),
         theme: theme,
@@ -44,7 +52,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: AppRoutes.loginScreen,
         getPages: AppRoutes.routes,
-      );
+      )  );
   
   }
 }

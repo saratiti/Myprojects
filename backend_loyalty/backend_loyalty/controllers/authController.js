@@ -69,7 +69,7 @@ exports.register = async (req, res) => {
 
   
     await Loyalty.create({
-      loyalty_point: 0, 
+      loyalty_point: 50, 
       loyalty_level: 'Bronze',
       user_id: user.user_id
     });

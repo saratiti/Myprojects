@@ -36,7 +36,7 @@ exports.create = async (req, res) => {
     const data = req.body;
 
     const order = new Order();
-    order.userId = authObject.id;
+    order.userId = authObject.userId;
     order.tax_amount = data.tax_amount;
     order.sub_total = data.sub_total;
     order.total_Price = data.total_price;
@@ -52,10 +52,6 @@ exports.create = async (req, res) => {
       orderProduct.qty = product.qty;
       orderProduct.price = product.price;
 
-     
-      if (color) {
-        orderProduct.colorId = color.id;
-      }
 
       if (size) {
         orderProduct.sizeId = size.id;

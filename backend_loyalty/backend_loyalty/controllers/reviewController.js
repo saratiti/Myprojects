@@ -1,23 +1,14 @@
 const Review = require('../models/review');
 const Product = require('../models/product');
-
+const User=require('../models/user')
 const sequelize = require('sequelize');
 
-exports.createReview = async (req, res) => {
-  try {
-    const newReview = await Review.create(req.body);
-    res.status(201).json({ message: 'Review created successfully', newReview });
-  } catch (error) {
-    console.error('Error creating review:', error.message);
-    res.status(500).send('Server Error');
-  }
-};
 
 exports.getReview = async (req, res) => {
   try {
     const user = req.user;
     const orders = await Review.query()
-      .where('user_id', user.id)
+      .where('user_id', user.user_id)
       .with('product')
       .with('user')
       .orderBy('created_at', 'desc');
@@ -67,13 +58,15 @@ exports.getTopRatedProducts = async (req, res) => {
 
 exports.getProductReviews = async (req, res) => {
   try {
-  
     const product = await Product.findOne({ where: { product_id: req.params.id } }); 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
-    const reviews = await Review.findAll({ where: { product_id: product.product_id } });
+    const reviews = await Review.findAll({ 
+      where: { product_id: product.product_id },
+      include: [{ model: User, as: 'users' }]
+    });
 
     let totalRatings = 0;
     reviews.forEach(review => {
@@ -90,15 +83,6 @@ exports.getProductReviews = async (req, res) => {
 
 
 
-exports.getAllReviews = async (req, res) => {
-  try {
-    const reviews = await Review.findAll();
-    res.json(reviews);
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
 
 exports.updateReview = async (req, res) => {
   try {
@@ -123,12 +107,18 @@ exports.updateReview = async (req, res) => {
 };
 
 exports.create = async (req, res) => {
+  const userId = req.user_id;
+  const user = await User.findByPk(userId);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  } 
   try {
-    const review = new Review();
-    review.user_id = req.user.id;
-    review.comment = req.body.comment;
-    review.rating = req.body.rating;
-    review.product_id = req.body.product_id;
+    const review = await Review.create({
+    user_id : userId,
+   comment : req.body.comment,
+    rating : req.body.rating,
+   product_id :req.body.product_id,
+  });
     await review.save();
 
     return res.status(201).json(review);
