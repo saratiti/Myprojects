@@ -38,7 +38,7 @@ Future<Login?> login(String email, String password) async {
     }
   } catch (e) {
     print('Login error: $e');
-    throw e;
+    rethrow;
   }
 }
 
@@ -97,7 +97,7 @@ static Future<void> logout(BuildContext context) async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) =>  LoginPage(),
+        builder: (context) =>  const LoginPage(),
       ),
     );
   } catch (e) {

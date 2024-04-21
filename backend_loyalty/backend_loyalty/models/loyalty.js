@@ -6,7 +6,7 @@ const User = require('./User');
 
 const Loyalty = sequelize.define('Loyalty', {
   loyality_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -24,7 +24,7 @@ const Loyalty = sequelize.define('Loyalty', {
 
 },
 user_id: {
-  type: DataTypes.INTEGER,
+  type: DataTypes.BIGINT,
   
 },
 createdAt: {

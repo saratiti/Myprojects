@@ -15,26 +15,26 @@ class InviteFriendsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header Section
-            Text(
+            const Text(
               'Invite your friends to join!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Invite Form
-            TextField(
+            const TextField(
               decoration: InputDecoration(
                 labelText: 'Friend\'s Email',
                 border: OutlineInputBorder(),
                 // Add more form fields for phone number, message, etc.
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             // Share Options
-            Text(
+            const Text(
               'Share invitation via:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -50,7 +50,7 @@ class InviteFriendsPage extends StatelessWidget {
               ],
             ),
             // Send Invitation Button
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildUploadButton(context)
           ],
         ),
@@ -59,7 +59,7 @@ class InviteFriendsPage extends StatelessWidget {
   }
   PreferredSizeWidget _buildAppBar(BuildContext context) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(kToolbarHeight),
+    preferredSize: const Size.fromHeight(kToolbarHeight),
     child: AppBar(
       elevation: 0,
       leadingWidth: 40.0,
@@ -74,7 +74,7 @@ class InviteFriendsPage extends StatelessWidget {
             shape: BoxShape.circle,
             color: appTheme.deepOrange800,
           ),
-          child: Center(
+          child: const Center(
             child: Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -83,7 +83,7 @@ class InviteFriendsPage extends StatelessWidget {
           ),
         ),
       ),
-      title: Text(
+      title: const Text(
         "Invite Friends",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
       ),
@@ -111,7 +111,7 @@ Widget _buildUploadButton(BuildContext context) {
           iconSize: 48,
           color: appTheme.deepOrange800,
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(label),
       ],
     );

@@ -1,8 +1,6 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
-import 'package:loyalty_app/model/category.dart';
-import 'package:loyalty_app/model/loyalty.dart';
-import 'package:loyalty_app/model/product.dart';
 
 class LoyaltyController {
 
@@ -19,7 +17,9 @@ class LoyaltyController {
       };
       
     } catch (ex) {
-      print(ex);
+      if (kDebugMode) {
+        print(ex);
+      }
       rethrow;
     }
   }

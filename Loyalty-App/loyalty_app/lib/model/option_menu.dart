@@ -1,9 +1,17 @@
+// ignore_for_file: prefer_null_aware_operators
+
 class OptionalMenu {
   final int optionId;
   final String? nameArabic;
   final String? nameEnglish;
   final double? price;
+   bool _isSelected = false;
+ bool get isSelected => _isSelected;
 
+  // Setter method for isSelected
+  set isSelected(bool value) {
+    _isSelected = value;
+  }
   OptionalMenu({
     required this.optionId,
     this.nameArabic,
@@ -20,7 +28,6 @@ class OptionalMenu {
     );
   }
 
-  @override
   List<Object?> get props => [
         optionId,
         nameArabic,

@@ -1,13 +1,11 @@
 // // ignore_for_file: camel_case_types
 
-// ignore_for_file: library_private_types_in_public_api, camel_case_types
+// ignore_for_file: library_private_types_in_public_api, camel_case_types, unnecessary_null_comparison
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
-import 'package:my_eco_print/data/module/store.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
 import 'package:my_eco_print/view/screen/barcode/barcode_read.dart';
 
@@ -61,11 +59,11 @@ Widget buildAllStore(BuildContext context) {
     stream: _offersStream,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return Center(child: Text('No data available'));
+        return const Center(child: Text('No data available'));
       } else {
         List<Offer> offers = snapshot.data!;
         return SizedBox(
@@ -154,7 +152,7 @@ Widget buildAllStore(BuildContext context) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => ScanCodeScreenRef(),
+                                          builder: (context) => const ScanCodeScreenRef(),
                                           settings: RouteSettings(
                                             arguments: {'offerId': offer.id, 'storeId': offer.storeId},
                                           ),
@@ -194,7 +192,7 @@ Widget buildAllStore(BuildContext context) {
                   children: [
                     
                     Padding(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10),
                       child: SizedBox(
                         height: 40.adaptSize,
                         width: 40.adaptSize,

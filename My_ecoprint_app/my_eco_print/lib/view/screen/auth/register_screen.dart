@@ -1,10 +1,11 @@
 // // ignore_for_file: must_be_immutable, library_private_types_in_public_api
 
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 
 
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/text_controller.dart';
 import 'package:my_eco_print/controller/user.dart';
@@ -109,20 +110,20 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
           hintText: "lbl2".tr,
           textInputAction: TextInputAction.done,
           textInputType: TextInputType.visiblePassword,
-          prefix: buildVisibilityIcon(toggleIconEye, isVisiblePassword1), // Pass toggleIconEye and isVisiblePassword1
+          prefix: buildVisibilityIcon(toggleIconEye, isVisiblePassword1), 
           suffix: buildLockIcon(),
-          isVisiblePassword: isVisiblePassword1, // Pass isVisiblePassword1
-          onTap: toggleIconEye, // Pass toggleIconEye
+          isVisiblePassword: isVisiblePassword1, 
+          onTap: toggleIconEye, 
         ),
                  buildTextFormField(
           controller: textControllers.confirmpasswordController,
           hintText: "lbl2".tr,
           textInputAction: TextInputAction.done,
           textInputType: TextInputType.visiblePassword,
-          prefix: buildVisibilityIcon(toggleIVisibleEye, isVisiblePassword2), // Pass toggleIVisibleEye and isVisiblePassword2
+          prefix: buildVisibilityIcon(toggleIVisibleEye, isVisiblePassword2), 
           suffix: buildLockIcon(),
-          isVisiblePassword: isVisiblePassword2, // Pass isVisiblePassword2
-          onTap: toggleIVisibleEye, // Pass toggleIVisibleEye
+          isVisiblePassword: isVisiblePassword2, 
+          onTap: toggleIVisibleEye,
         ),
                   buildTermsAndConditionsRow(),
                   buildElevatedButton(context),
@@ -151,8 +152,8 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
   Widget? suffix,
   TextInputAction? textInputAction,
   TextInputType? textInputType,
-  bool isVisiblePassword = false, // Add a parameter to control visibility
-  required VoidCallback onTap, // Add a callback to toggle visibility
+  bool isVisiblePassword = false,
+  required VoidCallback onTap, 
 }) {
   return Column(
     children: [
@@ -174,8 +175,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
         suffix: suffix,
         contentPadding: EdgeInsets.only(left: 30.h, top: 11.v, bottom: 11.v),
         obscureText: textInputType == TextInputType.visiblePassword ? !isVisiblePassword : false,
-        // Update the obscureText property based on the visibility state
-      // Pass the onTap callback to handle visibility toggle
+       
       ),
     ],
   );
@@ -324,7 +324,6 @@ Widget buildElevatedButton(BuildContext context) {
     onTap: () async {
      
       UserController userController = UserController();
-      String password = textControllers.passwordplacehoController.text;
       User user = User(
         username: textControllers.personalnameController.text,
         email: textControllers.emailaddressController.text,
@@ -345,7 +344,9 @@ Widget buildElevatedButton(BuildContext context) {
 
       } catch (e) {
        
-        print("Error creating user: $e");
+        if (kDebugMode) {
+          print("Error creating user: $e");
+        }
       }
     },
   );

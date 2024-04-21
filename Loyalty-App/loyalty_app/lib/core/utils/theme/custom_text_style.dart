@@ -37,7 +37,7 @@ class CustomTextStyles {
       );
   static get bodySmallInterff444444 =>
       theme.textTheme.bodySmall!.inter.copyWith(
-        color: Color(0XFF444444),
+        color: const Color(0XFF444444),
       );
   static get bodySmallMerriweatherWhiteA700 =>
       theme.textTheme.bodySmall!.merriweather.copyWith(
@@ -147,12 +147,12 @@ class CustomTextStyles {
       );
   static get labelLargeInterff967259 =>
       theme.textTheme.labelLarge!.inter.copyWith(
-        color: Color(0XFF967259),
+        color: const Color(0XFF967259),
         fontSize: 12.fSize,
       );
   static get labelLargeInterffd1512d =>
       theme.textTheme.labelLarge!.inter.copyWith(
-        color: Color(0XFFD1512D),
+        color: const Color(0XFFD1512D),
         fontSize: 12.fSize,
       );
   static get labelLargePoppinsGray600 =>
@@ -221,17 +221,17 @@ class CustomTextStyles {
       );
   static get titleMediumMulishff0e0e0e =>
       theme.textTheme.titleMedium!.mulish.copyWith(
-        color: Color(0XFF0E0E0E),
+        color: const Color(0XFF0E0E0E),
         fontSize: 16.fSize,
       );
   static get titleMediumMulishff333333 =>
       theme.textTheme.titleMedium!.mulish.copyWith(
-        color: Color(0XFF333333),
+        color: const Color(0XFF333333),
         fontSize: 16.fSize,
       );
   static get titleMediumMulishffd1512d =>
       theme.textTheme.titleMedium!.mulish.copyWith(
-        color: Color(0XFFD1512D),
+        color: const Color(0XFFD1512D),
         fontSize: 16.fSize,
       );
   static get titleMediumPoppinsGray700 =>
@@ -293,11 +293,6 @@ class CustomTextStyles {
 }
 
 extension on TextStyle {
-  TextStyle get aclonica {
-    return copyWith(
-      fontFamily: 'Aclonica',
-    );
-  }
 
   TextStyle get merriweather {
     return copyWith(
@@ -311,11 +306,6 @@ extension on TextStyle {
     );
   }
 
-  TextStyle get sourceSansPro {
-    return copyWith(
-      fontFamily: 'Source Sans Pro',
-    );
-  }
 
   TextStyle get inter {
     return copyWith(

@@ -1,5 +1,5 @@
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
 
 import 'package:loyalty_app/model/user_challenge.dart';
@@ -22,15 +22,21 @@ Future<List<UserChallenge>> getUserChallenge() async {
           result.add(UserChallenge.fromJson(value));
         });
       } else {
-        print("API response is not a map");
+        if (kDebugMode) {
+          print("API response is not a map");
+        }
       }
     } else {
-      print("API response is null");
+      if (kDebugMode) {
+        print("API response is null");
+      }
     }
 
     return result;
   } catch (ex) {
-    print(ex);
+    if (kDebugMode) {
+      print(ex);
+    }
     rethrow;
   }
 }

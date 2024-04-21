@@ -23,12 +23,12 @@ exports.login = (req, res) => {
             res.status(500).json({ message: 'Internal Server Error' });
           } else if (result) {
             const payload = {
-              user_id: user.user_id,
-              username: user.username,
+              user_id: user.id,
+             // username: user.username,
               email: user.email,
               //full_name: user.full_name,
               phone: user.phone,
-              // user_type: user.user_type,
+               role: user.role,
               // company_id: user.company_id,
             };
 

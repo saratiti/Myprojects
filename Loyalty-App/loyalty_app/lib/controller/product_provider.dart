@@ -1,6 +1,9 @@
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/model/cart.dart';
+import 'package:loyalty_app/model/option_menu.dart';
 import 'package:loyalty_app/model/product.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -18,9 +21,15 @@ class ProductProvider with ChangeNotifier {
 
   int get cartItemCount => selectedProducts.length;
 
-  void addToCart(Product product) {
-   selectedProducts.add(product);
+ void addToCart(Product product, List<OptionalMenu> selectedOptions) {
+ 
+    product.optionalMenuItems = selectedOptions;
+    
+    selectedProducts.add(product);
+    
     generateTotal();
+    
+
     notifyListeners();
   }
 
@@ -67,14 +76,14 @@ void removeFromCart(Product product) {
 void incrementQuantity(Product product) {
   product.selectedQty++;
   generateTotal();
-  notifyListeners();
+  notifyListeners(); 
 }
 
 void decrementQuantity(Product product) {
   if (product.selectedQty > 1) {
     product.selectedQty--;
     generateTotal();
-    notifyListeners();
+    notifyListeners(); 
   }
 }
 
@@ -86,17 +95,28 @@ void decrementQuantity(Product product) {
     notifyListeners();
   }
 
-    generateTotal() {
-    total = 0;
-    sub_total = 0;
-   // tax_amount= 0;
-    for (Product product in selectedProducts) {
-      sub_total += product.subTotal;
-     // tax_amount += product.tax_amount;
-      total += product.total;
+void generateTotal() {
+  total = 0;
+  sub_total = 0;
+
+  for (Product product in selectedProducts) {
+    double productSubtotal = product.price * product.selectedQty; // Initialize with the product price * quantity
+    
+    // Add the price of each selected optional menu item
+    for (OptionalMenu menu in product.optionalMenuItems) {
+      if (menu.isSelected) { 
+        productSubtotal += (menu.price ?? 0) * product.selectedQty;
+      }
     }
 
+    sub_total += productSubtotal; 
+    total += productSubtotal; 
   }
+}
+
+
+
+
    int get totalSelectedQuantity {
     int quantity = 0;
     for (final product in selectedProducts) {

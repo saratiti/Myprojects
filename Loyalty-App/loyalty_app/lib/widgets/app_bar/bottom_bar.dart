@@ -21,7 +21,7 @@ class Bottombar extends StatelessWidget {
                 onGenerateRoute: (routeSetting) => PageRouteBuilder(
                     pageBuilder: (ctx, ani, ani1) =>
                         getCurrentPage(routeSetting.name!),
-                    transitionDuration: Duration(seconds: 0))),
+                    transitionDuration: const Duration(seconds: 0))),
             bottomNavigationBar: _buildBottomBar(context)));
   }
 
@@ -54,7 +54,7 @@ class Bottombar extends StatelessWidget {
       case AppRoutes.homeScreen:
         return HomePage();
       default:
-        return DefaultWidget();
+        return const DefaultWidget();
     }
   }
 }

@@ -1,4 +1,6 @@
 
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:loyalty_app/model/order_product.dart';
 import 'package:loyalty_app/model/product.dart';
 

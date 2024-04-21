@@ -37,7 +37,7 @@ Future<Login?> login(String email, String password) async {
     }
   } catch (e) {
     print('Login error: $e');
-    throw e;
+    rethrow;
   }
 }
 

@@ -6,7 +6,7 @@ const User = require('./User');
 
 const Order = sequelize.define('Order', {
   order_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -32,7 +32,7 @@ const Order = sequelize.define('Order', {
   
 },
 user_id: {
-  type: DataTypes.INTEGER,
+  type: DataTypes.BIGINT,
   
 },
 createdAt: {

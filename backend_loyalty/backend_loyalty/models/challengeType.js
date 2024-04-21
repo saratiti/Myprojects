@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 const ChallengeType = sequelize.define('ChallengeType ', {
 
   challengType_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },

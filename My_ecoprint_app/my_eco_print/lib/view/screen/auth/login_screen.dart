@@ -1,6 +1,7 @@
-//ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+//ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_string_interpolations
 
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -40,8 +41,12 @@ void _loadSavedData() async {
   String? savedEmail = await const FlutterSecureStorage().read(key: "saved_email");
   String? savedPassword = await const FlutterSecureStorage().read(key: "saved_password");
 
-  print("Saved Email: $savedEmail");
-  print("Saved Password: $savedPassword");
+  if (kDebugMode) {
+    print("Saved Email: $savedEmail");
+  }
+  if (kDebugMode) {
+    print("Saved Password: $savedPassword");
+  }
 
   if (savedEmail != null) {
     textControllers.emailController.text = savedEmail;
@@ -124,7 +129,9 @@ void savePassword() async {
   await const FlutterSecureStorage().write(key: "saved_password", value: password);
 
 
-  print('Saved Password: $password');
+  if (kDebugMode) {
+    print('Saved Password: $password');
+  }
 }
 
 
@@ -264,8 +271,8 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
       FocusScope.of(context).requestFocus(_emailFocusNode);
 
       if (isCameraEnabled) {
-        String savedEmail = (await FlutterSecureStorage().read(key: "saved_email"))?.toString() ?? "";
-        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+        String savedEmail = (await const FlutterSecureStorage().read(key: "saved_email"))?.toString() ?? "";
+        String savedPassword = (await const FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
 
         if (savedPassword.isNotEmpty && textControllers.emailController.text == savedEmail) {
           textControllers.passwordController.text = savedPassword;
@@ -324,7 +331,7 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
       FocusScope.of(context).requestFocus(_passwordFocusNode);
 
       if (isCameraEnabled) {
-        String savedPassword = (await FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
+        String savedPassword = (await const FlutterSecureStorage().read(key: "saved_password"))?.toString() ?? "";
 
         if (savedPassword.isNotEmpty) {
           textControllers.passwordController.text = savedPassword;

@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, deprecated_member_use
 
 import 'dart:io';
 
@@ -15,6 +15,8 @@ import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
 import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatefulWidget {
+  const UserProfilePage({super.key});
+
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
 }
@@ -83,12 +85,16 @@ Future<void> _updateProfile() async {
       isLoading = false;
     });
 
-    print('Profile updated successfully');
+    if (kDebugMode) {
+      print('Profile updated successfully');
+    }
   } catch (e) {
     setState(() {
       isLoading = false;
     });
-    print('Error updating profile: $e');
+    if (kDebugMode) {
+      print('Error updating profile: $e');
+    }
   }
 }
 
@@ -96,11 +102,15 @@ Future<void> _updateProfile() async {
   Future<void> _uploadProfilePicture() async {
   try {
     String imageUrl = await _apiHelper.uploadProfilePicture(_selectedImage!);
-    print('Profile picture uploaded successfully: $imageUrl');
+    if (kDebugMode) {
+      print('Profile picture uploaded successfully: $imageUrl');
+    }
     
     Provider.of<UserProfileModel>(context, listen: false).updateProfilePicture(imageUrl);
   } catch (e) {
-    print('Error uploading profile picture: $e');
+    if (kDebugMode) {
+      print('Error uploading profile picture: $e');
+    }
   }
 }
   void toggleCheckmark() {
@@ -197,9 +207,9 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
       child:Scaffold(
     appBar: buildAppBar(context,"msg34"),
     body: isLoading
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
-            padding: EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -207,7 +217,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                   alignment: Alignment.center,
                   children: [
                    
-                    Container(
+                    SizedBox(
                       width: 150,
                       height: 150,
                       child: ClipOval(
@@ -223,7 +233,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return CircularProgressIndicator();
+                                    return const CircularProgressIndicator();
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
                                   } else if (snapshot.hasData) {
@@ -237,7 +247,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                                     );
                                   } else {
                                     return ClipOval(
-                                      child: Container(
+                                      child: SizedBox(
                                         width: 150,
                                         height: 150,
                                        
@@ -266,21 +276,21 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                             context: context,
                             builder: (context) {
                               return Container(
-                                padding: EdgeInsets.all(16.0),
+                                padding: const EdgeInsets.all(16.0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     ListTile(
-                                      leading: Icon(Icons.camera_alt),
-                                      title: Text('Take a photo'),
+                                      leading: const Icon(Icons.camera_alt),
+                                      title: const Text('Take a photo'),
                                       onTap: () {
                                         _pickImageFromCamera();
                                         Navigator.pop(context); 
                                       },
                                     ),
                                     ListTile(
-                                      leading: Icon(Icons.photo_library),
-                                      title: Text('Choose from gallery'),
+                                      leading: const Icon(Icons.photo_library),
+                                      title: const Text('Choose from gallery'),
                                       onTap: () {
                                         _pickImageFromGallery();
                                         Navigator.pop(context); 
@@ -303,7 +313,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                             ),
                             color: appTheme.lightGreen500,
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.edit,
                             color: Colors.white,
                           ),

@@ -1,5 +1,7 @@
 
 
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/controller/invoice.dart';
 import 'package:loyalty_app/model/invoice.dart';
@@ -27,30 +29,30 @@ class _ReceiptoneItemWidgetState extends State<ReceiptoneItemWidget> {
       future: _invoicesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No invoices available'));
+          return const Center(child: Text('No invoices available'));
         } else {
           return SingleChildScrollView(
             child: Column(
               children: [
                 ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: snapshot.data!.length,
                   itemExtent: 150,
                   itemBuilder: (context, index) {
                     Invoice invoice = snapshot.data![index];
                     return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Container(
                         width: 317,
-                        padding: EdgeInsets.symmetric(horizontal: 23, vertical: 14),
+                        padding: const EdgeInsets.symmetric(horizontal: 23, vertical: 14),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(30),
                             bottomRight: Radius.circular(30),
                           ),
@@ -59,7 +61,7 @@ class _ReceiptoneItemWidgetState extends State<ReceiptoneItemWidget> {
                               color: Colors.grey.withOpacity(0.3),
                               spreadRadius: 2,
                               blurRadius: 5,
-                              offset: Offset(0, 3),
+                              offset: const Offset(0, 3),
                             ),
                           ],
                         ),
@@ -68,19 +70,19 @@ class _ReceiptoneItemWidgetState extends State<ReceiptoneItemWidget> {
                             if (invoice.imageBytesList != null && index < invoice.imageBytesList!.length)
                               Expanded(
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.horizontal(left: Radius.circular(6)),
+                                  borderRadius: const BorderRadius.horizontal(left: Radius.circular(6)),
                                   child: Image.memory(
                                     invoice.imageBytesList![index],
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      return Text('Error loading image');
+                                      return const Text('Error loading image');
                                     },
                                   ),
                                 ),
                               ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Expanded(
                               flex: 2,
                               child: Column(
@@ -88,7 +90,7 @@ class _ReceiptoneItemWidgetState extends State<ReceiptoneItemWidget> {
                                 children: [
                                   Text(
                                     'Upload Date: ${invoice.uploadDate}',
-                                    style: TextStyle(fontSize: 18),
+                                    style: const TextStyle(fontSize: 18),
                                   ),
                                 ],
                               ),

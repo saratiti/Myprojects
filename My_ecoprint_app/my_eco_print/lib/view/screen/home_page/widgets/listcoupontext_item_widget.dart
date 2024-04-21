@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/transaction_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
@@ -28,7 +31,9 @@ List<Transaction> weeklyTransactions = [];
         weeklyTransactions = transactions;
       });
     } catch (error) {
-      print('Error fetching weekly transactions: $error');
+      if (kDebugMode) {
+        print('Error fetching weekly transactions: $error');
+      }
     }
   }
 
@@ -55,7 +60,7 @@ List<Transaction> weeklyTransactions = [];
           SizedBox(height: 24.v),
           ListView.builder(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemCount: weeklyTransactions.length,
             itemBuilder: (context, index) {
               final transaction = weeklyTransactions[index];
@@ -114,7 +119,7 @@ List<Transaction> weeklyTransactions = [];
     };
     final translationKey = transactionTypeMessages[transactionType];
     return translationKey != null
-        ? localization.getString(translationKey) ?? "Unknown transaction type"
+        ? localization.getString(translationKey)
         : "Unknown transaction type";
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:loyalty_app/controller/loyalty.dart';
@@ -100,7 +102,7 @@ Widget _buildAppBar(BuildContext context) {
     future:LoyaltyController().getLoyaltyDataByUser(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) { 
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       } else if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
       } else {
@@ -129,7 +131,7 @@ Widget _buildAppBar(BuildContext context) {
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
                   blurRadius: 6,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -195,7 +197,7 @@ Widget _buildAppBar(BuildContext context) {
                         loyaltyLevel.isNotEmpty
                             ? 'Currently you have $userPoints points $loyaltyLevel Level'
                             : 'No loyalty data available',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
@@ -237,7 +239,7 @@ Widget _buildAppBar(BuildContext context) {
             ),
             itemCount: 2,
             itemBuilder: (context, index, realIndex) {
-              return SliderWidget();
+              return const SliderWidget();
             },
           ),
         ],
@@ -302,7 +304,7 @@ Widget _buildAppBar(BuildContext context) {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           boxShadow: [
@@ -310,7 +312,7 @@ Widget _buildAppBar(BuildContext context) {
               color: const Color.fromARGB(255, 243, 239, 239).withOpacity(0.5),
               spreadRadius: 1,
               blurRadius: 2,
-              offset: Offset(0, 0),
+              offset: const Offset(0, 0),
             ),
           ],
         ),
@@ -351,7 +353,7 @@ Widget _buildAppBar(BuildContext context) {
           Container(
             width: 60.0,
             height: 60.0,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: Color(0xFFD1512D),
             ),
@@ -361,10 +363,10 @@ Widget _buildAppBar(BuildContext context) {
               size: 30.0,
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black,
               fontSize: 14.0,
             ),

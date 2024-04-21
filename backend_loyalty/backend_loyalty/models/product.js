@@ -6,7 +6,7 @@ const Category = require('./Category');
 
 const Product = sequelize.define('Product', {
   product_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -23,7 +23,7 @@ const Product = sequelize.define('Product', {
     allowNull: true,
   },
   category_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: true,
   },
   quantity: {
@@ -31,7 +31,7 @@ const Product = sequelize.define('Product', {
     allowNull: true,
   },
   price: {
-    type: DataTypes.STRING,
+    type: DataTypes.DOUBLE,
     allowNull: true,
   },
   createdAt: {

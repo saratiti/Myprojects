@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
 
 class UserProfileModel extends ChangeNotifier {
   String? _profilePicture;
-  int _totalPointsRedeemed = 0;
-  int _totalPoints = 0;
 
 
   String? get profilePicture => _profilePicture;
@@ -36,15 +34,21 @@ Future <int> get totalPointsRedeemed async{
       if (totalRedeemedPoints is int) {
         return totalRedeemedPoints;
       } else {
-        print("Error: 'totalRedeemedPoints' is not an integer");
+        if (kDebugMode) {
+          print("Error: 'totalRedeemedPoints' is not an integer");
+        }
         return 0; 
       }
     } else {
-      print("Error: Unexpected response format");
+      if (kDebugMode) {
+        print("Error: Unexpected response format");
+      }
       return 0; 
     }
   } catch (e) {
-    print("Error getting totalRedeemedPoints: $e");
+    if (kDebugMode) {
+      print("Error getting totalRedeemedPoints: $e");
+    }
     rethrow;
   }
 
@@ -64,26 +68,30 @@ Future<int> get totalPoints async {
       if (totalPoints != null) {
         return totalPoints['total_points'] ?? 0;
       } else {
-        print("Error: 'totalPoints' value is null");
+        if (kDebugMode) {
+          print("Error: 'totalPoints' value is null");
+        }
         return 0;
       }
     } else {
-      print("Error: 'totalPoints' key is missing in the API response");
+      if (kDebugMode) {
+        print("Error: 'totalPoints' key is missing in the API response");
+      }
       return 0;
     }
   } catch (e) {
-    print("Error getting total points: $e");
-    throw e; 
+    if (kDebugMode) {
+      print("Error getting total points: $e");
+    }
+    rethrow; 
   }
 }
 
  void updateTotalPointsRedeemed(int points) {
-    _totalPointsRedeemed = points;
     notifyListeners();
   }
   
   void updateTotalPoints(int points) {
-    _totalPoints = points;
     notifyListeners();
   }
 }

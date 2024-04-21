@@ -5,7 +5,7 @@ const User = require('./User');
 
 const InvitePerson = sequelize.define('InvitePerson', {
   invite_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -22,7 +22,7 @@ const InvitePerson = sequelize.define('InvitePerson', {
     allowNull: false,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
 createdAt: {

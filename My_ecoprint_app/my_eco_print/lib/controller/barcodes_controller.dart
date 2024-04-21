@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unnecessary_null_comparison, unnecessary_type_check
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -110,7 +110,7 @@ Future<List<Map<String, dynamic>>> getBarcodeByStoreAndOfferId(int storeId, int 
     }
   } catch (e) {
     print(e);
-    throw e; 
+    rethrow; 
   }
 }
 Future<Map<String, dynamic>?> generateBarcodeAndQRCode() async {
@@ -121,8 +121,6 @@ Future<Map<String, dynamic>?> generateBarcodeAndQRCode() async {
 
   int? offerId;
   int? storeId;
-  int? userId;
-int ?barcodeId;
     if (barcodeValue.isNotEmpty && qrCodeImageBytes != null) {
     
       return {
@@ -198,7 +196,7 @@ Future<bool> getBarcodeIsRead(int barcodeId) async {
   } catch (e) {
     
     print('Error getting barcode status: $e');
-    throw e;
+    rethrow;
   }
 }
 

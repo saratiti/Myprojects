@@ -1,63 +1,98 @@
 
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/controller/loyalty.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/model/category.dart';
 import 'package:loyalty_app/view/category/widgets/softdrink1_item_widget.dart';
 import 'package:loyalty_app/view/category/widgets/softdrink_item_widget.dart';
 import 'package:loyalty_app/view/category/widgets/top_product.dart';
 import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
-import 'package:loyalty_app/widgets/app_bar/custom_app_bar.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class CategoryPage extends StatefulWidget {
-  CategoryPage({Key? key}) : super(key: key);
+  const CategoryPage({Key? key}) : super(key: key);
 
   @override
   _CategoryPageState createState() => _CategoryPageState();
 }
 
 class _CategoryPageState extends State<CategoryPage> {
-  int userPoints = 2000;
-  bool showTopProducts = true; 
- void toggleTopProductsVisibility(bool showTopProducts) {
+    int userPoints = 2000;
+  bool showTopProducts = true;
+  int? _selectedCategoryId;
+    late List<Catalog> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final categories = await CategoryController().getAll();
+      setState(() {
+        _categories = categories;
+      });
+    } catch (ex) {
+      if (kDebugMode) {
+        print('Error fetching categories: $ex');
+      }
+    }
+  }
+
+  void toggleTopProductsVisibility(bool value) {
     setState(() {
-      showTopProducts = showTopProducts;
+      showTopProducts = value;
     });
   }
+
+  void onSelectCategory(int categoryId) {
+    setState(() {
+      _selectedCategoryId = categoryId;
+      showTopProducts = false; // Hide TopRatedProducts
+    });
+  }
+
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: appTheme.gray100,
-        appBar: _buildAppBar(context),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildZipcode(context, userPoints),
-              SizedBox(height: 46.v),
-              _buildSlider(context),
-              SizedBox(height: 90.v),
-            if (showTopProducts) // Only show if _showTopProducts is true
-              
+Widget build(BuildContext context) {
+  return SafeArea(
+    child: Scaffold(
+      backgroundColor: appTheme.gray100,
+      appBar: _buildAppBar(context),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildZipcode(context, userPoints),
+            SizedBox(height: 46.v),
+            _buildSlider(context),
+            SizedBox(height: 90.v),
+            if (_categories != null) // Null check added here
               SoftdrinkItemWidget(
-                toggleTopProductsVisibility: toggleTopProductsVisibility,
+                categories: _categories!,
+                selectedCategoryId: _selectedCategoryId,
+                onSelectCategory: onSelectCategory,
               ),
-                SizedBox(height: 46.v),
-                  TopRatedProducts(),
-              
-            ],
-          ),
+            SizedBox(height: 46.v),
+            if (showTopProducts)
+              const TopRatedProducts(),
+            if (_selectedCategoryId != null)
+              Softdrink1ItemWidget(categoryId: _selectedCategoryId!),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         elevation: 0,
         leadingWidth: 40.0,
@@ -72,7 +107,7 @@ class _CategoryPageState extends State<CategoryPage> {
               shape: BoxShape.circle,
               color: appTheme.deepOrange800,
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.arrow_back,
                 color: Colors.white,
@@ -81,7 +116,7 @@ class _CategoryPageState extends State<CategoryPage> {
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           "Category",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
@@ -92,7 +127,6 @@ class _CategoryPageState extends State<CategoryPage> {
   }
 
   Widget _buildSlider(BuildContext context) {
-    int sliderIndex = 1;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -111,12 +145,11 @@ class _CategoryPageState extends State<CategoryPage> {
               enableInfiniteScroll: false,
               scrollDirection: Axis.horizontal,
               onPageChanged: (index, reason) {
-                sliderIndex = index;
               },
             ),
             itemCount: 2,
             itemBuilder: (context, index, realIndex) {
-              return SliderWidget();
+              return const SliderWidget();
             },
           ),
         ],
@@ -129,7 +162,7 @@ class _CategoryPageState extends State<CategoryPage> {
       future: LoyaltyController().getLoyaltyDataByUser(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
@@ -164,7 +197,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   color: Colors.grey.withOpacity(0.3),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -174,7 +207,7 @@ class _CategoryPageState extends State<CategoryPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(right: 16),
+                    padding: const EdgeInsets.only(right: 16),
                     child: Image.asset(
                       medalImage,
                       height: 70,
@@ -187,30 +220,30 @@ class _CategoryPageState extends State<CategoryPage> {
                       children: [
                         Text(
                           medalText,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           "Available Points: $userPoints",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                           ),
                         ),
                         Text(
                           "Level: $userLevel",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20), // Adjust vertical padding
+                          padding: const EdgeInsets.symmetric(vertical: 20), // Adjust vertical padding
                           child: LinearProgressIndicator(
                             value: progress,
                             backgroundColor: Colors.grey[300],

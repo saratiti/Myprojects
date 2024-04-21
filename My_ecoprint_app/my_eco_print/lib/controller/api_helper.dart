@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
 class ApiHelper {
-  final String DOMAIN = "185.203.117.38:3000";
+  final String DOMAIN = "94.156.35.189:3000";
 
   Future<String> getToken() async {
     var storage = const FlutterSecureStorage();
@@ -21,20 +21,17 @@ class ApiHelper {
     return "";
   }
 
-Future<dynamic> getRequest(String path) async {
-  Uri uriFunction = Uri.http(DOMAIN, path);
+  Future<dynamic> getRequest(String path) async {
+    Uri uriFunction = Uri.http(DOMAIN, path);
 
-  var token = await getToken();
-  
+    var token = await getToken();
 
-  var headers = {"Authorization": "Bearer $token"};
-  
+    var headers = {"Authorization": "Bearer $token "};
 
-  http.Response response = await http.get(uriFunction, headers: headers);
-  
+    http.Response response = await http.get(uriFunction, headers: headers);
 
-  return resposneFunction(response);
-}
+    return resposneFunction(response);
+  }
 
   Future<dynamic> postRequest(String path, Map body) async {
     Uri uriFunction = Uri.http(DOMAIN, path);
@@ -63,27 +60,23 @@ Future<dynamic> getRequest(String path) async {
     return resposneFunction(response);
   }
 
-Future<dynamic> putRequest(String path, Map body) async {
-  Uri uri = Uri.http(DOMAIN, path);
-  
-  // Get the token
-  var token = await getToken();
-  
-  // Construct the headers with the authorization token
-  var headers = {
-    "Authorization": "Bearer $token",
-    "Content-Type": "application/json", // Assuming JSON body
-  };
+  Future<dynamic> putRequest(String path, Map body) async {
+    Uri uri = Uri.http(DOMAIN, path);
 
-  // Encode the body to JSON
-  String jsonBody = json.encode(body);
+    var token = await getToken();
 
-  // Send the PUT request
-  http.Response response = await http.put(uri, body: jsonBody, headers: headers);
+    var headers = {
+      "Authorization": "Bearer $token",
+      "Content-Type": "application/json",
+    };
 
-  // Process the response
-  return resposneFunction(response);
-}
+    String jsonBody = json.encode(body);
+
+    http.Response response =
+        await http.put(uri, body: jsonBody, headers: headers);
+
+    return resposneFunction(response);
+  }
 
   Future<dynamic> deleteRequest(String path) async {
     Uri uriFunction = Uri.http(DOMAIN, path);
@@ -231,131 +224,132 @@ Future<dynamic> putRequest(String path, Map body) async {
   }
 
   Future<String> uploadProfilePicture(File profilePicture) async {
-  try {
-    final dio = Dio();
-    var token = await getToken();
-    var headers = {"Authorization": "Bearer $token"};
+    try {
+      final dio = Dio();
+      var token = await getToken();
+      var headers = {"Authorization": "Bearer $token"};
 
-    // Check if the file is either PNG or JPEG
-    if (profilePicture.path.endsWith('.png') ||
-        profilePicture.path.endsWith('.jpeg') ||
-        profilePicture.path.endsWith('.jpg')) {
-      // Define the filename with the original extension
-      String fileName =
-          "profile_picture.${profilePicture.path.split("/").last.split(".").last}";
+      if (profilePicture.path.endsWith('.png') ||
+          profilePicture.path.endsWith('.jpeg') ||
+          profilePicture.path.endsWith('.jpg')) {
+        String fileName =
+            "profile_picture.${profilePicture.path.split("/").last.split(".").last}";
 
-      FormData formData = FormData.fromMap({
-        "profile_picture": await MultipartFile.fromFile(
-          profilePicture.path,
-          filename: fileName,
-        ),
-      });
+        FormData formData = FormData.fromMap({
+          "profile_picture": await MultipartFile.fromFile(
+            profilePicture.path,
+            filename: fileName,
+          ),
+        });
 
-      Response response = await dio.put(
-        'http://$DOMAIN/api/users/updateProfile',
-        data: formData,
+        Response response = await dio.put(
+          'http://$DOMAIN/api/users/updateProfile',
+          data: formData,
+          options: Options(
+            headers: headers,
+          ),
+        );
+
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          return response.data.toString();
+        } else {
+          throw "Failed to upload profile picture. Status code: ${response.statusCode}";
+        }
+      } else {
+        throw "Only PNG or JPEG files are allowed";
+      }
+    } catch (e) {
+      throw "Error uploading profile picture: $e";
+    }
+  }
+
+  Future<Uint8List?> getProfilePicture() async {
+    try {
+      final dio = Dio();
+      var token = await getToken();
+      var headers = {"Authorization": "Bearer $token"};
+
+      Response response = await dio.get(
+        'http://$DOMAIN/api/users/profilePicture',
         options: Options(
           headers: headers,
+          responseType: ResponseType.bytes,
         ),
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return response.data.toString();
-      } else {
-        throw "Failed to upload profile picture. Status code: ${response.statusCode}";
+      switch (response.statusCode) {
+        case 200:
+        case 201:
+          if (response.data is List<int>) {
+            return Uint8List.fromList(response.data);
+          } else {
+            throw "Invalid image data received";
+          }
+        case 400:
+          throw "Bad Request";
+        case 401:
+          throw "Unauthorized";
+        case 402:
+          throw "Payment Required";
+        case 403:
+          throw "Forbidden";
+        case 404:
+          return null;
+        case 500:
+          throw "Server Error :(";
+        default:
+          throw "Server Error :(";
       }
-    } else {
-      throw "Only PNG or JPEG files are allowed";
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching profile picture: $e');
+      }
+      return null;
     }
-  } catch (e) {
-    throw "Error uploading profile picture: $e";
   }
-}
 
-Future<Uint8List?> getProfilePicture() async {
-  try {
-    final dio = Dio();
-    var token = await getToken();
-    var headers = {"Authorization": "Bearer $token"};
+  Future<Uint8List?> getProfilePictureCompany(String companyId) async {
+    try {
+      final dio = Dio();
+      var token = await getToken();
+      var headers = {"Authorization": "Bearer $token"};
 
-    Response response = await dio.get(
-      'http://$DOMAIN/api/users/profilePicture',
-      options: Options(
-        headers: headers,
-        responseType: ResponseType.bytes,
-      ),
-    );
+      Response response = await dio.get(
+        'http://$DOMAIN/api/companies/$companyId',
+        options: Options(
+          headers: headers,
+          responseType: ResponseType.bytes,
+        ),
+      );
 
-    switch (response.statusCode) {
-      case 200:
-      case 201:
-        if (response.data is List<int>) {
-          return Uint8List.fromList(response.data);
-        } else {
-          throw "Invalid image data received";
-        }
-      case 400:
-        throw "Bad Request";
-      case 401:
-        throw "Unauthorized";
-      case 402:
-        throw "Payment Required";
-      case 403:
-        throw "Forbidden";
-      case 404:
-        // No profile picture found, return null
-        return null;
-      case 500:
-        throw "Server Error :(";
-      default:
-        throw "Server Error :(";
+      switch (response.statusCode) {
+        case 200:
+        case 201:
+          if (response.data is List<int>) {
+            return Uint8List.fromList(response.data);
+          } else {
+            throw "Invalid image data received";
+          }
+        case 400:
+          throw "Bad Request";
+        case 401:
+          throw "Unauthorized";
+        case 402:
+          throw "Payment Required";
+        case 403:
+          throw "Forbidden";
+        case 404:
+          return null;
+        case 500:
+          throw "Server Error :(";
+        default:
+          throw "Server Error :(";
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching profile picture: $e');
+      }
+      return null;
     }
-  } catch (e) {
-    print('Error fetching profile picture: $e');
-    return null; 
   }
-}
-Future<Uint8List?> getProfilePictureCompany(String companyId) async {
-  try {
-    final dio = Dio();
-    var token = await getToken();
-    var headers = {"Authorization": "Bearer $token"};
-
-    Response response = await dio.get(
-      'http://$DOMAIN/api/companies/$companyId', // Assuming the endpoint for company image is '/image'
-      options: Options(
-        headers: headers,
-        responseType: ResponseType.bytes,
-      ),
-    );
-
-    switch (response.statusCode) {
-      case 200:
-      case 201:
-        if (response.data is List<int>) {
-          return Uint8List.fromList(response.data);
-        } else {
-          throw "Invalid image data received";
-        }
-      case 400:
-        throw "Bad Request";
-      case 401:
-        throw "Unauthorized";
-      case 402:
-        throw "Payment Required";
-      case 403:
-        throw "Forbidden";
-      case 404:
-        // No profile picture found, return null
-        return null;
-      case 500:
-        throw "Server Error :(";
-      default:
-        throw "Server Error :(";
-    }
-  } catch (e) {
-    print('Error fetching profile picture: $e');
-    return null; 
-  }
-}
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/api_helper.dart';
@@ -79,7 +81,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
   return Directionality(
     textDirection: textDirection,
     child: SingleChildScrollView(
-      padding: EdgeInsets.only(),
+      padding: const EdgeInsets.only(),
       child: Column(
         children: [
           buildUserDetails(context),
@@ -287,14 +289,14 @@ Widget buildUserDetails(BuildContext context) {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 8.0), 
+                padding: const EdgeInsets.only(left: 8.0), 
                 child: Consumer<UserProfileModel>(
                   builder: (context, userProfile, _) {
                     return FutureBuilder(
                       future: _apiHelper.getProfilePicture(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         } else if (snapshot.data != null) {
                           Uint8List imageData = snapshot.data as Uint8List;
                           return ClipOval(
@@ -363,7 +365,7 @@ Widget buildUserDetails(BuildContext context) {
 
   void navigateToCouponScreen(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>  CoponScreen(),
+      builder: (context) =>  const CoponScreen(),
     ));
   }
   

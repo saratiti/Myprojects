@@ -1,8 +1,9 @@
 
+// ignore_for_file: unnecessary_null_comparison, unnecessary_type_check, unused_local_variable, library_private_types_in_public_api, unused_element, unnecessary_string_interpolations
+
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,19 +11,16 @@ import 'package:intl/intl.dart';
 import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/barcodes_controller.dart';
 
-import 'package:my_eco_print/controller/offer_controller.dart';
-import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/barcode.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/discountcoupon_item_widget.dart';
-import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
 import 'package:provider/provider.dart';
-import '../ points/collecting_points/collecting_points.dart';
-import '../../../data/module/user.dart';
 
 class ScanCodeScreenRef extends StatefulWidget {
+  const ScanCodeScreenRef({super.key});
+
   @override
   _ScanCodeScreenRefState createState() => _ScanCodeScreenRefState();
 }
@@ -39,7 +37,6 @@ ButtonStyle buttonStyle = CustomButtonStyles.fillLightGreenTL161;
   int? userId;
 int ?barcodeId;
 
-  String _displayText = "msg54";
 
 
   @override
@@ -50,7 +47,7 @@ int ?barcodeId;
 @override
 void initState() {
   super.initState();
-  WidgetsBinding.instance?.addObserver(this);
+  WidgetsBinding.instance.addObserver(this);
   _generateBarcodeAndQRCode().then((barcodeData) {
     if (barcodeData != null) {
       final String? barcodeId = barcodeData['barcodeId'];
@@ -124,17 +121,23 @@ Future<Map<String, dynamic>?> _generateBarcodeAndQRCode() async {
         };
       } else {
 
-        print('Error: Invalid response format');
+        if (kDebugMode) {
+          print('Error: Invalid response format');
+        }
         return null;
       }
     } else {
 
-      print('Error: No response received');
+      if (kDebugMode) {
+        print('Error: No response received');
+      }
       return null;
     }
   } catch (e) {
   
-    print('Error generating or retrieving barcode: $e');
+    if (kDebugMode) {
+      print('Error generating or retrieving barcode: $e');
+    }
     return null;
   }
 }
@@ -145,7 +148,9 @@ Future<void> _saveBarcodeToLocalDatabase(Map<String, dynamic> barcodeData) async
 
    await BarcodeController().createBarcode(Barcodes.fromJson(barcodeData));
   } catch (e) {
-    print('Error saving barcode data: $e');
+    if (kDebugMode) {
+      print('Error saving barcode data: $e');
+    }
   
   }
 }
@@ -173,7 +178,9 @@ Future<void> fetchBarcodeStatus(int barcodeId) async {
     }
   } catch (e) {
  
-    print('Error fetching barcode status: $e');
+    if (kDebugMode) {
+      print('Error fetching barcode status: $e');
+    }
    
   }
 }
@@ -203,7 +210,7 @@ Widget build(BuildContext context) {
                 return buildBody(mediaQueryData, offerId, storeId);
               } else {
                
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             },
           ),
@@ -211,7 +218,7 @@ Widget build(BuildContext context) {
       ),
     );
   } else {
-    return Center(
+    return const Center(
       child: Text('Missing offerId or storeId'),
     );
   }
@@ -330,7 +337,7 @@ FutureBuilder<Map<String, dynamic>?>(
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
 
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       // If an error occurs while fetching the image, display an error message
       return Text('Error: ${snapshot.error}');
@@ -360,7 +367,7 @@ FutureBuilder<Map<String, dynamic>?>(
     future: BarcodeController().getBarcodeByStoreAndOfferId(storeId!, offerId!),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return CircularProgressIndicator(); 
+        return const CircularProgressIndicator(); 
       } else if (snapshot.hasError) {
         return Text('Error: ${snapshot.error}');
       } else {
@@ -377,13 +384,13 @@ FutureBuilder<Map<String, dynamic>?>(
                 style: CustomTextStyles.titleMediumOnPrimaryContainer,
               );
             } else {
-              return Text('Barcode Value not found');
+              return const Text('Barcode Value not found');
             }
           } else {
-            return Text('No barcode found');
+            return const Text('No barcode found');
           }
         } else {
-          return Text('No barcode data found');
+          return const Text('No barcode data found');
         }
       }
     },
@@ -395,10 +402,10 @@ FutureBuilder<Map<String, dynamic>?>(
           );
         } else {
          
-          return Text('Error: Failed to load barcode image');
+          return const Text('Error: Failed to load barcode image');
         }
       } else {
-        return CircularProgressIndicator();
+        return const CircularProgressIndicator();
       }
     }
     },
@@ -431,7 +438,7 @@ FutureBuilder<List<Map<String, dynamic>>>(
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
       
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       
       return Text('Error: ${snapshot.error}');
@@ -449,10 +456,14 @@ if (barcodeStatus == 'redeemed') {
       Provider.of<UserProfileModel>(context, listen: false).updateTotalPointsRedeemed(pointsRedeemed);
       Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(pointsRedeemed);
     } else {
-      print('Number of points redeemed is null');
+      if (kDebugMode) {
+        print('Number of points redeemed is null');
+      }
     }
   } else {
-    print('Offers object is null');
+    if (kDebugMode) {
+      print('Offers object is null');
+    }
   }
 }
 
@@ -474,7 +485,7 @@ if (barcodeStatus == 'redeemed') {
         );
       } else {
         // If no barcodes are found, display a message
-        return Text("No barcode found for the given store ID and offer ID");
+        return const Text("No barcode found for the given store ID and offer ID");
       }
     }
   },
@@ -523,10 +534,10 @@ Widget buildBarcodeImage(Map<String, dynamic>? barcodeData) {
       );
     } else {
      
-      return Text('Error: Failed to load barcode image');
+      return const Text('Error: Failed to load barcode image');
     }
   } else {
-    return CircularProgressIndicator();
+    return const CircularProgressIndicator();
   }
 }
 

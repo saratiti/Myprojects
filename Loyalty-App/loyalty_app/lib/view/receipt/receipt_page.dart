@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/view/receipt/widgets/receiptone_item_widget.dart';
-import 'package:loyalty_app/widgets/app_bar/appbar_leading_iconbutton.dart';
-import 'package:loyalty_app/widgets/custom_bottom_bar.dart';
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class ReceiptPage extends StatelessWidget {
   const ReceiptPage({Key? key}) : super(key: key);
@@ -34,10 +30,10 @@ class ReceiptPage extends StatelessWidget {
   Widget _buildReceiptList(BuildContext context) {
     return Expanded(
       child: ListView.separated(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         separatorBuilder: (context, index) => SizedBox(height: 24.v),
         itemCount: 1,
-        itemBuilder: (context, index) => ReceiptoneItemWidget(),
+        itemBuilder: (context, index) => const ReceiptoneItemWidget(),
       ),
     );
   }
@@ -49,7 +45,7 @@ Widget _buildUploadButton(BuildContext context) {
     onPressed: () {
       Navigator.pushNamed(context, AppRoutes.receiptUploadScreen);
     },
-    leftIcon: Padding(
+    leftIcon: const Padding(
       padding: EdgeInsets.only(right: 9.0), 
       child: Icon(
         Icons.cloud_upload,
@@ -64,7 +60,7 @@ Widget _buildUploadButton(BuildContext context) {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
   return PreferredSize(
-    preferredSize: Size.fromHeight(kToolbarHeight),
+    preferredSize: const Size.fromHeight(kToolbarHeight),
     child: AppBar(
       elevation: 0,
       leadingWidth: 40.0,
@@ -79,7 +75,7 @@ Widget _buildUploadButton(BuildContext context) {
             shape: BoxShape.circle,
             color: appTheme.deepOrange800,
           ),
-          child: Center(
+          child: const Center(
             child: Icon(
               Icons.arrow_back,
               color: Colors.white,
@@ -88,7 +84,7 @@ Widget _buildUploadButton(BuildContext context) {
           ),
         ),
       ),
-      title: Text(
+      title: const Text(
         "My Receipts",
         style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
       ),

@@ -1,6 +1,6 @@
 class User {
  int ?id;
-  String username;
+  //String username;
   String email;
   String fullName;
   String?password;
@@ -9,7 +9,7 @@ class User {
 
   User({
     this.id,
-    required this.username,
+    //required this.username,
     required this.email,
     required this.image,
     required this.fullName,
@@ -21,7 +21,7 @@ class User {
     return User(
       
       id: json['user_id'] as int? ??0,
-      username: json['username']as String? ?? '',
+     // username: json['username']as String? ?? '',
        email: json['email']as String? ?? '',
        image: json['profile_picture']as String? ?? '',
        fullName: json['full_name']as String? ?? '',
@@ -33,7 +33,7 @@ class User {
 Map<String, dynamic> toJson() {
   return {
    
-    "username": username,
+   // "username": username,
     "email": email,
     "password": password ?? '',
     "full_name": fullName,

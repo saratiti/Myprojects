@@ -1,7 +1,7 @@
 
 
 
-// ignore_for_file: avoid_print, non_constant_identifier_names
+// ignore_for_file: avoid_print, non_constant_identifier_names, prefer_is_not_operator
 
 import 'package:dio/dio.dart';
 import 'package:loyalty_app/model/transaction.dart';
@@ -32,7 +32,7 @@ Future<List<dynamic>> getFilteredTransactions(String sort) async {
     }
   } catch (error) {
     print('Error: $error');
-    throw error; 
+    rethrow; 
   }
 }
 
@@ -71,7 +71,7 @@ Future<List<Transaction>> getAllTransactions() async {
       }
     } catch (error) {
       print('Error: $error');
-      throw error;
+      rethrow;
     }
   }
 

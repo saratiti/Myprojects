@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_key_in_widget_constructors
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_key_in_widget_constructors, unused_import
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -307,7 +307,7 @@ class ReplacePointListResturant extends StatelessWidget {
                       },
                       itemCount: 1,
                       itemBuilder: (context, index) {
-                        return AllStoreScreen();
+                        return const AllStoreScreen();
                       },
                     ),
                   ),
@@ -542,7 +542,7 @@ class _ReplacePointButtonsState extends State<ReplacePointButtons> {
               Widget visibleWidget;
 
               if (selectedButton == "lbl45".tr) {
-                visibleWidget = AllStoreScreen();
+                visibleWidget = const AllStoreScreen();
               } else if (selectedTypeId != null) {
                 visibleWidget = CoffeeScreen(typeId: selectedTypeId!);
               } else {

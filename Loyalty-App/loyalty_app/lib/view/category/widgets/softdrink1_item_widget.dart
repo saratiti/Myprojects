@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:loyalty_app/controller/category.dart';
@@ -40,7 +43,9 @@ class _Softdrink1ItemWidgetState extends State<Softdrink1ItemWidget> {
         _productsFuture = Future.value(products);
       });
     } catch (ex) {
-      print('Error fetching products: $ex');
+      if (kDebugMode) {
+        print('Error fetching products: $ex');
+      }
     }
   }
 
@@ -50,16 +55,16 @@ Widget build(BuildContext context) {
     future: _productsFuture,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-        return Center();
+        return const Center();
       } else {
         return SingleChildScrollView(
   child: GridView.builder(
     shrinkWrap: true, 
-    physics: NeverScrollableScrollPhysics(), 
+    physics: const NeverScrollableScrollPhysics(), 
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
       crossAxisSpacing: 8.0,
@@ -88,7 +93,7 @@ Widget build(BuildContext context) {
     
     Container(
       width: 166.0,
-      margin: EdgeInsets.symmetric(vertical: 8.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.0),
         boxShadow: [
@@ -96,7 +101,7 @@ Widget build(BuildContext context) {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -106,7 +111,7 @@ Widget build(BuildContext context) {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 13.0, vertical: 10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 10.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24.0),
                 color: Colors.white,
@@ -115,24 +120,24 @@ Widget build(BuildContext context) {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 39.0),
+                  const SizedBox(height: 39.0),
                   Text(
                     product.nameEnglish,
                     style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
                       color: appTheme.blueGray90001,
                     ),
                   ),
-                  SizedBox(height: 5.0),
+                  const SizedBox(height: 5.0),
                   Text(
                     product.description,
                     style: theme.textTheme.bodyMedium!.copyWith(
                       color: appTheme.blueGray600,
                     ),
                   ),
-                  SizedBox(height: 3.0),
+                  const SizedBox(height: 3.0),
                   Container(
                     width: 136.0,
-                    margin: EdgeInsets.only(left: 3.0),
+                    margin: const EdgeInsets.only(left: 3.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -143,7 +148,7 @@ Widget build(BuildContext context) {
                           allowHalfRating: true,
                           itemCount: 5,
                           itemSize: 20.0,
-                          itemBuilder: (context, _) => Icon(
+                          itemBuilder: (context, _) => const Icon(
                             Icons.star,
                             color: Colors.amber,
                           ),
@@ -152,7 +157,7 @@ Widget build(BuildContext context) {
                         CustomIconButton(
                           height: 31.0,
                           width: 32.0,
-                          padding: EdgeInsets.all(9.0),
+                          padding: const EdgeInsets.all(9.0),
                           child: CustomImageView(
                             imagePath: ImageConstant.imgPlusWhiteA700,
                           ),

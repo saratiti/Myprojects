@@ -1,7 +1,7 @@
 
 
 
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
@@ -16,7 +16,7 @@ class RewordContentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-    constraints: BoxConstraints(maxHeight: 900), 
+    constraints: const BoxConstraints(maxHeight: 900), 
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [ 
@@ -46,7 +46,7 @@ class RewordContentPage extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 10), 
+        const SizedBox(height: 10), 
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(left: 19.h, right: 28.h),
@@ -90,7 +90,7 @@ int userPoints = 60;
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 7,
                     blurRadius: 7,
-                    offset: Offset(0, 3), 
+                    offset: const Offset(0, 3), 
                   ),
                 ],
                 borderRadius: BorderRadius.circular(15.0),
@@ -115,10 +115,10 @@ int userPoints = 60;
                         width: 60,
                         radius: BorderRadius.circular(30),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: LinearPercentIndicator(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           lineHeight: 8.0,
                           percent: bronzeProgress,
                           backgroundColor: Colors.grey,
@@ -131,10 +131,10 @@ int userPoints = 60;
                         width: 60,
                         radius: BorderRadius.circular(30),
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: LinearPercentIndicator(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           lineHeight: 8.0,
                           percent: silverProgress,
                           backgroundColor: Colors.grey,
@@ -150,9 +150,9 @@ int userPoints = 60;
                     ],
                   ),
                 ),
-                SizedBox(height: 14),
+                const SizedBox(height: 14),
                 Padding(
-                  padding: EdgeInsets.only(left: 25),
+                  padding: const EdgeInsets.only(left: 25),
                   child: Text(
                     "Come back everyday and collect 5 free points",
                     style: CustomTextStyles.titleSmallBluegray90002,
@@ -169,7 +169,7 @@ int userPoints = 60;
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 12, bottom: 8),
+                  padding: const EdgeInsets.only(top: 12, bottom: 8),
                   child: Text(
                     "Current Points",
                     style: CustomTextStyles.titleMediumPoppinsGray900,
@@ -236,7 +236,7 @@ Widget _buildProduct02(
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, 3), 
+            offset: const Offset(0, 3), 
           ),
         ],
       ),

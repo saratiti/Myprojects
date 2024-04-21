@@ -7,7 +7,7 @@ const Product = require('./Product');
 
 const OrderProduct = sequelize.define('OrderProduct', {
   order_product_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -20,11 +20,11 @@ const OrderProduct = sequelize.define('OrderProduct', {
     allowNull: true,
   },
   product_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
   order_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
 createdAt: {

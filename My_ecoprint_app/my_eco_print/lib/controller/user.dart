@@ -1,5 +1,5 @@
 
-// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, depend_on_referenced_packages, unrelated_type_equality_checks
 
 
 import 'dart:io';

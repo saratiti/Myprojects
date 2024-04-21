@@ -1,13 +1,14 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/screen/reset_passowrd/rest_password_screen.dart';
 
 class PinCodePasswordScreen extends StatefulWidget {
-  PinCodePasswordScreen({Key? key}) : super(key: key);
+  const PinCodePasswordScreen({Key? key}) : super(key: key);
 
   @override
   _PinCodePasswordScreenState createState() => _PinCodePasswordScreenState();
@@ -152,18 +153,22 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                         right: 1.h,
                                       ),
                                       onChanged: (pin) {
-                                        print('PIN changed: $pin');
+                                        if (kDebugMode) {
+                                          print('PIN changed: $pin');
+                                        }
                                         if (pin.length == 6) {
                                           userController.verifyPinCode(
                                               context, userEmail, pin);
                                         }
                                       },
                                      onPinFilled: (pin) async {
-  print('PIN filled: $pin');
+  if (kDebugMode) {
+    print('PIN filled: $pin');
+  }
   bool isPinCorrect = await userController.verifyPinCode(context, userEmail, pin);
 
   if (isPinCorrect) {
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 2), () {
       Navigator.of(context).pushNamed(AppRoutes.resetPassowrd, arguments: {'email': userEmail});
     });
   } else {
@@ -171,14 +176,14 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Incorrect PIN'),
-        content: Text('Please try again with the correct PIN.'),
+        title: const Text('Incorrect PIN'),
+        content: const Text('Please try again with the correct PIN.'),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -199,7 +204,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                           margin: EdgeInsets.only(bottom: 2.v),
                                         ),
                                        StreamBuilder<int>(
-  stream: Stream.periodic(Duration(seconds: 1), (i) => i),
+  stream: Stream.periodic(const Duration(seconds: 1), (i) => i),
   builder: (context, snapshot) {
     if (snapshot.hasData) {
       int remainingTime = _countdownMinutes * 60 - snapshot.data!;
@@ -210,7 +215,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
         style: CustomTextStyles.bodySmallReadexPro,
       );
     } else {
-      return Text("Loading..."); // or any other placeholder
+      return const Text("Loading..."); // or any other placeholder
     }
   },
 ),

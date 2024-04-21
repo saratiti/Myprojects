@@ -1,5 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
 import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
@@ -23,7 +24,7 @@ class CardContainerEnglish extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child:  CardContentEnglish(),
+        child:  const CardContentEnglish(),
       ),
     );
   }
@@ -32,7 +33,7 @@ class CardContainerEnglish extends StatelessWidget {
 class CardContentEnglish extends StatefulWidget {
 
 
-  CardContentEnglish ({Key? key}) : super(key: key);
+  const CardContentEnglish ({Key? key}) : super(key: key);
 
   @override
   _CardContentEnglishState createState() => _CardContentEnglishState();
@@ -237,7 +238,7 @@ class _CardContentEnglishState extends State<CardContentEnglish > {
   future: userProfile.totalPoints,
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       return Text("Error: ${snapshot.error}");
     } else {

@@ -20,8 +20,8 @@ EasyLoading.instance
     ..backgroundColor =  appTheme.blueGray400
     ..indicatorColor = Colors.white 
     ..textColor = Colors.white 
-    ..textStyle = TextStyle(fontSize: 16.0, color: Colors.white)
-    ..contentPadding = EdgeInsets.all(10.0)
+    ..textStyle = const TextStyle(fontSize: 16.0, color: Colors.white)
+    ..contentPadding = const EdgeInsets.all(10.0)
     ..maskColor = Colors.transparent;
   final localizationController = Get.put(AppLocalizationController());
   localizationController.changeLocale(const Locale('ar'));

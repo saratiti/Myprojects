@@ -1,5 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
 import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
@@ -21,14 +22,14 @@ class CardContainerArabic extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child:  CardContentArabic(),
+        child:  const CardContentArabic(),
       ),
     );
   }
 }
 
 class CardContentArabic extends StatefulWidget {
-  CardContentArabic({Key? key}) : super(key: key);
+  const CardContentArabic({Key? key}) : super(key: key);
 
   @override
   _CardContentArabicState createState() => _CardContentArabicState();
@@ -235,7 +236,7 @@ Align(
   future: userProfile.totalPoints,
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       return Text("Error: ${snapshot.error}");
     } else {

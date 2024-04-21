@@ -285,7 +285,7 @@ async function hasUserScannedInvoice(userId, invoiceId) {
   return !!scannedInvoice;
 }
 
-// Function to mark the invoice as scanned by the user
+
 async function markInvoiceAsScanned(userId, invoiceId) {
   await ScannedInvoices.create({ user_id: userId, invoice_id: invoiceId });
 }

@@ -5,7 +5,7 @@ const User = require('./user');
 
 const Invoice = sequelize.define('Invoice', {
   invoice_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -22,7 +22,7 @@ const Invoice = sequelize.define('Invoice', {
     allowNull: false,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
   createdAt: {

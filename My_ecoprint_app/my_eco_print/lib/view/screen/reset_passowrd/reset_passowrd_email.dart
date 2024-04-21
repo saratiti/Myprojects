@@ -1,5 +1,6 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously, unnecessary_type_check
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
@@ -15,7 +16,9 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
 
     if (response is Map<String, dynamic>) {
       // Log the response for debugging purposes
-      print('Response Body: $response');
+      if (kDebugMode) {
+        print('Response Body: $response');
+      }
 
       final bool success = response['success'] ?? false;
       final bool exists = response['exists'] ?? false;
@@ -23,16 +26,22 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
       if (success) {
         return exists; // Return the value of 'exists'
       } else {
-        print('Failed to verify email existence: ${response['message']}');
+        if (kDebugMode) {
+          print('Failed to verify email existence: ${response['message']}');
+        }
         return false;
       }
     } else {
-      print('Unexpected response type: ${response.runtimeType}');
+      if (kDebugMode) {
+        print('Unexpected response type: ${response.runtimeType}');
+      }
       return false;
     }
   } catch (error) {
     // Handle errors, e.g., print an error message
-    print('Error checking email existence: $error');
+    if (kDebugMode) {
+      print('Error checking email existence: $error');
+    }
     return false;
   }
 }
@@ -169,7 +178,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Email cannot be empty"),
+              const Text("Email cannot be empty"),
               CustomElevatedButton(
                 height: 62.v,
                 text: "OK",
@@ -194,7 +203,9 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
 
   if (emailExists) {
     // Handle the case when the email already exists.
-    print("Email already exists!");
+    if (kDebugMode) {
+      print("Email already exists!");
+    }
 
     showDialog(
       context: context,
@@ -203,7 +214,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Your custom message for email exists..."),
+              const Text("Your custom message for email exists..."),
               CustomElevatedButton(
                 height: 62.v,
                 text: "msg18".tr,
@@ -212,7 +223,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                   right: 5.h,
                 ),
                 rightIcon: Container(
-                  margin: EdgeInsets.only(),
+                  margin: const EdgeInsets.only(),
                   child: CustomImageView(
                     svgPath: ImageConstant.imgGroup48096390,
                   ),
@@ -220,7 +231,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                 buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
                 buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
                 onTap: () {
-                  Navigator.of(context).pop(); // Close the current dialog
+                  Navigator.of(context).pop(); 
                   Navigator.of(context).pushNamed(AppRoutes.pinCodePassword, arguments: {'email': enteredEmail});
                 },
               ),
@@ -230,8 +241,10 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
       },
     );
   } else {
-    // Proceed with your logic when the email doesn't exist.
-    print("Email doesn't exist. Proceeding with your logic...");
+  
+    if (kDebugMode) {
+      print("Email doesn't exist. Proceeding with your logic...");
+    }
 
     showDialog(
       context: context,
@@ -240,7 +253,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Your custom message for email doesn't exist..."),
+              const Text("Your custom message for email doesn't exist..."),
               CustomElevatedButton(
                 height: 62.v,
                 text: "msg19_".tr,
@@ -249,7 +262,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                   right: 5.h,
                 ),
                 rightIcon: Container(
-                  margin: EdgeInsets.only(),
+                  margin: const EdgeInsets.only(),
                   child: CustomImageView(
                     svgPath: ImageConstant.imgGroup48096390,
                   ),

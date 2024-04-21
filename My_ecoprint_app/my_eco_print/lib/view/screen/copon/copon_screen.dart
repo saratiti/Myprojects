@@ -151,7 +151,6 @@ Widget buildCouponStack() {
 
 String getMessageForTransactionType(String transactionType) {
    final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
   final transactionTypeMessages = {
     'redemption': "msg30",
@@ -160,7 +159,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
   };
   final translationKey = transactionTypeMessages[transactionType];
   return translationKey != null
-      ? localization.getString(translationKey) ?? "Unknown transaction type"
+      ? localization.getString(translationKey)
       : "Unknown transaction type";
 }
 
@@ -179,8 +178,12 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
 
 
 void onSortButtonClick(String sortOrder) {
-  print('Sort button clicked: $sortOrder');
-  print('Sort button clicked: $sortOrder');
+  if (kDebugMode) {
+    print('Sort button clicked: $sortOrder');
+  }
+  if (kDebugMode) {
+    print('Sort button clicked: $sortOrder');
+  }
   setState(() {
     selectedSortOrder = sortOrder;
   });

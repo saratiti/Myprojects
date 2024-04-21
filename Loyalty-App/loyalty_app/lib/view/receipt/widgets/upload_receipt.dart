@@ -1,6 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
@@ -63,7 +65,9 @@ class _UploadReceiptState extends State<UploadReceipt> {
         await _uploadImage(imageFile);
       }
     } catch (error) {
-      print("Error picking image: $error");
+      if (kDebugMode) {
+        print("Error picking image: $error");
+      }
       setState(() {
         _uploadMessage = 'Error picking image: $error';
       });
@@ -78,7 +82,7 @@ class _UploadReceiptState extends State<UploadReceipt> {
         body: Center(
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 40.0,
               vertical: 40.0,
             ),
@@ -88,18 +92,18 @@ class _UploadReceiptState extends State<UploadReceipt> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: 10.0),
                     child: GestureDetector(
                       onTap: _uploading ? null : _pickImage,
                       child: DottedBorder(
                         color: appTheme.deepOrange800.withOpacity(0.43),
-                        padding: EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(10.0),
                         strokeWidth: 2.0,
-                        radius: Radius.circular(10.0),
+                        radius: const Radius.circular(10.0),
                         borderType: BorderType.RRect,
-                        dashPattern: [5, 5],
+                        dashPattern: const [5, 5],
                         child: Container(
-                          padding: EdgeInsets.all(40.0),
+                          padding: const EdgeInsets.all(40.0),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(10.0),
@@ -121,9 +125,9 @@ class _UploadReceiptState extends State<UploadReceipt> {
         width: 100.0,
       ),
 
-                              SizedBox(height: 20.0),
+                              const SizedBox(height: 20.0),
                               _uploading
-                                  ? CircularProgressIndicator()
+                                  ? const CircularProgressIndicator()
                                   : RichText(
                                       text: TextSpan(
                                         children: [
@@ -141,7 +145,7 @@ class _UploadReceiptState extends State<UploadReceipt> {
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
-                              SizedBox(height: 20.0),
+                              const SizedBox(height: 20.0),
                               Text(
                                 _uploadMessage.isNotEmpty
                                     ? _uploadMessage
@@ -156,14 +160,14 @@ class _UploadReceiptState extends State<UploadReceipt> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 CustomElevatedButton(
                   height: 60.0,
                   text: "Continue",
                   buttonStyle: CustomButtonStyles.outlineBlue,
                   buttonTextStyle: CustomTextStyles.titleLargeWhiteA700,
                 ),
-                SizedBox(height: 10.0),
+                const SizedBox(height: 10.0),
               ],
             ),
           ),
@@ -173,7 +177,7 @@ class _UploadReceiptState extends State<UploadReceipt> {
   }
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         elevation: 0,
         leadingWidth: 40.0,
@@ -188,7 +192,7 @@ class _UploadReceiptState extends State<UploadReceipt> {
               shape: BoxShape.circle,
               color: appTheme.deepOrange800,
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.arrow_back,
                 color: Colors.white,
@@ -197,7 +201,7 @@ class _UploadReceiptState extends State<UploadReceipt> {
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           "Upload Receipts",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),

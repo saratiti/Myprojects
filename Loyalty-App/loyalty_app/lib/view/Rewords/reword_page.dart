@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/view/rewords/challenge_reword.dart';
@@ -6,7 +8,7 @@ import 'package:loyalty_app/view/rewords/transaction_reword.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class RewordPage extends StatefulWidget {
-  RewordPage({Key? key}) : super(key: key);
+  const RewordPage({Key? key}) : super(key: key);
 
   @override
   _RewordPageState createState() => _RewordPageState();
@@ -72,7 +74,7 @@ class _RewordPageState extends State<RewordPage> {
                 shape: BoxShape.circle,
                 color: appTheme.deepOrange800,
               ),
-              child: Center(
+              child: const Center(
                 child: Icon(
                   Icons.arrow_back,
                   color: Colors.white,
@@ -113,7 +115,7 @@ class _RewordPageState extends State<RewordPage> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border(
@@ -127,7 +129,7 @@ class _RewordPageState extends State<RewordPage> {
         ),
         child: Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -141,7 +143,7 @@ class _RewordPageState extends State<RewordPage> {
       case 0:
         return RewordContentPage();
       case 1:
-        return ChallengePage();
+        return const ChallengePage();
       case 2:
         return TransactionPage();
       default:

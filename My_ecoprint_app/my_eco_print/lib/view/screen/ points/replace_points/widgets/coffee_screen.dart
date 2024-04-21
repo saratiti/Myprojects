@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, use_build_context_synchronously, unnecessary_null_comparison
+// ignore_for_file: camel_case_types, use_build_context_synchronously, unnecessary_null_comparison, library_private_types_in_public_api, unnecessary_cast
 
 
 import 'dart:typed_data';
@@ -8,7 +8,6 @@ import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
-import 'package:my_eco_print/view/screen/barcode/barcode_read.dart';
 import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
 import 'package:my_eco_print/view/screen/barcode/ref_screen.dart';
 
@@ -48,7 +47,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
       _fetchOffers();
     }
   }
- ApiHelper _apiHelper=ApiHelper();
+ final ApiHelper _apiHelper=ApiHelper();
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
@@ -172,7 +171,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => ScanCodeScreenRef1(),
+                                            builder: (context) => const ScanCodeScreenRef1(),
                                             settings: RouteSettings(
                                               arguments: {'offerId': offer.id, 'storeId': offer.storeId},
                                             ),
@@ -211,7 +210,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(top: 10),
+                                          padding: const EdgeInsets.only(top: 10),
                                           child: SizedBox(
                                             height: 40.adaptSize,
                                             width: 40.adaptSize,
@@ -226,7 +225,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
   future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       return Text('Error: ${snapshot.error}');
     } else if (snapshot.hasData) {
@@ -244,7 +243,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
             width: 150,
             height: 150,
             color: Colors.grey,
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.image_not_supported,
                 size: 50,
@@ -255,7 +254,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         );
       }
     } else {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     }
   },
 ),

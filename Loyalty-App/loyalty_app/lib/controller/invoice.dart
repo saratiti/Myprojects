@@ -1,10 +1,11 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
 import 'package:loyalty_app/model/invoice.dart';
-import 'package:loyalty_app/model/transaction.dart';
 
 class InvoiceController {
   final ApiHelper _apiHelper = ApiHelper();
@@ -16,9 +17,9 @@ Future<List<Invoice>> getUserInvoice() async {
     if (data != null) {
       List<Invoice> invoices = [];
       
-      // Construct Invoice objects
+     
       for (var item in data) {
-        // Read image bytes asynchronously
+       
         List<Uint8List> imageList = await _apiHelper.getInvoiceImages(item['file_path']);
         
         invoices.add(Invoice(
@@ -49,23 +50,22 @@ Future<Map<String, dynamic>> collectPoint({
       {'invoice_id': invoiceId.toString()},
     );
 
-    // Print response for inspection
-    print("Response: $response");
-
-    // Check if response is in the expected format
+    
+    if (kDebugMode) {
+      print("Response: $response");
+    }
     if (response is Map<String, dynamic>) {
-      // Handle successful response
+ 
       if (response.containsKey('message')) {
         final message = response['message'];
 
-        // Check if the message indicates success or failure
+     
         if (message == 'Loyalty points updated successfully') {
-          // Parse totalAmount as a double
+         
           final totalAmount = (response['totalAmount'] as num?)?.toDouble() ?? 0.0;
-          print("Total Amount: $totalAmount");
-
-          // Uncomment and implement transaction creation if needed
-          // await createTransaction(totalAmount);
+          if (kDebugMode) {
+            print("Total Amount: $totalAmount");
+          }
 
           return {
             'success': true,
@@ -80,7 +80,7 @@ Future<Map<String, dynamic>> collectPoint({
           };
         }
       } else {
-        // Handle unexpected response format
+       
         return {
           'success': false,
           'message': 'Unexpected response format',
@@ -88,7 +88,7 @@ Future<Map<String, dynamic>> collectPoint({
         };
       }
     } else {
-      // Handle unexpected response format
+   
       return {
         'success': false,
         'message': 'Unexpected response format',
@@ -96,8 +96,9 @@ Future<Map<String, dynamic>> collectPoint({
       };
     }
   } on DioError catch (e) {
-    // Handle Dio error
-    print("Error collecting points: $e");
+    if (kDebugMode) {
+      print("Error collecting points: $e");
+    }
     if (e.response?.statusCode == 404) {
       return {
         'success': false,
@@ -112,9 +113,11 @@ Future<Map<String, dynamic>> collectPoint({
       };
     }
   } catch (e) {
-    // Handle unexpected error
-    print("Unexpected error: $e");
-    // Rethrow or handle the error appropriately
+
+    if (kDebugMode) {
+      print("Unexpected error: $e");
+    }
+
     rethrow;
   }
 }
@@ -122,28 +125,30 @@ Future<Map<String, dynamic>> collectPoint({
 
 Future<Map<String, dynamic>> processScannedData(Uint8List imageBytes) async {
   try {
-    // Convert image bytes to base64 string
+    
     String base64Image = base64Encode(imageBytes);
 
-    // Send the base64 encoded image to the backend for scanning
+
     var response = await _apiHelper.postDio(
       "/api/invoices/scan",
       {'image': base64Image},
     );
 
-    // Check if the request was successful
+   
     if (response.statusCode == 200) {
-      // Decode the response body JSON string
+    
       Map<String, dynamic> result = json.decode(response.body);
       return result;
     } else {
-      // If the request was not successful, throw an exception
+     
       throw Exception('Failed to scan invoice: ${response.reasonPhrase}');
     }
   } catch (e) {
-    // Print the error message
-    print('Error scanning invoice: $e');
-    // Throw an exception to handle the error
+   
+    if (kDebugMode) {
+      print('Error scanning invoice: $e');
+    }
+    
     throw Exception('Failed to scan invoice: $e');
   }
 }}

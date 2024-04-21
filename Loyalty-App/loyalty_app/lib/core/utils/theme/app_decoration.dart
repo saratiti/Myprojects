@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/core/utils/theme/theme_helper.dart';
 
 
 class AppDecoration {
@@ -27,8 +26,8 @@ class AppDecoration {
   // Gradient decorations
   static BoxDecoration get gradientBlackToBlack => BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment(0.5, 0),
-          end: Alignment(0.5, 1),
+          begin: const Alignment(0.5, 0),
+          end: const Alignment(0.5, 1),
           colors: [
             appTheme.black900.withOpacity(0.3),
             appTheme.black900.withOpacity(0.3),
@@ -44,7 +43,7 @@ class AppDecoration {
             color: appTheme.black900.withOpacity(0.25),
             spreadRadius: 2.h,
             blurRadius: 2.h,
-            offset: Offset(
+            offset: const Offset(
               0,
               4,
             ),
@@ -58,7 +57,7 @@ class AppDecoration {
             color: appTheme.blueGray100Ad,
             spreadRadius: 2.h,
             blurRadius: 2.h,
-            offset: Offset(
+            offset: const Offset(
               1,
               12,
             ),

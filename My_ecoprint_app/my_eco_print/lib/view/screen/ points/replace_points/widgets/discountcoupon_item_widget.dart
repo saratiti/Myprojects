@@ -1,11 +1,10 @@
-// ignore_for_file: camel_case_types
+// ignore_for_file: camel_case_types, unnecessary_null_comparison, library_private_types_in_public_api, empty_catches
 
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:my_eco_print/controller/api_helper.dart';
 import 'package:my_eco_print/controller/store._controller.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/data/module/offer.dart';
 
@@ -38,9 +37,13 @@ final ApiHelper _apiHelper=ApiHelper();
 
     if (offerProvider.offers.isNotEmpty) {
       final offer = offerProvider.offers[0];
-      print("Offer ID: ${offer.id}, Description: ${offer.offerDescription}");
+      if (kDebugMode) {
+        print("Offer ID: ${offer.id}, Description: ${offer.offerDescription}");
+      }
     } else {
-      print("No data available");
+      if (kDebugMode) {
+        print("No data available");
+      }
     }
   }
 
@@ -58,7 +61,7 @@ Widget build(BuildContext context) {
     child: Consumer<OfferProvider>(
       builder: (context, offerProvider, child) {
         if (offerProvider.offers.isEmpty) {
-          return Center(
+          return const Center(
             child: Text("No data available"),
           );
         }
@@ -88,7 +91,7 @@ Widget build(BuildContext context) {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Padding(
-                                          padding: EdgeInsets.only(top: 10),
+                                          padding: const EdgeInsets.only(top: 10),
                                           child: SizedBox(
                                             height: 40.adaptSize,
                                             width: 40.adaptSize,
@@ -100,16 +103,16 @@ Widget build(BuildContext context) {
                                                 borderRadius: BorderRadiusStyle.roundedBorder17,
                                               ),
                                               child: Padding(
-                padding: EdgeInsets.only(left: 8.0), 
+                padding: const EdgeInsets.only(left: 8.0), 
                 child: FutureBuilder(
   future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
   builder: (context, snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     } else if (snapshot.hasError) {
       return Text('Error: ${snapshot.error}');
     } else if (snapshot.hasData) {
-      Uint8List? imageData = snapshot.data as Uint8List?;
+      Uint8List? imageData = snapshot.data;
       if (imageData != null) {
         return Image.memory(
           imageData,
@@ -119,10 +122,10 @@ Widget build(BuildContext context) {
         );
       } else {
         // Handle the case when imageData is null
-        return Text('No image available');
+        return const Text('No image available');
       }
     } else {
-      return CircularProgressIndicator();
+      return const CircularProgressIndicator();
     }
   },
 ),
@@ -198,12 +201,16 @@ class OfferProvider with ChangeNotifier {
 
   Future<void> fetchData(int? storeId, int? offerId) async {
   if (storeId == null || offerId == null) {
-    print('Error: storeId or offerId is null');
+    if (kDebugMode) {
+      print('Error: storeId or offerId is null');
+    }
     return;
   }
 
   try {
-    print('storeId: $storeId, offerId: $offerId');
+    if (kDebugMode) {
+      print('storeId: $storeId, offerId: $offerId');
+    }
     _offers = await StoreController().getOfferByStoreAndOfferId(storeId, offerId);
     notifyListeners();
   } catch (e) {

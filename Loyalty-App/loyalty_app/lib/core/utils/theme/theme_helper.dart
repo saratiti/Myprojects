@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
@@ -7,18 +6,18 @@ String _appTheme = "primary";
 /// Helper class for managing themes and colors.
 class ThemeHelper {
   // A map of custom color themes supported by the app
-  Map<String, PrimaryColors> _supportedCustomColor = {
+  final Map<String, PrimaryColors> _supportedCustomColor = {
     'primary': PrimaryColors()
   };
 
 // A map of color schemes supported by the app
-  Map<String, ColorScheme> _supportedColorScheme = {
+  final Map<String, ColorScheme> _supportedColorScheme = {
     'primary': ColorSchemes.primaryColorScheme
   };
 
-  /// Changes the app theme to [_newTheme].
-  void changeTheme(String _newTheme) {
-    _appTheme = _newTheme;
+  /// Changes the app theme to [newTheme].
+  void changeTheme(String newTheme) {
+    _appTheme = newTheme;
   }
 
   /// Returns the primary colors for the current theme.
@@ -122,79 +121,79 @@ class TextThemes {
 
 /// Class containing the supported color schemes.
 class ColorSchemes {
-  static final primaryColorScheme = ColorScheme.light();
+  static const primaryColorScheme = ColorScheme.light();
 }
 
 /// Class containing custom colors for a primary theme.
 class PrimaryColors {
   // Amber
-  Color get amber300 => Color(0XFFF4D150);
+  Color get amber300 => const Color(0XFFF4D150);
 
   // Black
-  Color get black900 => Color(0XFF000000);
+  Color get black900 => const Color(0XFF000000);
 
   // BlueGray
-  Color get blueGray100 => Color(0XFFD9D9D9);
-  Color get blueGray600 => Color(0XFF646982);
-  Color get blueGray900 => Color(0XFF333333);
-  Color get blueGray90001 => Color(0XFF31343D);
-  Color get blueGray90002 => Color(0XFF2F3548);
+  Color get blueGray100 => const Color(0XFFD9D9D9);
+  Color get blueGray600 => const Color(0XFF646982);
+  Color get blueGray900 => const Color(0XFF333333);
+  Color get blueGray90001 => const Color(0XFF31343D);
+  Color get blueGray90002 => const Color(0XFF2F3548);
 
   // BlueGrayAd
-  Color get blueGray100Ad => Color(0XADD7DAE0);
+  Color get blueGray100Ad => const Color(0XADD7DAE0);
 
   // DeepOrange
-  Color get deepOrange800 => Color(0XFFD1512D);
+  Color get deepOrange800 => const Color(0XFFD1512D);
 
   // DeepOrangeAE
-  Color get deepOrangeA700E5 => Color(0XE5FE1414);
+  Color get deepOrangeA700E5 => const Color(0XE5FE1414);
 
   // Gray
-  Color get gray100 => Color(0XFFF5F5F5);
-  Color get gray200 => Color(0XFFF0ECE6);
-  Color get gray300 => Color(0XFFDDDDDD);
-  Color get gray400 => Color(0XFFBBBBBB);
-  Color get gray600 => Color(0XFF7A7777);
-  Color get gray60001 => Color(0XFF777777);
-  Color get gray60033 => Color(0X33966E56);
-  Color get gray800 => Color(0XFF444444);
-  Color get gray900 => Color(0XFF1A1A1A);
+  Color get gray100 => const Color(0XFFF5F5F5);
+  Color get gray200 => const Color(0XFFF0ECE6);
+  Color get gray300 => const Color(0XFFDDDDDD);
+  Color get gray400 => const Color(0XFFBBBBBB);
+  Color get gray600 => const Color(0XFF7A7777);
+  Color get gray60001 => const Color(0XFF777777);
+  Color get gray60033 => const Color(0X33966E56);
+  Color get gray800 => const Color(0XFF444444);
+  Color get gray900 => const Color(0XFF1A1A1A);
 
 
   // Blue
-  Color get blue100 => Color(0XFFCAD6FF);
+  Color get blue100 => const Color(0XFFCAD6FF);
 
  
 
 
-  Color get gray30001 => Color(0XFFE3E3E3);
+  Color get gray30001 => const Color(0XFFE3E3E3);
 
 
-  Color get gray700 => Color(0XFF616161);
+  Color get gray700 => const Color(0XFF616161);
 
-  Color get gray80001 => Color(0XFF444444);
+  Color get gray80001 => const Color(0XFF444444);
 
 
   // GrayCc
-  Color get gray500Cc => Color(0XCC9F9F9F);
+  Color get gray500Cc => const Color(0XCC9F9F9F);
 
   // Lime
-  Color get lime900 => Color(0XFF755B00);
+  Color get lime900 => const Color(0XFF755B00);
 
   // Orange
-  Color get orangeA200 => Color(0XFFDC9E42);
+  Color get orangeA200 => const Color(0XFFDC9E42);
 
   // Pink
-  Color get pink300 => Color(0XFFFF54A0);
+  Color get pink300 => const Color(0XFFFF54A0);
 
   // RedAE
-  Color get redA100E5 => Color(0XE5FC8888);
+  Color get redA100E5 => const Color(0XE5FC8888);
 
   // Red
-  Color get redA70087 => Color(0X87FF0000);
-  Color get orange100 =>Color.fromARGB(255, 244, 180, 163);
+  Color get redA70087 => const Color(0X87FF0000);
+  Color get orange100 =>const Color.fromARGB(255, 244, 180, 163);
   // White
-  Color get whiteA700 => Color(0XFFFFFFFF);
+  Color get whiteA700 => const Color(0XFFFFFFFF);
   // GrayCc
 
 }

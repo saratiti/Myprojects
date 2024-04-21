@@ -6,7 +6,7 @@ const Challenge = require('./Challenge');
 
 const UserChallenge = sequelize.define('UserChallenge', {
   user_challenge_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -19,11 +19,11 @@ const UserChallenge = sequelize.define('UserChallenge', {
     allowNull: true,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
   challenge_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
 

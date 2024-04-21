@@ -20,7 +20,7 @@ class Cart {
         
         "id": id,
         'product_id': productId,
-        "product": product?.toJson(),
+        "product": product.toJson(),
        "quantity":quantity,
        
       };

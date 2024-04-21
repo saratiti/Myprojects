@@ -1,20 +1,25 @@
-class Category {
-  late int id;
-  late String nameArabic;
-  late String nameEnglish;
-  late String? logo;
+import 'dart:typed_data';
 
-  Category(this.id, this.nameArabic,this.nameEnglish, this.logo);
+class Catalog {
+ final  int id;
+ final   String nameArabic;
+ final   String nameEnglish;
+final   String? image;
+  List<Uint8List>? imageBytesList; 
 
-factory Category.fromJson(Map<String, dynamic>? json) {
-  if (json == null) {
-    return Category(0, "","", null);
-  }
-  return Category(
-    int.parse(json["category_id"].toString()),
-    json["name_arabic"] ?? "",
-    json["name_english"] ?? "",
-    json["logo"] ?? null,
+  Catalog(
+    
+    { required this.id,required this.nameArabic,required this.nameEnglish, this.image,this.imageBytesList, });
+   
+
+factory Catalog.fromJson(Map<String, dynamic>? json) {
+ 
+  return Catalog(
+    id:json!['id']as int? ?? 0,
+   nameEnglish: json["name_arabic"] ?? "",
+   nameArabic:  json["name_english"] ?? "",
+   image: json["image"], 
+    
   );
 }
 

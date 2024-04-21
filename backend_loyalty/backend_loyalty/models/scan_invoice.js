@@ -7,17 +7,17 @@ const Invoice= require('./invoice');
 
 const ScannedInvoice = sequelize.define('ScannedInvoice', {
   scanned_invoice_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
   
   },
   invoice_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
   
   },

@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/core/app_export.dart';
@@ -5,122 +8,91 @@ import 'package:loyalty_app/model/category.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 import 'softdrink1_item_widget.dart'; 
 
-class SoftdrinkItemWidget extends StatefulWidget {
-  final Function(bool) toggleTopProductsVisibility;
+class SoftdrinkItemWidget extends StatelessWidget {
+  final List<Catalog> categories;
+  final int? selectedCategoryId;
+  final Function(int) onSelectCategory;
 
-  const SoftdrinkItemWidget({Key? key, required this.toggleTopProductsVisibility}) : super(key: key);
-
-  @override
-  _SoftdrinkItemWidgetState createState() => _SoftdrinkItemWidgetState();
-}
-
-class _SoftdrinkItemWidgetState extends State<SoftdrinkItemWidget> {
-  late List<Category> _categories;
-  bool _isLoading = true;
-  int? _selectedCategoryId;
-
+  SoftdrinkItemWidget({
+    required this.categories,
+    required this.selectedCategoryId,
+    required this.onSelectCategory,
+  });
   Map<int, String> categoryImageMap = {
     1: "assets/images/img_rectangle_39.png",
     2: "assets/images/img_rectangle_44.png",
     3: "assets/images/img_rectangle_24.png",
-    // Add more category IDs and corresponding images here
+    
   };
 
   @override
-  void initState() {
-    super.initState();
-    _fetchCategories();
-  }
-
-  Future<void> _fetchCategories() async {
-    try {
-      final categories = await CategoryController().getAll();
-      setState(() {
-        _categories = categories;
-        _isLoading = false;
-      });
-    } catch (ex) {
-      print('Error fetching categories: $ex');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? SizedBox(
-            height: 122.h,
-            child: Padding(
-              padding: EdgeInsets.only(top: 1.v),
-              child: CircularProgressIndicator(),
-            ),
-          )
-        : SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 1.v),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (var category in _categories)
-                            Padding(
-                              padding: EdgeInsets.only(right: 24.h),
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedCategoryId = category.id;
-                                  });
-                                  widget.toggleTopProductsVisibility(false); // Hide TopRatedProducts
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 122.adaptSize,
-                                      width: 122.adaptSize,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 31.h,
-                                        vertical: 3.v,
-                                      ),
-                                      decoration: AppDecoration.outlineBlueGrayAd.copyWith(
-                                        borderRadius: BorderRadiusStyle.roundedBorder24,
-                                      ),
-                                      child: CustomImageView(
-                                        imagePath: categoryImageMap[category.id] ?? "",
-                                        height: 89.v,
-                                        width: 60.h,
-                                        alignment: Alignment.topCenter,
-                                      ),
-                                    ),
-                                    SizedBox(height: 20.v),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 30, right: 30, top: 10),
-                                      child: Center(
-                                        child: Text(
-                                          category.nameEnglish,
-                                          style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
-                                            color: appTheme.blueGray90001,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (var category in categories)
+            Padding(
+              padding: EdgeInsets.only(right: 24.h),
+              child: GestureDetector(
+                onTap: () {
+                  onSelectCategory(category.id);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 122.adaptSize,
+                      width: 122.adaptSize,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 31.h,
+                        vertical: 3.v,
+                      ),
+                      decoration: AppDecoration.outlineBlueGrayAd.copyWith(
+                        borderRadius: BorderRadiusStyle.roundedBorder24,
+                      ),
+                    child: Row(
+  children: [
+    for (var category in categories)
+      Expanded(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.horizontal(left: Radius.circular(6)),
+          child: Image.memory(
+            category.imageBytesList as Uint8List,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return const Text('Error loading image');
+            },
+          ),
+        ),
+      ),
+  ],
+),
+
+
+                    ),
+                    SizedBox(height: 20.v),
+                    Padding(
+                      padding: EdgeInsets.only(left: 30, right: 30, top: 10),
+                      child: Center(
+                        child: Text(
+                          category.nameEnglish,
+                          style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
+                            color: appTheme.blueGray90001,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                if (_selectedCategoryId != null)
-                  Softdrink1ItemWidget(categoryId: _selectedCategoryId!),
-              ],
+              ),
             ),
-          );
+        ],
+      ),
+    );
   }
 }
+

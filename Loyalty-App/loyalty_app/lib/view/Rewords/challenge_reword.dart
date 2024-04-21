@@ -12,7 +12,7 @@ class ChallengePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: BoxConstraints(maxHeight: 900),
+      constraints: const BoxConstraints(maxHeight: 900),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -28,7 +28,7 @@ class ChallengePage extends StatelessWidget {
             future: ChallengeController().getUserChallenge(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -53,7 +53,7 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
 
   return Column(
     children: [
-      SizedBox(height: 20), 
+      const SizedBox(height: 20), 
       SizedBox(
         height: 200,
         width: double.maxFinite,
@@ -69,7 +69,7 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                       color: Colors.grey.withOpacity(0.5),
                       spreadRadius: 7,
                       blurRadius: 7,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                   borderRadius: BorderRadius.circular(15.0),
@@ -79,8 +79,8 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
             Align(
               alignment: Alignment.center,
               child: Container(
-                margin: EdgeInsets.only(right: 2),
-                padding: EdgeInsets.symmetric(vertical: 13),
+                margin: const EdgeInsets.only(right: 2),
+                padding: const EdgeInsets.symmetric(vertical: 13),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -89,7 +89,7 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 22),
+                      padding: const EdgeInsets.only(left: 22),
                       child: Text(
                         challenge.challenges!.name, 
                         style: CustomTextStyles.titleSmallBluegray90002,
@@ -109,10 +109,10 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                           SizedBox(width: 12.h),
                           Flexible(
                             child: Container(
-                              margin: EdgeInsets.only(left: 12),
+                              margin: const EdgeInsets.only(left: 12),
                               child: Text(
                                 challenge.challenges!.description,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                 ),
                               ),
@@ -134,7 +134,7 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                         child: LinearProgressIndicator(
                           value: isCompleted ? 1.0 : 0.0,
                           backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
                         ),
                       ),
                     ),

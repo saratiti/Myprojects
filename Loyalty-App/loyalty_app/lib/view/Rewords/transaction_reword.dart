@@ -3,11 +3,11 @@ import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/controller/transaction_controller.dart'; // Import your TransactionController
 import 'package:loyalty_app/model/transaction.dart';
 import 'package:loyalty_app/view/rewords/widgets/points_item_widget.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class TransactionPage extends StatelessWidget {
-  final TransactionController _transactionController = TransactionController(); // Instantiate your TransactionController
+  final TransactionController _transactionController = TransactionController();
+
+  TransactionPage({super.key}); 
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +15,13 @@ class TransactionPage extends StatelessWidget {
       future: _transactionController.getAllTransactions(), // Use the method from your TransactionController to fetch transactions
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           List<Transaction> transactions = snapshot.data ?? [];
           return Container(
-            constraints: BoxConstraints(maxHeight: 900),
+            constraints: const BoxConstraints(maxHeight: 900),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,7 +73,7 @@ class TransactionPage extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.h),
         child: ListView.separated(
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           separatorBuilder: (
             context,

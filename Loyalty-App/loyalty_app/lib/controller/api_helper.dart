@@ -285,14 +285,13 @@ Future<List<Uint8List>> getInvoiceImages(String imagePath) async {
       'http://$DOMAIN/api/invoices/image',
       options: Options(
         headers: headers,
-        responseType: ResponseType.json, // Set responseType to JSON
+        responseType: ResponseType.json, 
       ),
     );
 
     switch (response.statusCode) {
       case 200:
       case 201:
-        // Check if the response contains the expected JSON structure
         List<Uint8List> imageList = [];
         Map<String, dynamic> responseData = response.data;
         if (responseData.containsKey('images')) {
@@ -327,7 +326,9 @@ Future<List<Uint8List>> getInvoiceImages(String imagePath) async {
         throw "Server Error :(";
     }
   } catch (e) {
-    print('Error fetching invoice images: $e');
+    if (kDebugMode) {
+      print('Error fetching invoice images: $e');
+    }
     return []; 
   }
 }
@@ -372,7 +373,9 @@ Future<Uint8List?> getProfilePictureCompany(String companyId) async {
         throw "Server Error :(";
     }
   } catch (e) {
-    print('Error fetching profile picture: $e');
+    if (kDebugMode) {
+      print('Error fetching profile picture: $e');
+    }
     return null; 
   }
 }

@@ -12,7 +12,6 @@ import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/model/option_menu.dart';
 import 'package:loyalty_app/model/product.dart';
 import 'package:loyalty_app/model/review.dart';
-import 'package:loyalty_app/view/my_bag_page/my_cart_screen.dart';
 import 'package:loyalty_app/view/product/product_review.dart';
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 import 'package:loyalty_app/widgets/custom_icon_button.dart';
@@ -108,7 +107,10 @@ void _fetchAndSetProductDetails(int productId) async {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
+        body:
+        
+        
+         SingleChildScrollView(
           child: FutureBuilder<Map<String, dynamic>>(
             future: _productDetailsFuture,
             builder: (context, snapshot) {
@@ -144,276 +146,285 @@ void _fetchAndSetProductDetails(int productId) async {
   }
 
   Widget _buildProductDetails(
-      Product product, List<OptionalMenu> optionalMenuItems) {
-      
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildMask(context),
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                product.nameEnglish,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+  Product product, List<OptionalMenu> optionalMenuItems) {
+  final productProvider = Provider.of<ProductProvider>(context, listen: false);
+  return Consumer<ProductProvider>(
+    builder: (context, productProvider, _) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      _buildMask(context),
+      Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              product.nameEnglish,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '\$${product.price}',
+              style: TextStyle(fontSize: 20, color: appTheme.deepOrange800),
+            ),
+            SizedBox(height: 20),
+            Padding(
+              padding: EdgeInsets.only(left: 19.h),
+              child: Text(
+                "Description",
+                style: CustomTextStyles.titleSmallGray80001,
               ),
-              SizedBox(height: 10),
-              Text(
-                '\$${product.price}',
-                style: TextStyle(fontSize: 20, color: appTheme.deepOrange800),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.only(left: 19.h),
-                child: Text(
-                  "Description",
-                  style: CustomTextStyles.titleSmallGray80001,
+            ),
+            SizedBox(height: 10),
+            Container(
+              width: 313.h,
+              margin: EdgeInsets.only(left: 19.h),
+              child: ReadMoreText(
+                product.description,
+                trimLines: 3,
+                trimMode: TrimMode.Line,
+                moreStyle: CustomTextStyles.bodySmallInterGray80001.copyWith(
+                  height: 1.83,
+                ),
+                lessStyle: CustomTextStyles.bodySmallInterGray80001.copyWith(
+                  height: 1.83,
                 ),
               ),
-              SizedBox(height: 10),
-            
-              Container(
-                width: 313.h,
-                margin: EdgeInsets.only(left: 19.h),
-                child: ReadMoreText(
-                  product.description,
-                  trimLines: 3,
-                  trimMode: TrimMode.Line,
-                  moreStyle: CustomTextStyles.bodySmallInterGray80001.copyWith(
-                    height: 1.83,
-                  ),
-                  lessStyle: CustomTextStyles.bodySmallInterGray80001.copyWith(
-                    height: 1.83,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              if (optionalMenuItems.isNotEmpty)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 19.h),
-                      child: Text(
-                        "Additional Options",
-                        style: CustomTextStyles.titleSmallGray80001,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Column(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: optionalMenuItems.map((menu) {
-    bool isSelected = selectedItems.contains(menu);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Checkbox(
-
-          value: isSelected,
-          activeColor: isSelected ? appTheme.deepOrange800 : appTheme.gray100,
-          onChanged: (newValue) {
-            setState(() {
-              if (newValue!) {
-                selectedItems.add(menu); 
-                totalOptionalMenuPrice += menu.price!;
-              } else {
-                selectedItems.remove(menu); 
-                totalOptionalMenuPrice -= menu.price!;
-              }
-            });
-          },
-        ),
-        Text(
-          ' ${menu.nameEnglish ?? menu.nameArabic}',
-          style: TextStyle(
-            fontSize: 16,
-            color: isSelected ?appTheme.deepOrange800 : appTheme.black900,
-          ),
-        ),
-        SizedBox(width: 10),
-        Text(
-          '\$${menu.price}',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-        SizedBox(height: 5), 
-      ],
-    );
-  }).toList(),
-),
-
-                  ],
-                ),
-              SizedBox(height: 20),
-Row(
-  children: [
-    Text(
-      'Choose Size',
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    ),
-    SizedBox(width: 50), 
-    Text(
-      "Quantity",
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    ),
-  ],
-),
-
-            
-              SizedBox(height: 10),
-              Row(
+            ),
+            SizedBox(height: 20),
+            if (optionalMenuItems.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSelectSize(),
-                  SizedBox(width: 10),
-                  _buildQuantitySelector(),
-                ],
-              ),
-                SizedBox(height: 20),
-                    Text(
-                      'Product Reviews',
+                  Padding(
+                    padding: EdgeInsets.only(left: 19.h),
+                    child: Text(
+                      "Additional Options",
                       style: CustomTextStyles.titleSmallGray80001,
                     ),
-                    SizedBox(height: 10),
-                    FutureBuilder<List<Review>>(
-                      future: ReviewController().getProductReviews(productId),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error: ${snapshot.error}'),
-                          );
-                        } else if (snapshot.hasData) {
-                          final reviews = snapshot.data!;
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: reviews.length,
-                            itemBuilder: (context, index) {
-                              return ProductReview(review: reviews[index]);
-                            },
-                          );
-                        } else {
-                          return Center(
-                            child: Text('No reviews available.'),
-                          );
-                        }
-                      },
+                  ),
+                  SizedBox(height: 20),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: 
+                    
+                    
+                    optionalMenuItems.map((menu) {
+                      bool isSelected = selectedItems.contains(menu);
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: isSelected,
+                            activeColor: isSelected
+                                ? appTheme.deepOrange800
+                                : appTheme.gray100,
+                onChanged: (newValue) {
+  if (newValue != null) {
+    setState(() {
+      if (newValue) {
+        selectedItems.add(menu);
+        totalOptionalMenuPrice += menu.price!;
+      } else {
+        selectedItems.remove(menu);
+        totalOptionalMenuPrice -= menu.price!;
+      }
+      // Toggle isSelected property
+      menu.isSelected = newValue;
+    });
+  }
+},
+
+
+                          ),
+                          Text(
+                            ' ${menu.nameEnglish ?? menu.nameArabic}',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isSelected
+                                  ? appTheme.deepOrange800
+                                  : appTheme.black900,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            '\$${menu.price}',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                          ),
+                          SizedBox(height: 5),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            SizedBox(height: 20),
+            Row(
+              children: [
+                Text(
+                  'Choose Size',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 50),
+                Text(
+                  "Quantity",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                _buildSelectSize(),
+                SizedBox(width: 10),
+                _buildQuantitySelector(context, product),
+              ],
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Product Reviews',
+              style: CustomTextStyles.titleSmallGray80001,
+            ),
+            SizedBox(height: 10),
+            FutureBuilder<List<Review>>(
+              future: ReviewController().getProductReviews(productId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else if (snapshot.hasData) {
+                  final reviews = snapshot.data!;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: reviews.length,
+                    itemBuilder: (context, index) {
+                      return ProductReview(review: reviews[index]);
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: Text('No reviews available.'),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Leave a Review',
+              style: CustomTextStyles.bodySmallInterGray80001,
+            ),
+            SizedBox(height: 10),
+            RatingBar.builder(
+              initialRating: starRating,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 30,
+              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (rating) {
+                setState(() {
+                  starRating = rating;
+                });
+              },
+            ),
+            SizedBox(height: 10),
+            GestureDetector(
+              onTap: () {
+                _submitReview();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    width: 1,
+                    color: Color.fromARGB(255, 211, 210, 210),
+                  ),
+                  color: Color.fromARGB(255, 204, 203, 203),
+                ),
+                child: TextFormField(
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    labelText: 'Comment',
+                    labelStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
                     ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Leave a Review',
-                      style:CustomTextStyles.bodySmallInterGray80001
-                    ),
-                    SizedBox(height: 10),
-                    RatingBar.builder(
-                      initialRating: starRating,
-                      minRating: 1,
-                      direction: Axis.horizontal,
-                      allowHalfRating: true,
-                      itemCount: 5,
-                      itemSize: 30,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                      itemBuilder: (context, _) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      onRatingUpdate: (rating) {
-                        setState(() {
-                          starRating = rating;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    GestureDetector(
+                    suffixIcon: GestureDetector(
                       onTap: () {
                         _submitReview();
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            width: 1,
-                            color: Color.fromARGB(255, 211, 210, 210),
-                          ),
-                          color: Color.fromARGB(255, 204, 203, 203),
-                        ),
-                        child: TextFormField(
-                          maxLines: 1,
-                          decoration: InputDecoration(
-                            labelText: 'Comment',
-                            labelStyle: TextStyle(color: Colors.grey),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 12,
-                              horizontal: 16,
-                            ),
-                            suffixIcon: GestureDetector(
-                              onTap: () {
-                                _submitReview();
-                              },
-                              child: Icon(Icons.send, color: Colors.white),
-                            ),
-                          ),
-                          style: TextStyle(color: Colors.grey),
-                          onChanged: (value) {
-                            setState(() {
-                              comment = value;
-                            });
-                          },
-                        ),
-                      ),
+                      child: Icon(Icons.send, color: Colors.white),
                     ),
-                    SizedBox(height: 20),
-              SizedBox(height: 25.v),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 19.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Price",
-                          style: CustomTextStyles.bodyMediumInterGray60001,
-                        ),
-                        SizedBox(height: 3.v),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "\$${(product.price + totalOptionalMenuPrice) * quantity}",
-                              style: CustomTextStyles.headlineSmallInterGray80001,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                   CustomElevatedButton(
-  onPressed: () {
-    _showSummaryInvoice(product, selectedItems.toList(), quantity, totalOptionalMenuPrice,70,60);
-  },
-  height: 50.v,
-  width: 190.h,
-  text: "Buy Now",
-  margin: EdgeInsets.only(bottom: 4.v),
-  buttonStyle: CustomButtonStyles.fillPrimary,
-  buttonTextStyle: CustomTextStyles.titleMediumSFProText,
-),
-                  ],
+                  ),
+                  style: TextStyle(color: Colors.grey),
+                  onChanged: (value) {
+                    setState(() {
+                      comment = value;
+                    });
+                  },
                 ),
               ),
-            ],
+            ),
+            SizedBox(height: 20),
+            SizedBox(height: 25.v),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 19.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Price",
+                        style: CustomTextStyles.bodyMediumInterGray60001,
+                      ),
+                      SizedBox(height: 3.v),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "\$${(product.price + totalOptionalMenuPrice) * productProvider.getCartItemQuantity(product)}",
+                            style: CustomTextStyles.headlineSmallInterGray80001,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  CustomElevatedButton(
+                    onPressed: () {
+                      _addToCart(context, product, optionalMenuItems);
+                          _showSummaryInvoice(context,product,optionalMenuItems);
+                    },
+                    height: 50.v,
+                    width: 190.h,
+                    text: "Buy Now",
+                    margin: EdgeInsets.only(bottom: 4.v),
+                    buttonStyle: CustomButtonStyles.fillPrimary,
+                    buttonTextStyle: CustomTextStyles.titleMediumSFProText,
+                 ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
-  }
-
+        ],
+      ))]);
+    },
+  );
+}
   Widget _buildSelectSize() {
     return Row(
       children: [
@@ -504,52 +515,48 @@ Row(
     );
   }
 
-  Widget _buildQuantitySelector() {
-    return 
-    Row(
-      children: [
-        
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              if (quantity > 1) {
-                quantity--;
-              }
-            });
-          },
-          child: Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[300],
+Widget _buildQuantitySelector(BuildContext context, Product product) {
+  return Consumer<ProductProvider>(
+    builder: (context, productProvider, _) {
+      return Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              productProvider.decrementQuantity(product);
+            },
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[300],
+              ),
+              child: Icon(Icons.remove),
             ),
-            child: Icon(Icons.remove),
           ),
-        ),
-        SizedBox(width: 8),
-        Text(
-          quantity.toString(),
-          style: TextStyle(fontSize: 16),
-        ),
-        SizedBox(width: 8),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              quantity++;
-            });
-          },
-          child: Container(
-            padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey[300],
+          SizedBox(width: 8),
+          Text(
+            product.selectedQty.toString(), // Use selectedQty instead of getCartItemQuantity
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(width: 8),
+          GestureDetector(
+            onTap: () {
+              productProvider.incrementQuantity(product);
+            },
+            child: Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[300],
+              ),
+              child: Icon(Icons.add),
             ),
-            child: Icon(Icons.add),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
+    },
+  );
+}
 
     Widget _buildMask(BuildContext context) {
     return Align(
@@ -823,63 +830,98 @@ Row(
       ),
     );
   }
-void _showSummaryInvoice(Product product, List<OptionalMenu> selectedItems, int quantity, double totalOptionalMenuPrice, int invoiceId, double totalAmount) {
+void _addToCart(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
+  final productProvider = Provider.of<ProductProvider>(context, listen: false);
+  productProvider.addToCart(product, selectedOptions);
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added to Cart')));
+}
+
+void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
+  final productProvider = Provider.of<ProductProvider>(context, listen: false);
+  
   showModalBottomSheet(
     context: context,
     builder: (BuildContext context) {
-      return Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Product Details:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      double totalPrice = productProvider.total;
+      
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Text(
+              'Summary Invoice',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-            Text('Name: ${product.nameEnglish}'),
-            Text('Price: \$${product.price}'),
-            Text('Selected Size: $selectedSize'),
-            Text('Quantity: $quantity'),
-            Text('Total Optional Menu Price: \$${totalOptionalMenuPrice.toStringAsFixed(2)}'),
-            SizedBox(height: 20),
-            Text(
-              'Selected Optional Menu Items:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: productProvider.selectedProducts.length,
+              itemBuilder: (context, index) {
+                final product = productProvider.selectedProducts[index];
+                double subtotal = product.price * product.selectedQty;
+                
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Product Details:',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: 10),
+                      Text('Name: ${product.nameEnglish}'),
+                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
+                      Text('Quantity: ${product.selectedQty}'),
+                      SizedBox(height: 10),
+                      Text(
+                        'Subtotal:',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '\$${subtotal.toStringAsFixed(2)}',
+                        style: TextStyle(fontSize: 20, color: Colors.deepOrange),
+                      ),
+                      // Include optional menu item prices
+                      if (selectedOptions.isNotEmpty)
+                        ...selectedOptions.map((option) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Option: ${option.nameEnglish ?? option.nameArabic}'),
+                              Text('Price: \$${option.price!.toStringAsFixed(2)}'),
+                            ],
+                          );
+                        }),
+                      Divider(),
+                    ],
+                  ),
+                );
+              },
             ),
-            SizedBox(height: 10),
-            for (var item in selectedItems)
-              Text('${item.nameEnglish ?? item.nameArabic}: \$${item.price}'),
-            SizedBox(height: 20),
-            Text(
-              'Total Price:',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Total Price:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '\$${totalPrice.toStringAsFixed(2)}',
+                  style: TextStyle(fontSize: 24, color: Colors.deepOrange, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            Text(
-              '\$${(product.price + totalOptionalMenuPrice) * quantity}',
-              style: TextStyle(fontSize: 24, color: appTheme.deepOrange800, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: BarcodeWidget(
-                barcode: Barcode.qrCode(),
-                data: "invoice_id: $invoiceId\nTotal Amount: \$${totalAmount.toStringAsFixed(2)}\n${product.nameEnglish}\nPrice: \$${product.price}\nQuantity: $quantity\nTotal Price: \$${(product.price + totalOptionalMenuPrice) * quantity}",
-                width: 200,
-                height: 100,
-                drawText: true,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       );
     },
   );
 }
-
-
-
-
-// In your _buildProductDetails method, update the Buy Now button onPressed callback
 
 
 }

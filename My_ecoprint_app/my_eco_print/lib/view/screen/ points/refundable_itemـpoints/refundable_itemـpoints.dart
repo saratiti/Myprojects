@@ -5,7 +5,6 @@ import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/view/screen/%20points/refundable_item%D9%80points/widgets/discountcoupon1_item_widget.dart';
 import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
 
-import '../collecting_points/collecting_points.dart';
 
 class RefundableItemPointScreen extends StatelessWidget {
   const RefundableItemPointScreen({Key? key}) : super(key: key);

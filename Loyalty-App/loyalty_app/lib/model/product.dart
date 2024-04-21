@@ -1,6 +1,10 @@
 
 
+// ignore_for_file: non_constant_identifier_names
+
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/model/category.dart';
+import 'package:loyalty_app/model/option_menu.dart';
 
 class Product {
   late int id;
@@ -13,12 +17,14 @@ class Product {
   
   late int quantity;
   late String description;
-  late Category category;
+  late Catalog category;
 
 
   
-  late double tax = 16.0;
+  //late double tax = 16.0;
   int selectedQty = 0;
+  double additionalCost=0;
+  List<OptionalMenu> optionalMenuItems = [];
    
 Product.fromJson(Map<String, dynamic> json) {
   id = json["product_id"] as int? ?? 0;
@@ -29,47 +35,57 @@ Product.fromJson(Map<String, dynamic> json) {
   image = json["image"] ?? "";
   quantity = json["quantity"] as int? ?? 0;
   description = json["product_descrption"] ?? "";
-  category = Category.fromJson(json["category"]);
-
+  category = Catalog.fromJson(json["category"]);
+optionalMenuItems = (json['OptionalMenu'] as List<dynamic>?)
+                ?.map((item) => OptionalMenu.fromJson(item))
+                .toList() ?? [];
   var priceValue = json["price"];
   if (priceValue is num) {
     price = priceValue.toDouble();
   } else if (priceValue is String) {
-    // Handle parsing of string to double
+   
     try {
       price = double.parse(priceValue);
     } catch (e) {
-      // Handle error if parsing fails
-      print("Error parsing price value: $e");
-      // Set price to a default value or handle error case as needed
+     
+      if (kDebugMode) {
+        print("Error parsing price value: $e");
+      }
+    
       price = 0.0;
     }
   } else {
-    // Handle other cases where price value is not a num or string
-    print("Error: Unexpected price value type");
-    // Set price to a default value or handle error case as needed
+   
+    if (kDebugMode) {
+      print("Error: Unexpected price value type");
+    }
+   
     price = 0.0;
   }
 }
 
   
 
-  double get finalPrice {
-    return price * (1 + (tax / 100));
-  }
+  // double get finalPrice {
+  //   return price * (1 + (tax / 100));
+  // }
 
   double get subTotal {
     return price * selectedQty;
   }
 
-  double get tax_amount {
-    return (price * (tax / 100)) * selectedQty;
-  }
+  // double get tax_amount {
+  //   return (price * (tax / 100)) * selectedQty;
+  // }
 
   double get total {
-    return (price * (1 + (tax / 100))) * selectedQty;
+    double total = price * selectedQty; // Start with the product's price and quantity
+    // Add the prices of selected optional menu items
+    for (final optionalMenuItem in optionalMenuItems) {
+      total += optionalMenuItem.price ?? 0.0; // Add the price, if available
+    }
+    return total;
   }
-
   double get total2 => price * selectedQty;
 
   Map<String, dynamic> toJson() => {

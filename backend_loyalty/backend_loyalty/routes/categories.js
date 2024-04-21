@@ -11,7 +11,7 @@ router.post('/categories', categoryController.createCategory);
 
 
 router.put('/categories/:id', categoryController.updateCategory);
-
+router.get('/image',categoryController.getCategoryImages);
 
 router.delete('/categories/:id', categoryController.deleteCategory);
 

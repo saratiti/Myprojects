@@ -1,3 +1,6 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_string_interpolations
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_eco_print/controller/point_controller.dart';
@@ -10,13 +13,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CalendarWidget extends StatefulWidget {
+  const CalendarWidget({super.key});
+
   @override
   _CalendarWidgetState createState() => _CalendarWidgetState();
 }
 
 class _CalendarWidgetState extends State<CalendarWidget> {
-  DateTime _selectedDate = DateTime.now();
-  Map<DateTime, bool> _collectedDates = {};
+  final Map<DateTime, bool> _collectedDates = {};
 
   @override
   void initState() {
@@ -47,7 +51,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       User user = await UserController().getUser();
 
   
-      if (user != null && user.id!= null) {
+      if (user.id!= null) {
        
         var dailyPoints = await PointController().collectDailyPoints();
 
@@ -62,7 +66,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         throw Exception("User ID is null or not available");
       }
     } catch (e) {
-      print("Error collecting daily points: $e");
+      if (kDebugMode) {
+        print("Error collecting daily points: $e");
+      }
       return 0;
     }
   }
@@ -151,8 +157,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
     final DateFormat dateFormat = DateFormat('dd');
-    final String locale = Localizations.localeOf(context).languageCode;
-    final DateFormat dayFormat = DateFormat('EEEE', locale);
 
     final int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
     final List<int> daysList = List.generate(daysInMonth, (index) => index + 1);
@@ -179,14 +183,12 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               child: Row(
                 children: daysList.map((day) {
                   final DateTime date = DateTime(now.year, now.month, day);
-                  final String formattedDay = dayFormat.format(date);
                   final String formattedDate = dateFormat.format(date);
                   final String labelKey = 'lbl${201 + day - 1}';
                   final String label = _getLocalizedLabel(context, labelKey);
                   final double leftMargin = day == daysList.first ? 0 : 12.h;
 
                   final bool isToday = date.day == now.day && date.month == now.month && date.year == now.year;
-                  final bool isCollected = _collectedDates[date] ?? false;
                   return GestureDetector(
                     onTap: () async {
                       if (isToday) {

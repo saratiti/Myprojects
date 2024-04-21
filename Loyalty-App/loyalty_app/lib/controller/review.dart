@@ -1,4 +1,5 @@
 
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
 import 'package:loyalty_app/model/product.dart';
 import 'package:loyalty_app/model/review.dart';
@@ -12,15 +13,17 @@ Future<List<Review>> getProductReviews(int productId) async {
     List<dynamic>? reviews = jsonObject["reviews"];
 
     if (reviews != null) {
-      reviews.forEach((reviewJson) {
+      for (var reviewJson in reviews) {
         Review review = Review.fromJson(reviewJson);
         result.add(review);
-      });
+      }
     }
 
     return result;
   } catch (ex) {
-    print(ex);
+    if (kDebugMode) {
+      print(ex);
+    }
     rethrow;
   }
 }
@@ -29,7 +32,9 @@ Future<List<Review>> getProductReviews(int productId) async {
   Future<dynamic> create(Review review) async {
     try {
       var result = await ApiHelper().postDio("/api/reviews", review.toJson());
-      print(result);
+      if (kDebugMode) {
+        print(result);
+      }
       return result;
     } catch (e) {
       rethrow;
@@ -62,9 +67,9 @@ Future<List<Product>> getTopRatedProducts() async {
       var response = await ApiHelper().getRequest("/api/reviews/topProducts");
 
       if (response is List<dynamic>) {
-        response.forEach((v) {
+        for (var v in response) {
           products.add(Product.fromJson(v));
-        });
+        }
       }
 
       return products;
@@ -78,7 +83,9 @@ Future<List<Product>> getTopRatedProducts() async {
 Future<dynamic> deleteReview(int reviewId) async {
   try {
     var result = await ApiHelper().deleteRequest("/api/reviews/$reviewId");
-    print(result);
+    if (kDebugMode) {
+      print(result);
+    }
     return result;
   } catch (e) {
     rethrow;

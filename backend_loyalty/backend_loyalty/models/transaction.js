@@ -4,13 +4,13 @@ const User = require('./user');
 
 const Transaction = sequelize.define('Transaction', {
   transaction_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
    
   },
  

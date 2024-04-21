@@ -24,7 +24,7 @@ final Map<String, dynamic>? arguments = routeArguments is Map<String, dynamic> ?
 
 if (arguments == null) {
   
-  return Scaffold(
+  return const Scaffold(
     body: Center(
       child: Text('Invalid route arguments'),
     ),
@@ -246,13 +246,13 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LoginScreen(),
+                                builder: (context) => const LoginScreen(),
                               ),
                             );
                           } else {
                             // Password change failed, show an error message or handle accordingly
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                 content: Text("Password change failed"),
                               ),
                             );

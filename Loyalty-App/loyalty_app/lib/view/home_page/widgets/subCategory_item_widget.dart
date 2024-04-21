@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/core/app_export.dart';
@@ -63,23 +65,23 @@ class SubCategoryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Category>>(
+    return FutureBuilder<List<Catalog>>(
       future: _categoryController.getFirstThree(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          List<Category>? categories = snapshot.data;
-          return Container(
+          List<Catalog>? categories = snapshot.data;
+          return SizedBox(
             height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: categories!.map((category) {
                 return Padding(
-                  padding: EdgeInsets.only(right: 16.0), // Adjust spacing as needed
+                  padding: const EdgeInsets.only(right: 16.0), // Adjust spacing as needed
                   child: Column(
                     children: [
                       ClipOval(
@@ -89,7 +91,7 @@ class SubCategoryWidget extends StatelessWidget {
                 width: 120.adaptSize,
               ),
                       ),
-                      SizedBox(height: 7.0),
+                      const SizedBox(height: 7.0),
                       Text(
                         category.nameEnglish,
                         style: CustomTextStyles.labelLargeProximaNovaBluegray900,

@@ -7,7 +7,7 @@ const Product = require('./product');
 
 const Review = sequelize.define('Review', {
   review_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
@@ -20,11 +20,11 @@ const Review = sequelize.define('Review', {
     allowNull: true,
   },
   user_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
   product_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     
   },
   createdAt: {

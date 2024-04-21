@@ -31,7 +31,7 @@ Future<List<dynamic>> getFilteredTransactions(String sort) async {
     }
   } catch (error) {
     print('Error: $error');
-    throw error; 
+    rethrow; 
   }
 }
 
@@ -40,7 +40,7 @@ Future<List<Transaction>> getAllTransactions() async {
   try {
     dynamic jsonResponse = await ApiHelper().getRequest("/api/transactions");
 
-    if (jsonResponse == null || !(jsonResponse is Map<String, dynamic>)) {
+    if (jsonResponse == null || jsonResponse is! Map<String, dynamic>) {
       return [];
     }
 
@@ -70,7 +70,7 @@ Future<List<Transaction>> getAllTransactions() async {
       }
     } catch (error) {
       print('Error: $error');
-      throw error;
+      rethrow;
     }
   }
 

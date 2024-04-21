@@ -1,6 +1,7 @@
 
-import 'dart:convert';
 
+
+import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
 import 'package:loyalty_app/model/order.dart';
 
@@ -37,7 +38,9 @@ Future<int> getCountOrder() async {
   Future<dynamic> create(Order order) async {
     try {
       var result = await ApiHelper().postDio("/api/orders", order.toJson());
-      print(result);
+      if (kDebugMode) {
+        print(result);
+      }
       return result;
     } catch (e) {
       rethrow;
@@ -47,7 +50,9 @@ Future<int> getCountOrder() async {
 Future<dynamic> deleteOrder(int orderId) async {
   try {
     var result = await ApiHelper().deleteRequest("/api/orders/$orderId");
-    print(result);
+    if (kDebugMode) {
+      print(result);
+    }
     return result;
   } catch (e) {
     rethrow;

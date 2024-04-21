@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:loyalty_app/model/challenge_type.dart';
-import 'package:loyalty_app/model/user_challenge.dart';
 
 class Challenge {
   final int id;

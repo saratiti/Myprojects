@@ -55,11 +55,11 @@ class AppRoutes {
     GetPage(name:resetPassowrdEmail , page:() =>ResetPassowrdEmailScreen()),
     GetPage(name:resetPassowrd , page:() =>RestPasswordScreen()),
     GetPage(name:infoScreen , page:() => const InfoScreen()),
-    GetPage(name:pinCodePassword, page:() =>  PinCodePasswordScreen()),
+    GetPage(name:pinCodePassword, page:() =>  const PinCodePasswordScreen()),
     GetPage(name:collectingPoints , page:() => const CollectingPointScreen()),
     GetPage(name:replacePoints , page:() => const  ReplacePointScreen()),
     GetPage(name:refundableitempoints , page:() => const RefundableItemPointScreen()),
-    GetPage(name:updateUser , page:() =>  UserProfilePage()),
+    GetPage(name:updateUser , page:() =>  const UserProfilePage()),
     
    
   ];

@@ -1,9 +1,10 @@
-import 'package:dio/dio.dart';
+// ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, use_build_context_synchronously
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:loyalty_app/controller/invoice.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class ReceiptScannerPage extends StatefulWidget {
   const ReceiptScannerPage({Key? key}) : super(key: key);
@@ -20,13 +21,13 @@ Future<void> scanBarcode() async {
   try {
     ScanResult result = await BarcodeScanner.scan();
 
-    if (result != null && result.rawContent != null) {
+    if (result.rawContent != null) {
       setState(() {
         scannedData = result.rawContent;
       });
 
       if (result.type == ResultType.Barcode) {
-        int? invoiceId = parseBarcodeData(scannedData) as int?;
+        int? invoiceId = parseBarcodeData(scannedData);
         if (invoiceId != null) {
           connectToBackend(context,invoiceId);
         } else {
@@ -39,19 +40,22 @@ Future<void> scanBarcode() async {
       showErrorDialog(context, 'Error Scanning QR Code', 'Result is null or missing properties.');
     }
   } catch (e) {
-    print('Error scanning QR code: $e');
+    if (kDebugMode) {
+      print('Error scanning QR code: $e');
+    }
     showErrorDialog(context, 'Error Scanning QR Code', 'Error: $e');
   }
 }
 
 int? parseBarcodeData(String barcodeValue) {
   try {
-    print('Raw Barcode Data: $barcodeValue');
-
-    // Split the barcode data into separate lines
+    if (kDebugMode) {
+      print('Raw Barcode Data: $barcodeValue');
+    }
     List<String> lines = barcodeValue.split('\n');
-
-    print('Lines after split: $lines');
+    if (kDebugMode) {
+      print('Lines after split: $lines');
+    }
 
     // Iterate over each line to find the line containing the invoice ID
     for (String line in lines) {
@@ -64,17 +68,23 @@ int? parseBarcodeData(String barcodeValue) {
         if (invoiceId != null) {
           return invoiceId;
         } else {
-          print('Invalid invoice ID extracted from barcode data');
+          if (kDebugMode) {
+            print('Invalid invoice ID extracted from barcode data');
+          }
           return null;
         }
       }
     }
 
     // If no line contains the invoice ID, print an error message
-    print('Invoice ID not found in barcode data');
+    if (kDebugMode) {
+      print('Invoice ID not found in barcode data');
+    }
     return null;
   } catch (e) {
-    print('Error parsing barcode data: $e');
+    if (kDebugMode) {
+      print('Error parsing barcode data: $e');
+    }
     return null;
   }
 }
@@ -85,39 +95,43 @@ void connectToBackend(BuildContext context, int? invoiceId) async {
   try {
     var result = await InvoiceController().collectPoint(invoiceId: invoiceId!);
 
-    if (result != null) {
-      String message = result['message'] ?? '';
-      double totalAmount = result['totalAmount'] ?? 0.0;
+    String message = result['message'] ?? '';
+    double totalAmount = result['totalAmount'] ?? 0.0;
 
-      if (message == 'Loyalty points updated successfully') {
+    if (message == 'Loyalty points updated successfully') {
+      if (kDebugMode) {
         print('Transaction successful');
-        showSuccessDialog(context, 'Transaction Successful', 'Total Amount: $totalAmount',totalAmount);
-      } else {
-        print('Transaction unsuccessful');
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Error'),
-              content: Text(
-                message,
-                style: TextStyle(color: Colors.black), // Set text color to black
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Close'),
-                ),
-              ],
-            );
-          },
-        );
       }
+      showSuccessDialog(context, 'Transaction Successful', 'Total Amount: $totalAmount',totalAmount);
+    } else {
+      if (kDebugMode) {
+        print('Transaction unsuccessful');
+      }
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text(
+              message,
+              style: const TextStyle(color: Colors.black), // Set text color to black
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
     }
   } catch (e) {
-    print('Error connecting to backend: $e');
+    if (kDebugMode) {
+      print('Error connecting to backend: $e');
+    }
     showErrorDialog(context, 'Error', 'An unexpected error occurred while connecting to the backend.');
   }
 }
@@ -152,7 +166,7 @@ Widget buildDialog(BuildContext context, String title, String content) {
             alignment: Alignment.center,
             child: Text(
               content, 
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.black, // Specify your desired text color here
                 fontSize: 16, // You can adjust the font size as needed
               ),
@@ -172,7 +186,7 @@ void showLoyaltyPointsDialog(BuildContext context, String message) {
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Text('Loyalty Points'),
+        title: const Text('Loyalty Points'),
         content: Text(message),
         actions: [
           TextButton(
@@ -202,7 +216,7 @@ void showSuccessDialog(BuildContext context, String title, String content, doubl
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(content),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
          Text('$totalAmount',
               style: TextStyle(color: appTheme.amber300)),
           ],
@@ -250,7 +264,7 @@ void showErrorDialog(BuildContext context, String title, String message) {
           children: [
             ElevatedButton(
               onPressed: scanBarcode,
-              child: SizedBox(
+              child: const SizedBox(
                 width: double.infinity,
                 height: 60,
                 child: Center(
@@ -261,11 +275,11 @@ void showErrorDialog(BuildContext context, String title, String message) {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               scannedData,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -275,7 +289,7 @@ void showErrorDialog(BuildContext context, String title, String message) {
 
   PreferredSizeWidget _buildAppBar() {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         elevation: 0,
         leadingWidth: 40.0,
@@ -290,7 +304,7 @@ void showErrorDialog(BuildContext context, String title, String message) {
               shape: BoxShape.circle,
               color: appTheme.deepOrange800,
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.arrow_back,
                 color: Colors.white,
@@ -299,7 +313,7 @@ void showErrorDialog(BuildContext context, String title, String message) {
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           "Scanner",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),

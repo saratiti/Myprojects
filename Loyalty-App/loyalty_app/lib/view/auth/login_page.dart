@@ -1,6 +1,8 @@
 
 
 
+// ignore_for_file: library_private_types_in_public_api, unnecessary_string_interpolations, use_build_context_synchronously
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,15 +10,16 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:loyalty_app/controller/auth.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
 import 'package:loyalty_app/model/login.dart';
+import 'package:loyalty_app/view/auth/register_page.dart';
+import 'package:loyalty_app/view/auth/reset_password_page.dart';
 import 'package:loyalty_app/view/home_page/home_page.dart';
 import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 import 'package:loyalty_app/widgets/custom_image_view.dart';
 import 'package:loyalty_app/widgets/custom_text_form_field.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key? key}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -24,7 +27,8 @@ class LoginPage extends StatefulWidget {
 
    TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+ GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+
   bool _obscureText = true;
 
   void _handleSignInAction(BuildContext context) async {
@@ -76,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Form(
-              key: _formKey,
+              key:_loginFormKey,
               child: Container(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(
@@ -133,13 +137,25 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 29.v),
                       _buildPassword(context),
                       SizedBox(height: 31.v),
-                      Align(
+                     Align(
                         alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.only(right: 39.h),
-                          child: Text(
-                            "Forgot your password?",
-                            style: CustomTextStyles.titleMediumMulishffd1512d,
+                        child: GestureDetector( // Wrap the text with GestureDetector
+                          onTap: () {
+                            Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => ResetPassowrdEmailScreen(),
+ 
+  ),
+);
+
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(right: 39.h),
+                            child: Text(
+                              "Forgot your password?",
+                              style: CustomTextStyles.titleMediumMulishffd1512d,
+                            ),
                           ),
                         ),
                       ),
@@ -234,7 +250,7 @@ Widget _buildEmail(BuildContext context) {
       controller: emailController,
       hintText: "Email",
       textInputType: TextInputType.emailAddress,
-      prefix: Icon(Icons.email,color: Colors.grey,), 
+      prefix: const Icon(Icons.email,color: Colors.grey,), 
     ),
   );
 }
@@ -286,17 +302,24 @@ Widget _buildSignIn(BuildContext context) {
   );
 }
 
-  /// Section Widget
-  Widget _buildCreateNewAccount(BuildContext context) {
-    return CustomElevatedButton(
-      height: 41.v,
-      text: "Create new account",
-      margin: EdgeInsets.only(
-        left: 32.h,
-        right: 39.h,
-      ),
-      buttonStyle: CustomButtonStyles.fillWhiteA,
-      buttonTextStyle: CustomTextStyles.titleSmallPoppinsGray800,
-    );
-  }
+
+Widget _buildCreateNewAccount(BuildContext context) {
+  return CustomElevatedButton(
+    height: 41.v,
+    text: "Create new account",
+    margin: EdgeInsets.only(
+      left: 32.h,
+      right: 39.h,
+    ),
+    buttonStyle: CustomButtonStyles.fillWhiteA,
+    buttonTextStyle: CustomTextStyles.titleSmallPoppinsGray800,
+    onPressed: () {
+      // Navigate to the register page
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const RegisterPage()),
+      );
+    },
+  );
+}
 }

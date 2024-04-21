@@ -16,7 +16,7 @@ class CircularNavigationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -25,13 +25,13 @@ class CircularNavigationMenu extends StatelessWidget {
             label: 'Your Profile',
             onPressed: onProfilePressed,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildMenuItem(
             icon: Icons.person_add,
             label: 'Invite Friends',
             onPressed: onInvitePressed,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _buildMenuItem(
             icon: Icons.logout,
             label: 'Logout',
@@ -60,7 +60,7 @@ class CircularNavigationMenu extends StatelessWidget {
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 3,
               blurRadius: 7,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -72,10 +72,10 @@ class CircularNavigationMenu extends StatelessWidget {
               color: Colors.white,
               size: 30,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
               ),

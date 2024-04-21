@@ -6,13 +6,13 @@ import 'package:loyalty_app/model/review.dart';
 class ProductReview extends StatelessWidget {
   final Review review;
 
-  const ProductReview({required this.review});
+  const ProductReview({super.key, required this.review});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.grey[200],
         borderRadius: BorderRadius.circular(8),
@@ -31,7 +31,7 @@ class ProductReview extends StatelessWidget {
                 allowHalfRating: true,
                 itemCount: 5,
                 itemSize: 20,
-                itemBuilder: (context, _) => Icon(
+                itemBuilder: (context, _) => const Icon(
                   Icons.star,
                   color: Colors.amber,
                 ),
@@ -39,15 +39,15 @@ class ProductReview extends StatelessWidget {
               ),
                 Text(
                 'Rating: ${review.rating.toStringAsFixed(1)}',
-                style: TextStyle(fontWeight: FontWeight.w200),
+                style: const TextStyle(fontWeight: FontWeight.w200),
               ),
-              Text(
-                'By: ${review.user?.username?? 'Unknown User'}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              // Text(
+              //   'By: ${review.user?.username?? 'Unknown User'}',
+              //   style: const TextStyle(fontWeight: FontWeight.bold),
+              // ),
             ],
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(review.comment),
         ],
       ),

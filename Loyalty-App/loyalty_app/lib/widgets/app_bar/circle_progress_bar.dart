@@ -6,7 +6,7 @@ class CircularProgressBar extends StatelessWidget {
   final int progress;
   final Color color;
 
-  const CircularProgressBar({
+  const CircularProgressBar({super.key, 
     required this.radius,
     required this.strokeWidth,
     required this.progress,
@@ -15,7 +15,7 @@ class CircularProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: radius * 2,
       height: radius * 2,
       child: CircularProgressIndicator(

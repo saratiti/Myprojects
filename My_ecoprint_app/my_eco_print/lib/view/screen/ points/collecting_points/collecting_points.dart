@@ -104,7 +104,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
               child: Column(
                 children: [
                    const SizedBox(height: 35,),
-                  CalendarWidget(),
+                  const CalendarWidget(),
 
 
 
@@ -190,7 +190,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
 //       ),
 //     );
 //   }
-Future<int> _collectDailyPoints() async {
+Future<int> collectDailyPoints() async {
   try {
     PointController pointController = PointController();
     int dailyPoints = await pointController.collectDailyPoints();
@@ -204,7 +204,7 @@ Future<int> _collectDailyPoints() async {
 }
 
 
-void _showPopDialog(BuildContext context, int dailyPoints) {
+void showPopDialog(BuildContext context, int dailyPoints) {
   String messageText = dailyPoints > 0
       ? "msg37".tr 
       : "msg36".tr;
@@ -394,7 +394,7 @@ class SomeStackedWidgets extends StatelessWidget {
                                                 EdgeInsets.only(bottom: 26.v),
                                             child: SizedBox(
                                                 width: 188.h,
-                                                child: Divider()))),
+                                                child: const Divider()))),
                                     Align(
                                         alignment: Alignment.bottomCenter,
                                         child: Padding(
@@ -402,7 +402,7 @@ class SomeStackedWidgets extends StatelessWidget {
                                                 EdgeInsets.only(bottom: 26.v),
                                             child: SizedBox(
                                                 width: 188.h,
-                                                child: Divider())))
+                                                child: const Divider())))
                                   ])),
          
         ],

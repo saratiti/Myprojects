@@ -14,11 +14,11 @@ class OrderPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Header Section
-            Text(
+            const Text(
               'Your Order Details',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
             _buildOrderCard(),
            
@@ -37,20 +37,20 @@ class OrderPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Product Name',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-            Text(
+            const SizedBox(height: 10),
+            const Text(
               'Price: \$10.99',
               style: TextStyle(fontSize: 16),
             ),
-            Text(
+            const Text(
               'Quantity: 1',
               style: TextStyle(fontSize: 16),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -58,8 +58,8 @@ class OrderPage extends StatelessWidget {
                   onPressed: () {
                     // Implement logic to delete the order
                   },
-                  icon: Icon(Icons.delete),
-                  label: Text('Delete'),
+                  icon: const Icon(Icons.delete),
+                  label: const Text('Delete'),
                 ),
               ],
             ),
@@ -71,7 +71,7 @@ class OrderPage extends StatelessWidget {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(kToolbarHeight),
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: AppBar(
         elevation: 0,
         leadingWidth: 40.0,
@@ -86,7 +86,7 @@ class OrderPage extends StatelessWidget {
               shape: BoxShape.circle,
               color: appTheme.deepOrange800,
             ),
-            child: Center(
+            child: const Center(
               child: Icon(
                 Icons.arrow_back,
                 color: Colors.white,
@@ -95,7 +95,7 @@ class OrderPage extends StatelessWidget {
             ),
           ),
         ),
-        title: Text(
+        title: const Text(
           "My Orders",
           style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
