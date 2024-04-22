@@ -1,7 +1,9 @@
 
 
 
-import 'package:barcode_widget/barcode_widget.dart';
+// ignore_for_file: file_names, library_private_types_in_public_api
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -82,10 +84,14 @@ int quantity = 0;
         productId = productIdValue;
         _fetchAndSetProductDetails(productId);
       } else {
-        print('Invalid or zero product ID: $productIdValue');
+        if (kDebugMode) {
+          print('Invalid or zero product ID: $productIdValue');
+        }
       }
     } else {
-      print('Product ID not found in arguments: $arguments');
+      if (kDebugMode) {
+        print('Product ID not found in arguments: $arguments');
+      }
     }
   }
 
@@ -95,10 +101,14 @@ void _fetchAndSetProductDetails(int productId) async {
     setState(() {
       _productDetailsFuture = Future.value(productDetails);
     });
-    print('Response Body: $productDetails');
+    if (kDebugMode) {
+      print('Response Body: $productDetails');
+    }
   } catch (error) {
 
-    print('Error fetching product details: $error');
+    if (kDebugMode) {
+      print('Error fetching product details: $error');
+    }
   }
 }
 
@@ -115,7 +125,7 @@ void _fetchAndSetProductDetails(int productId) async {
             future: _productDetailsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
@@ -124,7 +134,7 @@ void _fetchAndSetProductDetails(int productId) async {
                     snapshot.data!['optionalMenuItems'];
 
                 if (productData != null && productData is Product) {
-                  final Product product = productData as Product;
+                  final Product product = productData;
                   List<OptionalMenu> optionalMenuItems = [];
 
                   if (optionalMenuItemsData != null &&
@@ -133,9 +143,9 @@ void _fetchAndSetProductDetails(int productId) async {
                   }
 
                   return _buildProductDetails(
-                      product, optionalMenuItems ?? []);
+                      product, optionalMenuItems);
                 } else {
-                  return Center(child: Text('Product data is invalid'));
+                  return const Center(child: Text('Product data is invalid'));
                 }
               }
             },
@@ -147,7 +157,6 @@ void _fetchAndSetProductDetails(int productId) async {
 
   Widget _buildProductDetails(
   Product product, List<OptionalMenu> optionalMenuItems) {
-  final productProvider = Provider.of<ProductProvider>(context, listen: false);
   return Consumer<ProductProvider>(
     builder: (context, productProvider, _) {
   return Column(
@@ -155,20 +164,20 @@ void _fetchAndSetProductDetails(int productId) async {
     children: [
       _buildMask(context),
       Padding(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               product.nameEnglish,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               '\$${product.price}',
               style: TextStyle(fontSize: 20, color: appTheme.deepOrange800),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Padding(
               padding: EdgeInsets.only(left: 19.h),
               child: Text(
@@ -176,7 +185,7 @@ void _fetchAndSetProductDetails(int productId) async {
                 style: CustomTextStyles.titleSmallGray80001,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Container(
               width: 313.h,
               margin: EdgeInsets.only(left: 19.h),
@@ -192,7 +201,7 @@ void _fetchAndSetProductDetails(int productId) async {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (optionalMenuItems.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +213,7 @@ void _fetchAndSetProductDetails(int productId) async {
                       style: CustomTextStyles.titleSmallGray80001,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: 
@@ -247,20 +256,20 @@ void _fetchAndSetProductDetails(int productId) async {
                                   : appTheme.black900,
                             ),
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Text(
                             '\$${menu.price}',
-                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                            style: const TextStyle(fontSize: 14, color: Colors.grey),
                           ),
-                          SizedBox(height: 5),
+                          const SizedBox(height: 5),
                         ],
                       );
                     }).toList(),
                   ),
                 ],
               ),
-            SizedBox(height: 20),
-            Row(
+            const SizedBox(height: 20),
+            const Row(
               children: [
                 Text(
                   'Choose Size',
@@ -273,25 +282,25 @@ void _fetchAndSetProductDetails(int productId) async {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: [
                 _buildSelectSize(),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildQuantitySelector(context, product),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Product Reviews',
               style: CustomTextStyles.titleSmallGray80001,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             FutureBuilder<List<Review>>(
               future: ReviewController().getProductReviews(productId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
@@ -302,25 +311,25 @@ void _fetchAndSetProductDetails(int productId) async {
                   final reviews = snapshot.data!;
                   return ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: reviews.length,
                     itemBuilder: (context, index) {
                       return ProductReview(review: reviews[index]);
                     },
                   );
                 } else {
-                  return Center(
+                  return const Center(
                     child: Text('No reviews available.'),
                   );
                 }
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Leave a Review',
               style: CustomTextStyles.bodySmallInterGray80001,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             RatingBar.builder(
               initialRating: starRating,
               minRating: 1,
@@ -328,8 +337,8 @@ void _fetchAndSetProductDetails(int productId) async {
               allowHalfRating: true,
               itemCount: 5,
               itemSize: 30,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
+              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => const Icon(
                 Icons.star,
                 color: Colors.amber,
               ),
@@ -339,7 +348,7 @@ void _fetchAndSetProductDetails(int productId) async {
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             GestureDetector(
               onTap: () {
                 _submitReview();
@@ -349,17 +358,17 @@ void _fetchAndSetProductDetails(int productId) async {
                   borderRadius: BorderRadius.circular(50),
                   border: Border.all(
                     width: 1,
-                    color: Color.fromARGB(255, 211, 210, 210),
+                    color: const Color.fromARGB(255, 211, 210, 210),
                   ),
-                  color: Color.fromARGB(255, 204, 203, 203),
+                  color: const Color.fromARGB(255, 204, 203, 203),
                 ),
                 child: TextFormField(
                   maxLines: 1,
                   decoration: InputDecoration(
                     labelText: 'Comment',
-                    labelStyle: TextStyle(color: Colors.grey),
+                    labelStyle: const TextStyle(color: Colors.grey),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
+                    contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 16,
                     ),
@@ -367,10 +376,10 @@ void _fetchAndSetProductDetails(int productId) async {
                       onTap: () {
                         _submitReview();
                       },
-                      child: Icon(Icons.send, color: Colors.white),
+                      child: const Icon(Icons.send, color: Colors.white),
                     ),
                   ),
-                  style: TextStyle(color: Colors.grey),
+                  style: const TextStyle(color: Colors.grey),
                   onChanged: (value) {
                     setState(() {
                       comment = value;
@@ -379,7 +388,7 @@ void _fetchAndSetProductDetails(int productId) async {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(height: 25.v),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 19.h),
@@ -525,31 +534,31 @@ Widget _buildQuantitySelector(BuildContext context, Product product) {
               productProvider.decrementQuantity(product);
             },
             child: Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[300],
               ),
-              child: Icon(Icons.remove),
+              child: const Icon(Icons.remove),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           Text(
             product.selectedQty.toString(), // Use selectedQty instead of getCartItemQuantity
-            style: TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 16),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           GestureDetector(
             onTap: () {
               productProvider.incrementQuantity(product);
             },
             child: Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[300],
               ),
-              child: Icon(Icons.add),
+              child: const Icon(Icons.add),
             ),
           ),
         ],
@@ -833,7 +842,7 @@ Widget _buildQuantitySelector(BuildContext context, Product product) {
 void _addToCart(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
   final productProvider = Provider.of<ProductProvider>(context, listen: false);
   productProvider.addToCart(product, selectedOptions);
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Added to Cart')));
+  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Added to Cart')));
 }
 
 void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
@@ -847,8 +856,8 @@ void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMen
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
+          const Padding(
+            padding: EdgeInsets.all(20),
             child: Text(
               'Summary Invoice',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -866,22 +875,22 @@ void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMen
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Product Details:',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text('Name: ${product.nameEnglish}'),
                       Text('Price: \$${product.price.toStringAsFixed(2)}'),
                       Text('Quantity: ${product.selectedQty}'),
-                      SizedBox(height: 10),
-                      Text(
+                      const SizedBox(height: 10),
+                      const Text(
                         'Subtotal:',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         '\$${subtotal.toStringAsFixed(2)}',
-                        style: TextStyle(fontSize: 20, color: Colors.deepOrange),
+                        style: const TextStyle(fontSize: 20, color: Colors.deepOrange),
                       ),
                       // Include optional menu item prices
                       if (selectedOptions.isNotEmpty)
@@ -894,7 +903,7 @@ void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMen
                             ],
                           );
                         }),
-                      Divider(),
+                      const Divider(),
                     ],
                   ),
                 );
@@ -906,13 +915,13 @@ void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMen
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Total Price:',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   '\$${totalPrice.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 24, color: Colors.deepOrange, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 24, color: Colors.deepOrange, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String enteredEmail = emailController.text;
   String enteredPassword = passwordController.text;
   String enteredFullName = fullNameController.text;
-  String enteredusername=usernameController.text;
+  //String enteredusername=usernameController.text;
   String enteredPhone = phoneController.text;
 
   UserController userController = UserController(); 

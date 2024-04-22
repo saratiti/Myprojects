@@ -1,5 +1,5 @@
 
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unnecessary_null_comparison
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
@@ -74,7 +74,7 @@ Widget build(BuildContext context) {
             SizedBox(height: 90.v),
             if (_categories != null) // Null check added here
               SoftdrinkItemWidget(
-                categories: _categories!,
+                categories: _categories,
                 selectedCategoryId: _selectedCategoryId,
                 onSelectCategory: onSelectCategory,
               ),

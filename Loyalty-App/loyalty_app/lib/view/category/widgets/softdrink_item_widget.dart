@@ -1,19 +1,17 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/category.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/model/category.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'softdrink1_item_widget.dart'; 
 
 class SoftdrinkItemWidget extends StatelessWidget {
   final List<Catalog> categories;
   final int? selectedCategoryId;
   final Function(int) onSelectCategory;
 
-  SoftdrinkItemWidget({
+  SoftdrinkItemWidget({super.key, 
     required this.categories,
     required this.selectedCategoryId,
     required this.onSelectCategory,
@@ -76,7 +74,7 @@ class SoftdrinkItemWidget extends StatelessWidget {
                     ),
                     SizedBox(height: 20.v),
                     Padding(
-                      padding: EdgeInsets.only(left: 30, right: 30, top: 10),
+                      padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
                       child: Center(
                         child: Text(
                           category.nameEnglish,

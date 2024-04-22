@@ -1,3 +1,4 @@
+
 // ignore_for_file: prefer_null_aware_operators
 
 class OptionalMenu {
@@ -5,13 +6,7 @@ class OptionalMenu {
   final String? nameArabic;
   final String? nameEnglish;
   final double? price;
-   bool _isSelected = false;
- bool get isSelected => _isSelected;
-
-  // Setter method for isSelected
-  set isSelected(bool value) {
-    _isSelected = value;
-  }
+   bool isSelected = false;
   OptionalMenu({
     required this.optionId,
     this.nameArabic,
