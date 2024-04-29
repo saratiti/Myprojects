@@ -1,9 +1,9 @@
 // ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
+
+
 import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:loyalty_app/controller/invoice.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 class ReceiptScannerPage extends StatefulWidget {

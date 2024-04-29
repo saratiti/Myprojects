@@ -60,8 +60,8 @@ class _CardContentArabicState extends State<CardContentArabic> {
             borderRadius: BorderRadiusStyle.roundedBorder40,
           ),
           child: Container(
-            height: 180.v,
-            width: 300.h,
+            height: 190.v,
+            width: 350.h,
             decoration: AppDecoration.gradientLightGreenToLightGreen.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder40,
             ),

@@ -3,12 +3,9 @@
 
 // ignore_for_file: must_be_immutable, unused_local_variable
 
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
+
 
 class RewordContentPage extends StatelessWidget {
   RewordContentPage({super.key});

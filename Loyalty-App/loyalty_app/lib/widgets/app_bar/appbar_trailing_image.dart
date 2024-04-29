@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 // ignore: must_be_immutable
 class AppbarTrailingImage extends StatelessWidget {

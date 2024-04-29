@@ -2,13 +2,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/model/product.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 class Softdrink1ItemWidget extends StatefulWidget {
   final int categoryId;
@@ -36,18 +31,25 @@ class _Softdrink1ItemWidgetState extends State<Softdrink1ItemWidget> {
     super.didUpdateWidget(oldWidget);
   }
 
-  Future<void> _fetchProducts() async {
-    try {
-      List<Product> products = await CategoryController().getProductsByCategory(widget.categoryId);
+ Future<void> _fetchProducts() async {
+  try {
+    final List<Product> products = await CategoryController().getProductsByCategory(widget.categoryId);
+    if (products.isNotEmpty) {
       setState(() {
         _productsFuture = Future.value(products);
       });
-    } catch (ex) {
-      if (kDebugMode) {
-        print('Error fetching products: $ex');
-      }
+    } else {
+      // Handle case where products list is empty
+      // You can display a message or take appropriate action
+    }
+  } catch (ex) {
+    if (kDebugMode) {
+      print('Error fetching products: $ex');
     }
   }
+}
+
+
 
    @override
 Widget build(BuildContext context) {
@@ -83,15 +85,12 @@ Widget build(BuildContext context) {
   );
 }
 
-  Widget _buildProduct(BuildContext context, Product product) {
-    return  GestureDetector(
+ Widget _buildProduct(BuildContext context, Product product) {
+  return GestureDetector(
     onTap: () {
-      _navigateToProductDetails(context,product.id);
+      _navigateToProductDetails(context, product.id);
     },
-    child:
-    
-    
-    Container(
+    child: Container(
       width: 166.0,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
@@ -122,14 +121,14 @@ Widget build(BuildContext context) {
                 children: [
                   const SizedBox(height: 39.0),
                   Text(
-                    product.nameEnglish,
+                    product.nameEnglish ?? '', // Add null check here
                     style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
                       color: appTheme.blueGray90001,
                     ),
                   ),
                   const SizedBox(height: 5.0),
                   Text(
-                    product.description,
+                    product.description ?? '', // Add null check here
                     style: theme.textTheme.bodyMedium!.copyWith(
                       color: appTheme.blueGray600,
                     ),
@@ -142,7 +141,7 @@ Widget build(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         RatingBar.builder(
-                          initialRating: product.price,
+                          initialRating: product.price ?? 0, // Add null check here
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
@@ -169,17 +168,13 @@ Widget build(BuildContext context) {
               ),
             ),
           ),
-          // CustomImageView(
-          //   imagePath: product.image ?? "",
-          //   height: 89.0,
-          //   width: 60.0,
-          //   alignment: Alignment.topLeft,
-          //   margin: EdgeInsets.only(left: 48.0),
-          // ),
         ],
       ),
-     ) );
-  }
+    ),
+  );
+}
+
+
 void _navigateToProductDetails(BuildContext context, int productId) {
   Navigator.of(context).pushNamed(
     AppRoutes.productDetailsScreen,

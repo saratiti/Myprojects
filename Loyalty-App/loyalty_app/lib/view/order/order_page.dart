@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/core/utils/theme/theme_helper.dart';
+import 'package:loyalty_app/core/app_export.dart';
 
 class OrderPage extends StatelessWidget {
   const OrderPage({Key? key}) : super(key: key);

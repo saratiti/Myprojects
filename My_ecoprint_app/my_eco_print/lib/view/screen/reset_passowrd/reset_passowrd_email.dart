@@ -1,8 +1,5 @@
 // ignore_for_file: must_be_immutable, use_build_context_synchronously, unnecessary_type_check
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class ResetPassowrdEmailScreen extends StatelessWidget {
@@ -15,7 +12,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
     final response = await UserController().sendPinForEmailVerification(enteredEmail);
 
     if (response is Map<String, dynamic>) {
-      // Log the response for debugging purposes
+      
       if (kDebugMode) {
         print('Response Body: $response');
       }

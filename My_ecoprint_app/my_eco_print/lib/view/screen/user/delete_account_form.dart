@@ -1,11 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
-
 
 class DeleteAccountForm extends StatefulWidget {
   @override
@@ -15,59 +10,58 @@ class DeleteAccountForm extends StatefulWidget {
 class _DeleteAccountFormState extends State<DeleteAccountForm> {
   final TextEditingController otherReasonController = TextEditingController();
   String selectedReason = '';
-Future<void> deleteUser() async {
-  try {
-    final user = await UserController().getUser();
-    if (user.id != null) {
-      await UserController().deleteUser(user.id!);
-    Navigator.pushReplacementNamed(context, '/login'); 
-      if (kDebugMode) {
-        print('User deleted successfully.');
+  Future<void> deleteUser() async {
+    try {
+      final user = await UserController().getUser();
+      if (user.id != null) {
+        await UserController().deleteUser(user.id!);
+        Navigator.pushReplacementNamed(context, '/login');
+        if (kDebugMode) {
+          print('User deleted successfully.');
+        }
+      } else {
+        if (kDebugMode) {
+          print('User ID is null.');
+        }
       }
-     
-    } else {
+    } catch (error) {
       if (kDebugMode) {
-        print('User ID is null.');
+        print('Error deleting User: $error');
       }
-    
     }
-  } catch (error) {
-    if (kDebugMode) {
-      print('Error deleting User: $error');
-    }
-   
   }
-}
-void showDeleteAccountDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Delete Account'),
-        content: const Text('Are you sure you want to remove your Account?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              deleteUser(); 
-            },
-            child: const Text('Remove'),
-          ),
-        ],
-      );
-    },
-  );
-}
+
+  void showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Account'),
+          content: const Text('Are you sure you want to remove your Account?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                deleteUser();
+              },
+              child: const Text('Remove'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context,"lbl30_"),
+      appBar: buildAppBar(context, "lbl30_"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -138,5 +132,4 @@ void showDeleteAccountDialog(BuildContext context) {
       ),
     );
   }
-
 }

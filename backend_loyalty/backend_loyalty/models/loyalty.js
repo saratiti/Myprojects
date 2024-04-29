@@ -39,6 +39,18 @@ deletedAt: {
   type: DataTypes.DATE,
   allowNull: true,
 }
+// created_at: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// },
+// updated_at: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// },
+// deleted_at: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// }
 },{
 timestamps: false, 
 paranoid: true,

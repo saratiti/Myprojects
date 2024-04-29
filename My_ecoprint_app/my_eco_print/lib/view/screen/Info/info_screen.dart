@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/core/utils/image_constant.dart';
-import 'package:my_eco_print/core/localization/app_localization.dart';
-import 'package:my_eco_print/core/constants/theme/theme_helper.dart';
-import 'package:my_eco_print/view/widgets/custom_image_view.dart';
+
+
+import 'package:my_eco_print/core/app_export.dart';
 
 class InfoScreen extends StatelessWidget {
   const InfoScreen({Key? key}) : super(key: key);

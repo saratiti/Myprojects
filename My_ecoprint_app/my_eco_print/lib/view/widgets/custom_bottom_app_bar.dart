@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable, constant_identifier_names
 
-import 'package:flutter/material.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class CustomBottomAppBar extends StatefulWidget {
@@ -14,7 +13,7 @@ class CustomBottomAppBar extends StatefulWidget {
 
 class CustomBottomAppBarState extends State<CustomBottomAppBar> {
   List<BottomMenuModel> bottomMenuList = [
-       BottomMenuModel(
+    BottomMenuModel(
       icon: ImageConstant.imgCut,
       activeIcon: ImageConstant.imgCut,
       type: BottomBarEnum.Cut,
@@ -24,8 +23,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
       activeIcon: ImageConstant.imgFingerprint,
       type: BottomBarEnum.Fingerprint,
     ),
-
-     BottomMenuModel(
+    BottomMenuModel(
         icon: ImageConstant.imgInfocircle,
         activeIcon: ImageConstant.imgInfocircle,
         type: BottomBarEnum.Infocircle,
@@ -49,10 +47,9 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                   for (var element in bottomMenuList) {
                     element.isSelected = false;
                   }
-        
+
                   bottomMenuList[index].isSelected = true;
 
-                  
                   widget.onChanged?.call(bottomMenuList[index].type);
 
                   setState(() {});
@@ -61,15 +58,12 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
                   svgPath: bottomMenuList[index].isSelected
                       ? bottomMenuList[index].activeIcon
                       : bottomMenuList[index].icon,
-                  height: bottomMenuList[index].isSelected
-                      ? 34.adaptSize
-                      : 68.v,
-                  width: bottomMenuList[index].isSelected
-                      ? 34.adaptSize
-                      : 44.h,
+                  height:
+                      bottomMenuList[index].isSelected ? 34.adaptSize : 68.v,
+                  width: bottomMenuList[index].isSelected ? 34.adaptSize : 44.h,
                   color: bottomMenuList[index].isSelected
-                      ? theme.colorScheme.primary 
-                      : appTheme.lightGreen500, 
+                      ? theme.colorScheme.primary
+                      : appTheme.lightGreen500,
                 ),
               );
             },
@@ -79,7 +73,6 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
     );
   }
 }
-
 
 enum BottomBarEnum {
   Infocircle,

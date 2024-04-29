@@ -2,25 +2,21 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/user.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:loyalty_app/widgets/custom_text_form_field.dart';
+
 
 class ResetPassowrdEmailScreen extends StatelessWidget {
   ResetPassowrdEmailScreen({Key? key}) : super(key: key);
 
   final TextEditingController emailController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Unique GlobalKey for form
 
   Future<bool> checkIfEmailExists(String enteredEmail) async {
     try {
       final response = await UserController().sendPinForEmailVerification(enteredEmail);
 
       if (response is Map<String, dynamic>) {
-      
         if (kDebugMode) {
           print('Response Body: $response');
         }
@@ -28,14 +24,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
         final bool success = response['success'] ?? false;
         final bool exists = response['exists'] ?? false;
 
-        if (success) {
-          return exists; // Return the value of 'exists'
-        } else {
-          if (kDebugMode) {
-            print('Failed to verify email existence: ${response['message']}');
-          }
-          return false;
-        }
+        return success ? exists : false;
       } else {
         if (kDebugMode) {
           print('Unexpected response type: ${response.runtimeType}');
@@ -80,6 +69,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                         child: Stack(
                           alignment: Alignment.topCenter,
                           children: [
+                            
                             Align(
                               alignment: Alignment.topCenter,
                               child: Padding(
@@ -88,236 +78,164 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                                   top: 162.v,
                                   right: 47.h,
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "msg12".tr,
-                                      style: CustomTextStyles.titleMediumInter,
-                                    ),
-                                    Container(
-                                      width: 274.h,
-                                      margin: EdgeInsets.only(
-                                        left: 8.h,
-                                        top: 14.v,
+                                child: Form(
+                                  key: _formKey, // Assigning the unique GlobalKey to Form widget
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "msg12".localized,
+                                        style: CustomTextStyles.titleLargeWhiteA700,
                                       ),
-                                      child: RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: "msg14".tr,
-                                              style: theme.textTheme.bodyMedium,
-                                            ),
-                                            TextSpan(
-                                              text: "msg15".tr,
-                                              style: CustomTextStyles.bodyMediumInterGray60001,
-                                            ),
-                                          ],
+                                      Container(
+                                        width: 274.h,
+                                        margin: EdgeInsets.only(
+                                          left: 8.h,
+                                          top: 14.v,
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                          top: 22.v,
-                                          right: 32.h,
-                                        ),
-                                        child: Text(
-                                          "msg2".tr,
-                                          style: CustomTextStyles.bodyMediumInterGray60001,
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: "msg14".localized,
+                                                style: theme.textTheme.bodyMedium,
+                                              ),
+                                              TextSpan(
+                                                text: "msg15".localized,
+                                                style: CustomTextStyles.bodySmallGray400,
+                                              ),
+                                            ],
+                                          ),
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
-                                    ),
-                                     Padding(
-    padding: EdgeInsets.only(
-      left: 32.h,
-      right: 39.h,
-    ),
-    child:
-                                    CustomTextFormField(
-                                      controller: emailController,
-                                   
-                                      hintText: "msg3".tr,
-                                      suffix: Container(
-                                        margin: EdgeInsets.fromLTRB(10.h, 12.v, 20.h, 13.v),
-                                        child: CustomImageView(
-                                          
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                            top: 22.v,
+                                            right: 32.h,
+                                          ),
+                                          child: Text(
+                                            "msg2".localized,
+                                            style: CustomTextStyles.bodySmallDeeporange800,
+                                          ),
                                         ),
                                       ),
-                                      suffixConstraints: BoxConstraints(
-                                        maxHeight: 45.v,
-                                      ),
-                                      contentPadding: EdgeInsets.only(
-                                        left: 30.h,
-                                        top: 11.v,
-                                        bottom: 11.v,
-                                      ),
-                                    )),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        String enteredEmail = emailController.text;
-
-                                        if (enteredEmail.isEmpty) {
-                                          // Show a dialog for empty email
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    const Text("Email cannot be empty"),
-                                                    CustomElevatedButton(
-                                                      height: 62.v,
-                                                      text: "OK",
-                                                      margin: EdgeInsets.only(
-                                                        top: 20.v,
-                                                      ),
-                                                      buttonStyle: CustomButtonStyles.fillPrimary,
-                                                      // onTap: () {
-                                                      //   Navigator.of(context).pop(); 
-                                                      // },
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                          return;
-                                        }
-
-                                        // Check if the email exists
-                                        bool emailExists = await checkIfEmailExists(enteredEmail);
-
-                                        if (emailExists) {
-                                          // Handle the case when the email already exists.
-                                          if (kDebugMode) {
-                                            print("Email already exists!");
+                                      CustomTextFormField(
+                                        controller: emailController,
+                                     
+                                        hintText: "msg3".localized,
+                                        suffix: Container(
+                                          margin: EdgeInsets.fromLTRB(10.h, 12.v, 20.h, 13.v),
+                                          child: CustomImageView(
+                                           
+                                          ),
+                                        ),
+                                        suffixConstraints: BoxConstraints(
+                                          maxHeight: 45.v,
+                                        ),
+                                        contentPadding: EdgeInsets.only(
+                                          left: 30.h,
+                                          top: 11.v,
+                                          bottom: 11.v,
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Email cannot be empty';
                                           }
-
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    const Text("Your custom message for email exists..."),
-                                                    CustomElevatedButton(
-                                                      height: 62.v,
-                                                      text: "msg18".tr,
-                                                      margin: EdgeInsets.only(
-                                                        top: 53.v,
-                                                        right: 5.h,
-                                                      ),
-                                                      rightIcon: Container(
-                                                        margin: const EdgeInsets.only(),
-                                                        child: CustomImageView(
-                                                        
-                                                        ),
-                                                      ),
-                                                      // buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
-                                                      // buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
-                                                      // onTap: () {
-                                                      //   Navigator.of(context).pop(); // Close the current dialog
-                                                      //   // Reset the page by pushing the ResetPasswordEmailScreen again
-                                                      //   Navigator.pushReplacement(
-                                                      //     context,
-                                                      //     MaterialPageRoute(
-                                                      //       builder: (context) => ResetPassowrdEmailScreen(),
-                                                      //     ),
-                                                      //   );
-                                                      // },
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        } else {
-                                          // Proceed with your logic when the email doesn't exist.
-                                          if (kDebugMode) {
-                                            print("Email doesn't exist. Proceeding with your logic...");
-                                          }
-
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                content: Column(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    const Text("Your custom message for email doesn't exist..."),
-                                                    CustomElevatedButton(
-                                                      height: 62.v,
-                                                      text: "msg19_".tr,
-                                                      margin: EdgeInsets.only(
-                                                        top: 53.v,
-                                                        right: 5.h,
-                                                      ),
-                                                      rightIcon: Container(
-                                                        margin: const EdgeInsets.only(),
-                                                        child: CustomImageView(
-                                                          
-                                                        ),
-                                                      ),
-                                                      // buttonStyle: CustomButtonStyles.outlineOnPrimaryContainer,
-                                                      // buttonTextStyle: CustomTextStyles.labelSmallFFShamelFamilyWhiteA700,
-                                                      // onTap: () {
-                                                      //   Navigator.of(context).pop();
-                                                      // },
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                      child: CustomElevatedButton(
-                                        text: "lbl12".tr,
+                                          return null;
+                                        },
+                                      ),
+                                      CustomElevatedButton(
+                                        text: "lbl12".localized,
                                         margin: EdgeInsets.only(
                                           left: 30.h,
                                           top: 61.v,
                                           right: 31.h,
                                         ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState?.validate() ?? false) {
+                                            String enteredEmail = emailController.text;
+
+                                            bool emailExists = await checkIfEmailExists(enteredEmail);
+
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  content: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(
+                                                        emailExists
+                                                            ? "Your custom message for email exists..."
+                                                            : "Your custom message for email doesn't exist...",
+                                                      ),
+                                                      CustomElevatedButton(
+                                                        height: 62.v,
+                                                        text: emailExists ? "msg18".localized : "msg19_".localized,
+                                                        margin: EdgeInsets.only(
+                                                          top: 53.v,
+                                                          right: 5.h,
+                                                        ),
+                                                        rightIcon: Container(
+                                                          margin: const EdgeInsets.only(),
+                                                          child: CustomImageView(
+                                                           
+                                                          ),
+                                                        ),
+                                                        buttonStyle: CustomButtonStyles.outlineBlueTL27,
+                                                        buttonTextStyle: CustomTextStyles.labelLargeInterBlack900,
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop(); 
+                                                          if (emailExists) {
+                                                            Navigator.of(context).pushNamed(AppRoutes.pinCodePassword, arguments: {'email': enteredEmail});
+                                                          }
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
                                       ),
-                                    ),
-                                    SizedBox(height: 25.v),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 3.h),
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: "msg17".tr,
-                                                  style: theme.textTheme.labelMedium,
-                                                ),
-                                                const TextSpan(
-                                                  text: " ",
-                                                ),
-                                              ],
+                                      SizedBox(height: 25.v),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 3.h),
+                                            child: RichText(
+                                              text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: "msg17".localized,
+                                                    style: theme.textTheme.labelMedium,
+                                                  ),
+                                                  const TextSpan(
+                                                    text: " ",
+                                                  ),
+                                                ],
+                                              ),
+                                              textAlign: TextAlign.left,
                                             ),
-                                            textAlign: TextAlign.left,
                                           ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
-                                          },
-                                          child: Text(
-                                            "lbl3".tr,
-                                            style: CustomTextStyles.labelLargeGray600,
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+                                            },
+                                            child: Text(
+                                              "lbl3".localized,
+                                              style: CustomTextStyles.labelLargeInterBlack900Medium,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

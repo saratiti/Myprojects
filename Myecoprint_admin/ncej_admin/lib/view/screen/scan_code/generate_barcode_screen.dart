@@ -38,7 +38,7 @@ late int selectedCompanyId;
   void initState() {
     super.initState();
      selectedCompanyId = Provider.of<CompanyProvider>(context, listen: false).companyId;
-    fetchStoreIdsByCompanyId(selectedCompanyId); // Fetch storeIds initially
+    fetchStoreIdsByCompanyId(selectedCompanyId); 
   }
 
 Future<void> fetchStoreIdsByCompanyId(int companyId) async {

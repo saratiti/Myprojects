@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:loyalty_app/model/review.dart';
+import 'package:loyalty_app/core/app_export.dart';
+
 
 class ProductReview extends StatelessWidget {
   final Review review;

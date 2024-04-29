@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -26,8 +25,8 @@ class CustomTextFormField extends StatelessWidget {
     this.onEditingComplete,
     this.fillColor,
     this.filled = false,
-    this.validator, 
-     this.onChanged,
+    this.validator,
+    this.onChanged,
   }) : super(
           key: key,
         );
@@ -63,7 +62,7 @@ class CustomTextFormField extends StatelessWidget {
   final BoxConstraints? prefixConstraints;
 
   final Widget? suffix;
-final VoidCallback? onEditingComplete;
+  final VoidCallback? onEditingComplete;
   final BoxConstraints? suffixConstraints;
 
   final EdgeInsets? contentPadding;
@@ -73,7 +72,7 @@ final VoidCallback? onEditingComplete;
   final Color? fillColor;
 
   final bool? filled;
-final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onChanged;
   final FormFieldValidator<String>? validator;
 
   @override

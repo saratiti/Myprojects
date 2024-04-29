@@ -1,21 +1,13 @@
 // ignore_for_file: camel_case_types, use_build_context_synchronously, unnecessary_null_comparison, library_private_types_in_public_api, unnecessary_cast
 
-
-import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/api_helper.dart';
-import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/offer.dart';
-import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
-import 'package:my_eco_print/view/screen/barcode/ref_screen.dart';
 
 class CoffeeScreen extends StatefulWidget {
   final int? typeId;
   final String? selectedButton;
 
-  const CoffeeScreen({Key? key, this.typeId, this.selectedButton}) : super(key: key);
+  const CoffeeScreen({Key? key, this.typeId, this.selectedButton})
+      : super(key: key);
 
   @override
   _CoffeeScreenState createState() => _CoffeeScreenState();
@@ -32,10 +24,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
 
   void _fetchOffers() {
     if (widget.selectedButton == "lbl45") {
-     
-      _offersFuture = StoreController().getStoresWithOffers(0); 
+      _offersFuture = StoreController().getStoresWithOffers(0);
     } else if (widget.typeId != null) {
-      
       _offersFuture = StoreController().getStoresWithOffers(widget.typeId!);
     }
   }
@@ -43,11 +33,13 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
   @override
   void didUpdateWidget(covariant CoffeeScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedButton != widget.selectedButton || oldWidget.typeId != widget.typeId) {
+    if (oldWidget.selectedButton != widget.selectedButton ||
+        oldWidget.typeId != widget.typeId) {
       _fetchOffers();
     }
   }
- final ApiHelper _apiHelper=ApiHelper();
+
+  final ApiHelper _apiHelper = ApiHelper();
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
@@ -68,6 +60,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
   }
 
   Widget buildClothesContainer(BuildContext context) {
+    final theme = Theme.of(context);
     final localization = AppLocalizationController.to;
     final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
@@ -86,7 +79,7 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
           List<Offer> offers = snapshot.data!;
 
           return SizedBox(
-            width: double.maxFinite,
+            width: double.infinity,
             child: Padding(
               padding: EdgeInsets.only(bottom: 60.v),
               child: ListView.builder(
@@ -104,8 +97,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                           return AlertDialog(
                             contentPadding: EdgeInsets.zero,
                             content: Container(
-                              width: 350.h,
-                              height: 350.v,
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.6,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 20.h,
                                 vertical: 20.v,
@@ -130,8 +123,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   Directionality(
                                     textDirection: textDirection,
                                     child: Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 10.h, top: 24.v),
+                                      padding: EdgeInsets.only(
+                                          left: 10.h, top: 24.v),
                                       child: Text(
                                         "lbl48".tr,
                                         style:
@@ -141,7 +134,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                   ),
                                   SizedBox(height: 10.v),
                                   SizedBox(
-                                    width: 300.h,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.6,
                                     child: RichText(
                                       text: TextSpan(children: [
                                         TextSpan(
@@ -151,7 +145,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                         ),
                                         TextSpan(
                                           text: offer.numberDiscount.toString(),
-                                          style: CustomTextStyles.titleMediumRed700,
+                                          style: CustomTextStyles
+                                              .titleMediumRed700,
                                         ),
                                       ]),
                                       textAlign: TextAlign.center,
@@ -165,15 +160,21 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                       width: 150.h,
                                       text: "lbl49".tr,
                                       margin: EdgeInsets.only(top: 22.v),
-                                      buttonStyle: CustomButtonStyles.fillLightGreenTL20,
-                                      buttonTextStyle: CustomTextStyles.titleSmallBahijTheSansArabicWhiteA700,
+                                      buttonStyle:
+                                          CustomButtonStyles.fillLightGreenTL20,
+                                      buttonTextStyle: CustomTextStyles
+                                          .titleSmallBahijTheSansArabicWhiteA700,
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => const ScanCodeScreenRef1(),
+                                            builder: (context) =>
+                                                const ScanCodeScreenRef1(),
                                             settings: RouteSettings(
-                                              arguments: {'offerId': offer.id, 'storeId': offer.storeId},
+                                              arguments: {
+                                                'offerId': offer.id,
+                                                'storeId': offer.storeId
+                                              },
                                             ),
                                           ),
                                         );
@@ -194,99 +195,82 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                           horizontal: 20.h,
                           vertical: 5.v,
                         ),
-                        decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                        decoration:
+                            AppDecoration.outlineOnPrimaryContainer3.copyWith(
                           borderRadius: BorderRadiusStyle.roundedBorder24,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Container(
+                              height: 40.adaptSize,
+                              width: 40.adaptSize,
+                              padding: EdgeInsets.all(5.h),
+                              decoration: AppDecoration.fillGray.copyWith(
+                                borderRadius: BorderRadiusStyle.roundedBorder17,
+                              ),
+                              child: FutureBuilder(
+                                future: _apiHelper.getProfilePictureCompany(
+                                    offer.companyId.toString()),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData) {
+                                    Uint8List? imageData =
+                                        snapshot.data as Uint8List?;
+                                    if (imageData != null) {
+                                      return Image.memory(
+                                        imageData,
+                                        width: 150,
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                      );
+                                    } else {
+                                      return ClipOval(
+                                        child: Container(
+                                          width: 150,
+                                          height: 150,
+                                          color: Colors.grey,
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.image_not_supported,
+                                              size: 50,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return const CircularProgressIndicator();
+                                  }
+                                },
+                              ),
+                            ),
                             Expanded(
-                              child: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 40, bottom: 40),
+                                child: Flex(
+                                  direction: Axis.horizontal,
                                   children: [
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 10),
-                                          child: SizedBox(
-                                            height: 40.adaptSize,
-                                            width: 40.adaptSize,
-                                            child: Container(
-                                              height: 40.adaptSize,
-                                              width: 40.adaptSize,
-                                              padding: EdgeInsets.all(5.h),
-                                              decoration: AppDecoration.fillGray.copyWith(
-                                                borderRadius: BorderRadiusStyle.roundedBorder17,
-                                              ),
-                                           child:  FutureBuilder(
-  future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const CircularProgressIndicator();
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else if (snapshot.hasData) {
-      Uint8List? imageData = snapshot.data as Uint8List?;
-      if (imageData != null) {
-        return Image.memory(
-          imageData,
-          width: 150,
-          height: 150,
-          fit: BoxFit.cover,
-        );
-      } else {
-        return ClipOval(
-          child: Container(
-            width: 150,
-            height: 150,
-            color: Colors.grey,
-            child: const Center(
-              child: Icon(
-                Icons.image_not_supported,
-                size: 50,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        );
-      }
-    } else {
-      return const CircularProgressIndicator();
-    }
-  },
-),
-
-
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left: 40, bottom: 40),
-                                            child: Flex(
-                                              direction: Axis.horizontal,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    '${offer.numberDiscount.toString()}%',
-                                                    style: theme.textTheme.headlineSmall,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                    Flexible(
+                                      child: Text(
+                                        '${offer.numberDiscount.toString()}%',
+                                        style: theme.textTheme.headlineSmall,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
                             Text(
-                              offer.offerDescription != null ? offer.offerDescription.toString() : 'No description available',
+                              offer.offerDescription != null
+                                  ? offer.offerDescription.toString()
+                                  : 'No description available',
                               style: theme.textTheme.labelMedium,
                               textAlign: TextAlign.center,
                             ),
@@ -299,7 +283,8 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
                                       alignment: Alignment.topLeft,
                                       child: paint(
                                         textDirection: textDirection,
-                                        additionalText: offer.numberPoint.toString(),
+                                        additionalText:
+                                            offer.numberPoint.toString(),
                                       ),
                                     ),
                                   ],
@@ -317,136 +302,5 @@ class _CoffeeScreenState extends State<CoffeeScreen> {
         }
       },
     );
-  }
-}
-
-
-
-class paint extends StatelessWidget {
-  final TextDirection textDirection;
-  final String additionalText; 
-
-  const paint({
-    Key? key,
-    required this.textDirection,
-    required this.additionalText, 
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        height: 47.v,
-        width: 40.h,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Align(
-              alignment: textDirection == TextDirection.rtl
-                  ? Alignment.topLeft
-                  : Alignment.topRight,
-              child: SizedBox(
-                height: 47,
-                width: 40,
-                child: OverflowBox(
-                  maxHeight: double.infinity,
-                  maxWidth: double.infinity,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 50.v,
-                    ),
-                    child: CustomPaint(
-                      painter: MyPainter(textDirection: textDirection),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                         
-                          Padding(
-                            padding: EdgeInsets.only(right: 2.h),
-                            child: Text(
-                              additionalText,
-                              style: CustomTextStyles.titleMediumWhiteA700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-class MyPainter extends CustomPainter {
-  final TextDirection textDirection;
-
-  MyPainter({required this.textDirection});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-    Path path = Path();
-    paint.color = const Color(0xff99CA3C);
-    path = Path();
-
-    if (textDirection == TextDirection.ltr) {
-      path.lineTo(size.width * 0.78, 0);
-      path.cubicTo(
-          size.width * 0.78, 0, size.width * 0.22, 0, size.width * 0.22, 0);
-      path.cubicTo(
-          size.width * 0.1, 0, 0, size.height * 0.09, 0, size.height * 0.19);
-      path.cubicTo(
-          0, size.height * 0.19, 0, size.height * 0.9, 0, size.height * 0.9);
-      path.cubicTo(0, size.height, size.width * 0.07, size.height * 1.03,
-          size.width * 0.16, size.height * 0.98);
-      path.cubicTo(size.width * 0.16, size.height * 0.98, size.width * 0.45,
-          size.height * 0.85, size.width * 0.45, size.height * 0.85);
-      path.cubicTo(size.width * 0.48, size.height * 0.83, size.width * 0.52,
-          size.height * 0.83, size.width * 0.55, size.height * 0.85);
-      path.cubicTo(size.width * 0.55, size.height * 0.85, size.width * 0.83,
-          size.height * 0.98, size.width * 0.83, size.height * 0.98);
-      path.cubicTo(size.width * 0.93, size.height * 1.03, size.width,
-          size.height, size.width, size.height * 0.9);
-      path.cubicTo(size.width, size.height * 0.9, size.width,
-          size.height * 0.19, size.width, size.height * 0.19);
-      path.cubicTo(size.width, size.height * 0.09, size.width * 0.9, 0,
-          size.width * 0.78, 0);
-    } else {
-      path.lineTo(size.width * 0.22, 0);
-      path.cubicTo(
-          size.width * 0.22, 0, size.width * 0.78, 0, size.width * 0.78, 0);
-      path.cubicTo(size.width * 0.83, 0, size.width, size.height * 0.09,
-          size.width, size.height * 0.19);
-      path.cubicTo(size.width, size.height * 0.19, size.width,
-          size.height * 0.9, size.width, size.height * 0.9);
-      path.cubicTo(size.width, size.height, size.width * 0.93,
-          size.height * 1.03, size.width * 0.83, size.height * 0.98);
-      path.cubicTo(size.width * 0.83, size.height * 0.98, size.width * 0.55,
-          size.height * 0.85, size.width * 0.55, size.height * 0.85);
-      path.cubicTo(size.width * 0.52, size.height * 0.83, size.width * 0.48,
-          size.height * 0.83, size.width * 0.45, size.height * 0.85);
-      path.cubicTo(size.width * 0.45, size.height * 0.85, size.width * 0.16,
-          size.height * 0.98, size.width * 0.16, size.height * 0.98);
-      path.cubicTo(size.width * 0.07, size.height * 1.03, 0, size.height, 0,
-          size.height * 0.9);
-      path.cubicTo(
-          0, size.height * 0.9, 0, size.height * 0.19, 0, size.height * 0.19);
-      path.cubicTo(
-          0, size.height * 0.09, size.width * 0.1, 0, size.width * 0.22, 0);
-    }
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
   }
 }

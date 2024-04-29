@@ -28,11 +28,11 @@ class AppLocalization extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
     'en': {
-      'app_title': 'NCEJ',
+      'app_title': 'Loyality_app',
 
     },
     'ar': {
-      'app_title': 'NCEJ', 
+      'app_title': 'Loyality_app', 
      
     },
   };
@@ -57,7 +57,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizationContr
 }
 
 extension LocalizationExtension on String {
-  String get tr {
+  String get localized {
     final localization = AppLocalizationController.to;
     return localization.getString(this);
   }

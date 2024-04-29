@@ -1,18 +1,9 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:loyalty_app/controller/loyalty.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/view/home_page/widgets/subCategory_item_widget.dart';
-import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
-import 'package:loyalty_app/view/navigation/navigation.dart';
-import 'package:loyalty_app/widgets/app_bar/custom_bottom_bar.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import '../../core/app_export.dart';
+import 'package:loyalty_app/core/app_export.dart';
+
+
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);

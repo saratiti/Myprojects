@@ -1,10 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/transaction_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/transaction.dart';
+
 
 class ListcoupontextItemWidget extends StatefulWidget {
   const ListcoupontextItemWidget({Key? key}) : super(key: key);

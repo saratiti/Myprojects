@@ -1,16 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_string_interpolations
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
-import 'package:my_eco_print/controller/user.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/user.dart';
-import 'package:my_eco_print/view/screen/%20points/collecting_points/collecting_points.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CalendarWidget extends StatefulWidget {
   const CalendarWidget({super.key});
@@ -30,7 +21,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   void _storeCollectedDates(int userId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('collectedDates', _collectedDates.keys.map((date) => date.toString()).toList());
+    await prefs.setStringList('collectedDates',
+        _collectedDates.keys.map((date) => date.toString()).toList());
   }
 
   Future<void> _retrieveCollectedDates() async {
@@ -47,17 +39,13 @@ class _CalendarWidgetState extends State<CalendarWidget> {
 
   Future<int> collectDaily() async {
     try {
-   
       User user = await UserController().getUser();
 
-  
-      if (user.id!= null) {
-       
+      if (user.id != null) {
         var dailyPoints = await PointController().collectDailyPoints();
 
-    
-        Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(dailyPoints);
-        
+        Provider.of<UserProfileModel>(context, listen: false)
+            .updateTotalPoints(dailyPoints);
 
         _storeCollectedDates(user.id!);
 
@@ -73,7 +61,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     }
   }
 
-
   void _showPopDialog(BuildContext context, int dailyPoints) async {
     String messageText = dailyPoints > 0 ? "msg37".tr : "msg36".tr;
     User user = await UserController().getUser();
@@ -82,7 +69,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
       setState(() {
         _collectedDates[now] = true;
       });
-      _storeCollectedDates(user.id!); 
+      _storeCollectedDates(user.id!);
     }
 
     showDialog(
@@ -150,10 +137,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-
-
-
- @override
+  @override
   Widget build(BuildContext context) {
     final DateTime now = DateTime.now();
     final DateFormat dateFormat = DateFormat('dd');
@@ -165,13 +149,15 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     final isRtl = localization.locale.languageCode == 'ar';
 
     return Column(
-      crossAxisAlignment: isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      crossAxisAlignment:
+          isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end,
       children: [
         Align(
           alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
-          child: Padding(padding:
-            EdgeInsets.only(top: 20.v, left: 30.h,right: 20.h),
-            child: Text("lbl26".tr, style: CustomTextStyles.titleSmallBahijTheSansArabic15),
+          child: Padding(
+            padding: EdgeInsets.only(top: 20.v, left: 30.h, right: 20.h),
+            child: Text("lbl26".tr,
+                style: CustomTextStyles.titleSmallBahijTheSansArabic15),
           ),
         ),
         SizedBox(height: 24.v),
@@ -179,7 +165,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           scrollDirection: Axis.horizontal,
           child: IntrinsicWidth(
             child: Padding(
-              padding: EdgeInsets.only(right: isRtl ? 0 : 28.h, left: isRtl ? 28.h : 0),
+              padding: EdgeInsets.only(
+                  right: isRtl ? 0 : 28.h, left: isRtl ? 28.h : 0),
               child: Row(
                 children: daysList.map((day) {
                   final DateTime date = DateTime(now.year, now.month, day);
@@ -188,22 +175,26 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   final String label = _getLocalizedLabel(context, labelKey);
                   final double leftMargin = day == daysList.first ? 0 : 12.h;
 
-                  final bool isToday = date.day == now.day && date.month == now.month && date.year == now.year;
+                  final bool isToday = date.day == now.day &&
+                      date.month == now.month &&
+                      date.year == now.year;
                   return GestureDetector(
                     onTap: () async {
                       if (isToday) {
                         int dailyPoints = await collectDaily();
                         if (dailyPoints > 0) {
                           setState(() {
-                            _collectedDates[date] = true; 
+                            _collectedDates[date] = true;
                           });
                         }
                         _showPopDialog(context, dailyPoints);
                       }
                     },
                     child: _collectedDates[date] ?? false
-                      ? _buildCheckmarkContainer(formattedDate, label, leftMargin: leftMargin)
-                      : _buildCard(context, formattedDate, label, leftMargin: leftMargin, isClickable: isToday),
+                        ? _buildCheckmarkContainer(formattedDate, label,
+                            leftMargin: leftMargin)
+                        : _buildCard(context, formattedDate, label, date,
+                            leftMargin: leftMargin, isClickable: isToday),
                   );
                 }).toList(),
               ),
@@ -214,15 +205,16 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-
   String _getLocalizedLabel(BuildContext context, String labelKey) {
     final localizationController = AppLocalizationController.to;
     return localizationController.getString(labelKey);
   }
 
-  Widget _buildCard(BuildContext context, String formattedDate, String label, {double leftMargin = 0, bool isClickable = true}) {
-    final user = Provider.of<UserProfileModel>(context); // Fetch the user using Provider
-    bool isCollectedByCurrentUser = _collectedDates[DateTime.now()] ?? false;
+  Widget _buildCard(BuildContext context, String formattedDate, String label,
+      DateTime cardDate,
+      {double leftMargin = 0, bool isClickable = true}) {
+    final user = Provider.of<UserProfileModel>(context);
+    bool isCollectedByCurrentUser = _collectedDates[cardDate] ?? false;
 
     return GestureDetector(
       onTap: () async {
@@ -230,9 +222,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           int dailyPoints = await collectDaily();
           if (dailyPoints > 0) {
             setState(() {
-              _collectedDates[DateTime.now()] = true; 
+              _collectedDates[cardDate] = true;
+              isCollectedByCurrentUser = true; // Update the variable
             });
-            _storeCollectedDates(user.userId); // Update collected dates for the current user
+            _storeCollectedDates(user.userId);
           }
           _showPopDialog(context, dailyPoints);
         }
@@ -274,7 +267,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   ),
                 ),
               ),
-              if (isCollectedByCurrentUser) // Show checkmark only if collected by the current user
+              if (isCollectedByCurrentUser)
                 Positioned.fill(
                   child: Align(
                     alignment: Alignment.center,
@@ -288,7 +281,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     );
   }
 
-  Widget _buildCheckmarkContainer(String formattedDate, String label, {double leftMargin = 0}) {
+  Widget _buildCheckmarkContainer(String formattedDate, String label,
+      {double leftMargin = 0}) {
     return Container(
       margin: EdgeInsets.only(left: leftMargin),
       padding: EdgeInsets.symmetric(horizontal: 13.h, vertical: 17.v),
@@ -303,7 +297,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             height: 10.adaptSize,
             width: 10.adaptSize,
           ),
-          
           SizedBox(height: 5.v),
           Text(
             formattedDate,

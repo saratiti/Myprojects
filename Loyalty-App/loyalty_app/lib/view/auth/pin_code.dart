@@ -2,13 +2,8 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/user.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/widgets/custom_pin_code_text_field.dart';
 
 class PinCodePasswordScreen extends StatefulWidget {
   const PinCodePasswordScreen({Key? key}) : super(key: key);
@@ -68,7 +63,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
         ? TextDirection.rtl
         : TextDirection.ltr;
 
-     return Directionality(
+    return Directionality(
       textDirection: textDirection,
       child: SafeArea(
         child: Scaffold(
@@ -76,165 +71,177 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
           body: ListView(
             children: [
               SizedBox(
-            width: mediaQueryData.size.width,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(top: 92.v),
-              child: SizedBox(
-                height: 878.v,
-                width: double.maxFinite,
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        height: 854.v,
-                        width: double.maxFinite,
-                        child: Stack(
-                          alignment: Alignment.topCenter,
-                          children: [
-                          
-                            Align(
+                width: mediaQueryData.size.width,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(top: 92.v),
+                  child: SizedBox(
+                    height: 878.v,
+                    width: double.maxFinite,
+                    child: Stack(
+                      alignment: Alignment.topCenter,
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: SizedBox(
+                            height: 854.v,
+                            width: double.maxFinite,
+                            child: Stack(
                               alignment: Alignment.topCenter,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 46.h,
-                                  top: 162.v,
-                                  right: 46.h,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      "msg12",
-                                      style: CustomTextStyles
-                                          .titleMediumGray100
+                              children: [
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 46.h,
+                                      top: 162.v,
+                                      right: 46.h,
                                     ),
-                                    Container(
-                                      width: 252.h,
-                                      margin: EdgeInsets.only(
-                                        left: 23.h,
-                                        top: 14.v,
-                                        right: 24.h,
-                                      ),
-                                      child: RichText(
-                                        text: TextSpan(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "msg12".localized,
+                                          style: CustomTextStyles
+                                              .bodyMediumMerriweatherBlack90001,
+                                        ),
+                                        Container(
+                                          width: 252.h,
+                                          margin: EdgeInsets.only(
+                                            left: 23.h,
+                                            top: 14.v,
+                                            right: 24.h,
+                                          ),
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: "msg20".localized,
+                                                  style: theme
+                                                      .textTheme.bodyMedium,
+                                                ),
+                                                TextSpan(
+                                                  text: "lbl_62".localized,
+                                                  style: CustomTextStyles
+                                                      .bodyMediumInterGray60001,
+                                                ),
+                                                TextSpan(
+                                                  text: "lbl13".localized,
+                                                ),
+                                              ],
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        CustomPinCodeTextField(
+                                          controller: pinController,
+                                          context: context,
+                                          margin: EdgeInsets.only(
+                                            top: 41.v,
+                                            right: 1.h,
+                                          ),
+                                          onChanged: (pin) {
+                                            if (kDebugMode) {
+                                              print('PIN changed: $pin');
+                                            }
+                                            if (pin.length == 6) {
+                                              userController.verifyPinCode(
+                                                  context, userEmail, pin);
+                                            }
+                                          },
+                                          onPinFilled: (pin) async {
+                                            if (kDebugMode) {
+                                              print('PIN filled: $pin');
+                                            }
+                                            bool isPinCorrect =
+                                                await userController
+                                                    .verifyPinCode(context,
+                                                        userEmail, pin);
+
+                                            if (isPinCorrect) {
+                                              Future.delayed(
+                                                  const Duration(seconds: 2),
+                                                  () {
+                                                Navigator.of(context).pushNamed(
+                                                    AppRoutes.resetPassowrd,
+                                                    arguments: {
+                                                      'email': userEmail
+                                                    });
+                                              });
+                                            } else {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AlertDialog(
+                                                  title: const Text(
+                                                      'Incorrect PIN'),
+                                                  content: const Text(
+                                                      'Please try again with the correct PIN.'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                          },
+                                        ),
+                                        SizedBox(height: 10.v),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            TextSpan(
-                                              text: "msg20",
-                                              style:
-                                                  theme.textTheme.bodyMedium,
+                                            StreamBuilder<int>(
+                                              stream: Stream.periodic(
+                                                  const Duration(seconds: 1),
+                                                  (i) => i),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.hasData) {
+                                                  int remainingTime =
+                                                      _countdownMinutes * 60 -
+                                                          snapshot.data!;
+                                                  int minutes =
+                                                      remainingTime ~/ 60;
+                                                  int seconds =
+                                                      remainingTime % 60;
+                                                  return Text(
+                                                    "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
+                                                    style: CustomTextStyles
+                                                        .bodySmallGray400,
+                                                  );
+                                                } else {
+                                                  return const Text(
+                                                      "Loading..."); // or any other placeholder
+                                                }
+                                              },
                                             ),
-                                            TextSpan(
-                                              text: "lbl_62",
-                                              style: CustomTextStyles
-                                                  .bodyMediumInterGray60001,
-                                            ),
-                                            const TextSpan(
-                                              text: "lbl13",
-                                              
-                                                  
+                                            const Spacer(),
+                                            GestureDetector(
+                                              onTap: () async {
+                                                await userController
+                                                    .sendPinForEmailVerification(
+                                                        userEmail);
+                                              },
+                                              child: Text(
+                                                "msg21".localized,
+                                                style:
+                                                    theme.textTheme.bodySmall,
+                                              ),
                                             ),
                                           ],
                                         ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    CustomPinCodeTextField(
-                                      controller: pinController,
-                                      context: context,
-                                      margin: EdgeInsets.only(
-                                        top: 41.v,
-                                        right: 1.h,
-                                      ),
-                                      onChanged: (pin) {
-                                        if (kDebugMode) {
-                                          print('PIN changed: $pin');
-                                        }
-                                        if (pin.length == 6) {
-                                          userController.verifyPinCode(
-                                              context, userEmail, pin);
-                                        }
-                                      },
-                                     onPinFilled: (pin) async {
-  if (kDebugMode) {
-    print('PIN filled: $pin');
-  }
-  bool isPinCorrect = await userController.verifyPinCode(context, userEmail, pin);
-
-  if (isPinCorrect) {
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pushNamed(AppRoutes.resetPassowrd, arguments: {'email': userEmail});
-    });
-  } else {
-    // Show an error dialog for incorrect PIN
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Incorrect PIN'),
-        content: const Text('Please try again with the correct PIN.'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-},
-
-                                    ),
-                                    SizedBox(height: 10.v),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        
-                                       StreamBuilder<int>(
-  stream: Stream.periodic(const Duration(seconds: 1), (i) => i),
-  builder: (context, snapshot) {
-    if (snapshot.hasData) {
-      int remainingTime = _countdownMinutes * 60 - snapshot.data!;
-      int minutes = remainingTime ~/ 60;
-      int seconds = remainingTime % 60;
-      return Text(
-        "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}",
-        style: CustomTextStyles.bodySmallGray400,
-      );
-    } else {
-      return const Text("Loading..."); // or any other placeholder
-    }
-  },
-),
-
-                                        const Spacer(),
-                                        GestureDetector(
-                                          onTap: () async {
-                                           
-                                            await userController
-                                                .sendPinForEmailVerification(
-                                                    userEmail);
-                                          },
-                                          child: Text(
-                                            "msg21",
-                                            style:
-                                                theme.textTheme.bodySmall,
-                                          ),
-                                        ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    ],
+                      ],
                     ),
                   ),
                 ),

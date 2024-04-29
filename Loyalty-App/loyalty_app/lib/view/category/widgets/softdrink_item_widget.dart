@@ -1,10 +1,10 @@
 // ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/category.dart';
+
 
 class SoftdrinkItemWidget extends StatelessWidget {
   final List<Catalog> categories;
@@ -35,7 +35,7 @@ class SoftdrinkItemWidget extends StatelessWidget {
               padding: EdgeInsets.only(right: 24.h),
               child: GestureDetector(
                 onTap: () {
-                  onSelectCategory(category.id);
+                  onSelectCategory(category.categoryId);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,25 +50,25 @@ class SoftdrinkItemWidget extends StatelessWidget {
                       decoration: AppDecoration.outlineBlueGrayAd.copyWith(
                         borderRadius: BorderRadiusStyle.roundedBorder24,
                       ),
-                    child: Row(
-  children: [
-    for (var category in categories)
-      Expanded(
-        child: ClipRRect(
-          borderRadius: const BorderRadius.horizontal(left: Radius.circular(6)),
-          child: Image.memory(
-            category.imageBytesList as Uint8List,
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const Text('Error loading image');
-            },
-          ),
-        ),
-      ),
-  ],
-),
+//                     child: Row(
+//   children: [
+//     for (var category in categories)
+//       Expanded(
+//         child: ClipRRect(
+//           borderRadius: const BorderRadius.horizontal(left: Radius.circular(6)),
+//           child: Image.memory(
+//             category.imageBytesList as Uint8List,
+//             width: 100,
+//             height: 100,
+//             fit: BoxFit.cover,
+//             errorBuilder: (context, error, stackTrace) {
+//               return const Text('Error loading image');
+//             },
+//           ),
+//         ),
+//       ),
+//   ],
+// ),
 
 
                     ),

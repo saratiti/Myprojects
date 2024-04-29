@@ -10,6 +10,7 @@ const Category = sequelize.define('Category', {
     primaryKey: true,
     autoIncrement: true
   },
+  
   name_arabic: {
     type: DataTypes.STRING,
     allowNull: true
@@ -18,18 +19,35 @@ const Category = sequelize.define('Category', {
     type: DataTypes.STRING,
     allowNull: true
   },
-  image: {
+  // image: {
+  //   type: DataTypes.STRING,
+  //   allowNull: true
+  // },
+  logo: {
     type: DataTypes.STRING,
     allowNull: true
   },
-  created_at: {
+  createdAt:{
     type: DataTypes.DATE,
     allowNull: true,
   },
-  updated_at: {
+  
+  updatedAt: {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  // created_at: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
+  // updated_at: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
   // deleted_At: {
   //   type: DataTypes.DATE,
   //   allowNull: true,

@@ -35,17 +35,17 @@ Future<int> getCountOrder() async {
 
 }
 
-  Future<dynamic> create(Order order) async {
-    try {
-      var result = await ApiHelper().postDio("/api/orders", order.toJson());
-      if (kDebugMode) {
-        print(result);
-      }
-      return result;
-    } catch (e) {
-      rethrow;
+ Future<dynamic> create(Map<String, dynamic> orderData) async {
+  try {
+    var result = await ApiHelper().postDio("/api/orders", orderData);
+    if (kDebugMode) {
+      print(result);
     }
+    return result;
+  } catch (e) {
+    rethrow;
   }
+}
 
 Future<dynamic> deleteOrder(int orderId) async {
   try {

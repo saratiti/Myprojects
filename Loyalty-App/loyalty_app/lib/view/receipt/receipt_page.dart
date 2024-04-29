@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/view/receipt/widgets/receiptone_item_widget.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
 
 class ReceiptPage extends StatelessWidget {
   const ReceiptPage({Key? key}) : super(key: key);

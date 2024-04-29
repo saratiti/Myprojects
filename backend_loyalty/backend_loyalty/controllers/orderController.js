@@ -1,6 +1,7 @@
 
 const Order = require('../models/order');
 const OrderProduct = require('../models/orderProduct');
+const Invoice=require('../models/invoice');
 exports.getOrder = async (req, res) => {
   try {
     const user = req.user;
@@ -29,44 +30,62 @@ exports.getCountOrder = async (req, res) => {
   }
 };
 
-
 exports.create = async (req, res) => {
   try {
-    const authObject = req.user; 
+    console.log('Incoming data:', req.body);
+
+    const userId = req.user_id;
+    
+    console.log('User ID:', req.user_id);
+    
     const data = req.body;
 
-    const order = new Order();
-    order.userId = authObject.userId;
-    order.tax_amount = data.tax_amount;
-    order.sub_total = data.sub_total;
-    order.total_Price = data.total_price;
-    order.total = data.total;
-    order.payment_method_id = data.payment_method_id;
-    const newOrder = await order.save();
+    
+    if (!data.products || !data.total || !data.total_price) {
+      throw new Error('Invalid product data');
+    }
 
    
+    const newOrder = await Order.create({
+      user_id: userId,
+      total: data.total,
+      total_price: data.total_price,
+    });
+
+    console.log('New Order:', newOrder.toJSON());
+    const invoices = await Promise.all(data.products.map(async (product) => {
+      const invoice = await Invoice.create({
+        user_id: userId,
+        order_id: newOrder.order_id,  
+        upload_date: new Date().toISOString(),
+        total_amount: data.total,
+      });
+
+      console.log('New Invoice:', invoice.toJSON());
+
+      return invoice;
+    }));
+
     const orderProducts = await Promise.all(data.products.map(async (product) => {
-      const orderProduct = new OrderProduct();
-      orderProduct.orderId = newOrder.id;
-      orderProduct.productId = product.product_id;
-      orderProduct.qty = product.qty;
-      orderProduct.price = product.price;
-
-
-      if (size) {
-        orderProduct.sizeId = size.id;
-      }
+      const orderProduct = await OrderProduct.create({
+        order_id: newOrder.order_id,
+        product_id: product.product_id,
+        qty: product.qty,
+        price: product.price,
+      });
 
       return orderProduct;
     }));
 
-    await OrderProduct.createMany(orderProducts);
-    return res.status(201).json(newOrder.toJSON());
+    console.log('Order created successfully:', newOrder);
+
+    return res.status(201).json(newOrder);
   } catch (ex) {
-    console.log(ex);
-    return res.status(400).json({ message: ex });
+    console.error('Error creating order:', ex);
+    return res.status(400).json({ message: ex.message });
   }
 };
+
 
 
 exports.destroy = async (req, res) => {

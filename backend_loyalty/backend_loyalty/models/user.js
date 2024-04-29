@@ -41,20 +41,23 @@ const User = sequelize.define('User', {
    
   },
   
+createdAt:{
+  type: DataTypes.DATE,
+  allowNull: true,
+},
 
-
-  created_at: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
-  updated_at: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
-  // deleted_at: {
+  // created_at: {
   //   type: DataTypes.DATE,
   //   allowNull: true,
   // },
+  // updated_at: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
+  deletedAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   timestamps: false, 
   paranoid: true, 

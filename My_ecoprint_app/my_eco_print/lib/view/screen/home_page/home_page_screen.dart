@@ -1,17 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/api_helper.dart';
-import 'package:my_eco_print/controller/user.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
+
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:my_eco_print/view/screen/home_page/widgets/card_arabic.dart';
 import 'package:my_eco_print/view/screen/home_page/widgets/card_english.dart';
 import 'package:my_eco_print/view/screen/home_page/widgets/listcoupontext_item_widget.dart';
 import 'package:my_eco_print/view/screen/home_page/widgets/chipviewcompute_item_widget.dart';
-import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
-import 'package:provider/provider.dart';
+
 
 
 class HomePageScreen extends StatefulWidget {
@@ -154,58 +149,66 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
         ));
   }
 
-  Widget buildNavigationRow(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+Widget buildNavigationRow(BuildContext context) {
+  final localization = AppLocalizationController.to;
+  final textDirection =
+      localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
 
-    return Directionality(
-        textDirection: textDirection,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: () => navigateToCouponScreen(context),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 8.v, right: 10.h, left: 10.h),
-                    child: Text(
-                      "lbl20_".tr,
-                      style: CustomTextStyles.titleMediumOnPrimaryContainer,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 200.h,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8.v),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "lbl22".tr,
-                            style: CustomTextStyles.titleMediumLightgreen500,
-                          ),
-                          Directionality(
-                            textDirection: textDirection,
-                            child: CustomImageView(
-                              svgPath: (textDirection == TextDirection.rtl)
-                                  ? ImageConstant.imgArrowleft
-                                  : ImageConstant.imgArrowright,
-                              color: appTheme.lightGreen500,
-                              height: 15.adaptSize,
-                              width: 15.adaptSize,
-                              margin: EdgeInsets.only(top: 5.v, bottom: 5),
-                            ),
-                          )
-                        ]),
-                  )
-                ],
+  final screenSize = MediaQuery.of(context).size;
+  final screenWidth = screenSize.width;
+  final screenHeight = screenSize.height;
+
+  return Directionality(
+    textDirection: textDirection,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => navigateToCouponScreen(context),
+          child: Row(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: screenHeight * 0.02, right: screenWidth * 0.02, left: screenWidth * 0.02),
+                child: Text(
+                  "lbl20_".tr,
+                  style: CustomTextStyles.titleMediumOnPrimaryContainer,
+                ),
               ),
-            ),
-          ],
-        ));
-  }
+              SizedBox(
+                width: screenWidth * 0.45, 
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: screenHeight * 0.02),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "lbl22".tr,
+                      style: CustomTextStyles.titleMediumLightgreen500,
+                    ),
+                    Directionality(
+                      textDirection: textDirection,
+                      child: CustomImageView(
+                        svgPath: (textDirection == TextDirection.rtl)
+                            ? ImageConstant.imgArrowleft
+                            : ImageConstant.imgArrowright,
+                        color: appTheme.lightGreen500,
+                        height: screenHeight * 0.03, // Adjust as needed
+                        width: screenHeight * 0.03, // Adjust as needed
+                        margin: EdgeInsets.only(top: screenHeight * 0.01, bottom: screenHeight * 0.01),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget buildCouponList(BuildContext context) {
  final localization = AppLocalizationController.to;
@@ -232,7 +235,7 @@ Widget buildUserDetails(BuildContext context) {
     child: Padding(
       padding: EdgeInsets.symmetric(horizontal: 10.h), 
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Adjust as needed
+        crossAxisAlignment: CrossAxisAlignment.start, 
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

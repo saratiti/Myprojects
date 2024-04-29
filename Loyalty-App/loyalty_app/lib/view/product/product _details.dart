@@ -1,25 +1,11 @@
 
 
-
 // ignore_for_file: file_names, library_private_types_in_public_api
+
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:loyalty_app/controller/product.dart';
-import 'package:loyalty_app/controller/product_provider.dart';
-import 'package:loyalty_app/controller/review.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/option_menu.dart';
-import 'package:loyalty_app/model/product.dart';
-import 'package:loyalty_app/model/review.dart';
-import 'package:loyalty_app/view/product/product_review.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:provider/provider.dart';
-import 'package:readmore/readmore.dart';
 
 
 class ProductDetailsPage extends StatefulWidget {
@@ -239,7 +225,7 @@ void _fetchAndSetProductDetails(int productId) async {
         selectedItems.remove(menu);
         totalOptionalMenuPrice -= menu.price!;
       }
-      // Toggle isSelected property
+     
       menu.isSelected = newValue;
     });
   }
@@ -417,7 +403,7 @@ void _fetchAndSetProductDetails(int productId) async {
                   CustomElevatedButton(
                     onPressed: () {
                       _addToCart(context, product, optionalMenuItems);
-                          _showSummaryInvoice(context,product,optionalMenuItems);
+                          showSummaryInvoice(context);
                     },
                     height: 50.v,
                     width: 190.h,
@@ -544,7 +530,7 @@ Widget _buildQuantitySelector(BuildContext context, Product product) {
           ),
           const SizedBox(width: 8),
           Text(
-            product.selectedQty.toString(), // Use selectedQty instead of getCartItemQuantity
+            product.selectedQty.toString(),
             style: const TextStyle(fontSize: 16),
           ),
           const SizedBox(width: 8),
@@ -845,92 +831,9 @@ void _addToCart(BuildContext context, Product product, List<OptionalMenu> select
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Added to Cart')));
 }
 
-void _showSummaryInvoice(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
-  final productProvider = Provider.of<ProductProvider>(context, listen: false);
-  
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      double totalPrice = productProvider.total;
-      
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: Text(
-              'Summary Invoice',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: productProvider.selectedProducts.length,
-              itemBuilder: (context, index) {
-                final product = productProvider.selectedProducts[index];
-                double subtotal = product.price * product.selectedQty;
-                
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Product Details:',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      Text('Name: ${product.nameEnglish}'),
-                      Text('Price: \$${product.price.toStringAsFixed(2)}'),
-                      Text('Quantity: ${product.selectedQty}'),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Subtotal:',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '\$${subtotal.toStringAsFixed(2)}',
-                        style: const TextStyle(fontSize: 20, color: Colors.deepOrange),
-                      ),
-                      // Include optional menu item prices
-                      if (selectedOptions.isNotEmpty)
-                        ...selectedOptions.map((option) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Option: ${option.nameEnglish ?? option.nameArabic}'),
-                              Text('Price: \$${option.price!.toStringAsFixed(2)}'),
-                            ],
-                          );
-                        }),
-                      const Divider(),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Total Price:',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  '\$${totalPrice.toStringAsFixed(2)}',
-                  style: const TextStyle(fontSize: 24, color: Colors.deepOrange, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+
+
+
 
 
 }

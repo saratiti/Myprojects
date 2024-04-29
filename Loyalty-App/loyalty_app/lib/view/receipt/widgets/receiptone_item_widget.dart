@@ -2,9 +2,9 @@
 
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/invoice.dart';
-import 'package:loyalty_app/model/invoice.dart';
+
+import 'package:loyalty_app/core/app_export.dart';
+
 
 class ReceiptoneItemWidget extends StatefulWidget {
   const ReceiptoneItemWidget({Key? key}) : super(key: key);

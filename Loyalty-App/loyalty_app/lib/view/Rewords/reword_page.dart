@@ -1,11 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/view/rewords/challenge_reword.dart';
-import 'package:loyalty_app/view/rewords/reword_page_content.dart';
-import 'package:loyalty_app/view/rewords/transaction_reword.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 class RewordPage extends StatefulWidget {
   const RewordPage({Key? key}) : super(key: key);

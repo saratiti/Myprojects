@@ -225,7 +225,7 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
       "pin": pin,
     });
 
-    // Print the entire response for debugging
+ 
     print('Dio Response: $response');
 
     if (response != null) {
@@ -234,7 +234,7 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
 
         if (result is Map<String, dynamic> && result.containsKey('success')) {
           if (result['success']) {
-            // Extract the hashed PIN from the response
+           
             String? hashedPin = result['hashedPin'];
 
             if (hashedPin != null) {

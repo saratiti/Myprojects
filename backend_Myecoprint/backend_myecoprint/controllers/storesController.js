@@ -183,32 +183,58 @@ exports.getOffersWithStoresAndType = async (req, res) => {
 
 exports.getAllStoresWithOffers = async (req, res) => {
   try {
-    const stores = await Offer.findAll({
-      include: [
-        {
-          model: Store,
-          as: 'stores',
-          include: [
-            {
-              model: Company,
-              where: { company_id: sequelize.col('stores.company_id') },
-              attributes: ['company_name'],
-              as: 'companies',
-            },
-          ],
-        },
-      ],
-      order: [['createdAt', 'DESC']], 
+    const storesWithType = await Store.findAll({
+      include: [{
+        model: Type,
+        as: 'types',
+      }],
     });
 
-    if (!stores || stores.length === 0) {
-      return res.status(404).json({ error: 'No stores found with offers and companies' });
+    if (!storesWithType || storesWithType.length === 0) {
+      console.log('No stores found for the specified type');
+      return res.status(404).json({ error: 'No stores found for the specified type' });
     }
 
-    res.json(stores);
+    const storeIds = storesWithType.map(store => store.store_id);
+
+
+    const offersWithStoresAndType = await Offer.findAll({
+      include: [{
+        model: Store,
+        as: 'stores',
+        where: { store_id: storeIds },
+      }, {
+        model: Company,
+        as: 'companies',
+      }],
+      order: [['createdAt', 'DESC']],
+    });
+
+    const formattedData = await Promise.all(offersWithStoresAndType.map(async offer => {
+      const store = offer.store ? offer.store.toJSON() : null;
+      let companyDetails = null;
+      if (store && store.company_id) {
+        try {
+          companyDetails = await Company.findByPk(store.company_id);
+          if (companyDetails) {
+            companyDetails = companyDetails.toJSON();
+          }
+        } catch (error) {
+          console.error('Error fetching company details:', error);
+        }
+      }
+      return {
+        offer: offer.toJSON(),
+        store: store,
+        companyDetails: companyDetails
+      };
+    }));
+
+    console.log('Offers with stores of specific offer:', formattedData);
+    return res.status(200).json({ data: formattedData });
   } catch (error) {
-    console.error('Error getting all stores with offers and companies:', error);
-    res.status(500).json({ error: 'Failed to fetch all stores with offers and companies', details: error.message });
+    console.error('Error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 

@@ -66,7 +66,7 @@ exports.getCategoryImages = async (req, res) => {
     const categories = await Category.findAll();
 
     if (!categories || categories.length === 0) {
-      return res.status(404).json({ error: 'No categories found' });
+      return res.status(404).json({ error: 'User not found or no categories found' });
     }
 
     const images = [];
@@ -75,28 +75,23 @@ exports.getCategoryImages = async (req, res) => {
       const category = categories[i];
       const imagePath = category.image;
 
-      if (!imagePath) {
-        console.log(`Image path not found for category: ${category.id}`);
-        continue;
-      }
+      console.log(`Checking image path: ${imagePath}`); // Debug print
 
-      if (!fs.existsSync(imagePath)) {
-        console.log(`Image path does not exist: ${imagePath}`);
+      if (!imagePath || !fs.existsSync(imagePath)) {
+        console.log(`Image not found: ${imagePath}`); // Debug print
         continue;
       }
 
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
       const ext = path.extname(imagePath).toLowerCase();
       if (!imageExtensions.includes(ext)) {
-        console.log(`Skipping non-image file: ${imagePath}`);
+        console.log(`Skipping non-image file: ${imagePath}`); // Debug print
         continue;
       }
 
       const imageBuffer = fs.readFileSync(imagePath);
       const base64Image = imageBuffer.toString('base64');
-
       const contentType = getContentType(ext);
-
       const dataUrl = `data:${contentType};base64,${base64Image}`;
 
       images.push({ categoryId: category.id, dataUrl });
@@ -109,6 +104,7 @@ exports.getCategoryImages = async (req, res) => {
   }
 };
 
+
 function getContentType(fileExtension) {
   switch (fileExtension) {
     case '.jpg':
@@ -116,6 +112,7 @@ function getContentType(fileExtension) {
       return 'image/jpeg';
     case '.png':
       return 'image/png';
+      
     case '.gif':
       return 'image/gif';
     default:

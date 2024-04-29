@@ -11,7 +11,7 @@ const crypto = require('crypto');
 const { Op } = require('sequelize');
 const bcryptjs = require('bcryptjs');
 const bcrypt = require('bcrypt');
-
+const Loyalty = require('../models/loyalty');
 const storage = multer.diskStorage({
   destination: 'uploads/',
   filename: function (req, file, cb) {
@@ -49,12 +49,12 @@ exports.changePassword = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    
+ 
     const salt = await bcrypt.genSalt(10);
     
-    const hashedPassword = await bcryptjs.hash(req.body.password, salt);
+ 
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
     
-   
     const user = await User.create({
       username: req.body.username,
       email: req.body.email,
@@ -66,7 +66,15 @@ exports.createUser = async (req, res) => {
       company_id: req.body.company_id
     });
 
-    res.json(user);
+    const loyalty = await Loyalty.create({
+      loyalty_point: 50, 
+      loyalty_level: 'bronze',
+      user_id: user.id,
+      last_activity_date: new Date() 
+    });
+
+   
+    res.json({ user, loyalty });
   } catch (error) {
     console.error('Error creating user:', error.message);
     res.status(400).json({ error: 'Failed to create User', details: error.message });
@@ -262,7 +270,8 @@ exports.update = async (req, res) => {
   try {
     const { username, email, full_name, phone } = req.body;
     const authObject = req.user;
-    const user = await User.findOne({ where: { user_id: authObject.user_id } });
+    const user = await User.findOne({ where: { id: authObject.user_id } });
+
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
@@ -308,7 +317,8 @@ exports.update = async (req, res) => {
 
 exports.getProfilePicture = async (req, res) => {
   try {
-    const userId = req.user_id;
+    const userId = req.user.id;
+
     const user = await User.findByPk(userId);
 
     if (!user) {

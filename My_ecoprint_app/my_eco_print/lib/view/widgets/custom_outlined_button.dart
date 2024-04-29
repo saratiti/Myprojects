@@ -1,8 +1,6 @@
 // ignore_for_file: use_key_in_widget_constructors
 
-import 'package:flutter/material.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/widgets/base_button.dart';
 
 class CustomOutlinedButton extends BaseButton {
   const CustomOutlinedButton({

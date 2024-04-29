@@ -1,17 +1,8 @@
 
 // ignore_for_file: library_private_types_in_public_api, unnecessary_null_comparison
 
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/category.dart';
-import 'package:loyalty_app/controller/loyalty.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/category.dart';
-import 'package:loyalty_app/view/category/widgets/softdrink1_item_widget.dart';
-import 'package:loyalty_app/view/category/widgets/softdrink_item_widget.dart';
-import 'package:loyalty_app/view/category/widgets/top_product.dart';
-import 'package:loyalty_app/view/home_page/widgets/slider_item_widget.dart';
+
 
 class CategoryPage extends StatefulWidget {
   const CategoryPage({Key? key}) : super(key: key);
@@ -72,7 +63,7 @@ Widget build(BuildContext context) {
             SizedBox(height: 46.v),
             _buildSlider(context),
             SizedBox(height: 90.v),
-            if (_categories != null) // Null check added here
+            if (_categories != null) 
               SoftdrinkItemWidget(
                 categories: _categories,
                 selectedCategoryId: _selectedCategoryId,

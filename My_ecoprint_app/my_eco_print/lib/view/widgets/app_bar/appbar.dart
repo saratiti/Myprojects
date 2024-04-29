@@ -1,6 +1,4 @@
-
-import 'package:flutter/material.dart';
-import '../../../core/app_export.dart';
+import 'package:my_eco_print/core/app_export.dart';
 
 CustomAppBar buildAppBar(BuildContext context, String text) {
   final localization = AppLocalizationController.to;
@@ -29,12 +27,9 @@ CustomAppBar buildAppBar(BuildContext context, String text) {
 }
 
 void onTapArrowLeft(BuildContext context) {
-
   if (Navigator.of(context).canPop()) {
-  
     Navigator.of(context).pop();
   } else {
-    
     Navigator.of(context).pop();
   }
 }

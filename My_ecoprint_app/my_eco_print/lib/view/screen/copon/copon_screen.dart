@@ -1,10 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/transaction_controller.dart';
+
+
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/transaction.dart';
 
 class CoponScreen extends StatefulWidget {
   const CoponScreen({Key? key}) : super(key: key);
@@ -81,7 +79,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
           children: [
             buildAppBar(context),
              SizedBox(height: 26.v),
-             headerCoupon(),
+            // headerCoupon(),
             SizedBox(height: 26.v),
             buildCouponStack(),
           ],
@@ -237,42 +235,51 @@ Widget headerCoupon() {
 Widget buildCouponContainer(Transaction transaction) {
   final localization = AppLocalizationController.to;
 
-    final isRtl = localization.locale.languageCode == 'ar';
+  final isRtl = localization.locale.languageCode == 'ar';
 
-    return Directionality(
-      textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-      child:
-  Container(
-    padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
-    decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-      borderRadius: BorderRadiusStyle.roundedBorder24,
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 5.v),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              
-              Text( getMessageForTransactionType(transaction.transactionType), style: theme.textTheme.titleMedium),
-              SizedBox(height: 8.v), 
-              Text(transaction.points.toString(), style: CustomTextStyles.titleSmallBahijTheSansArabicRed700),
-            ],
+  return Directionality(
+    textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.h, vertical: 20.v),
+      decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder24,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded( // Wrap the text in an Expanded widget
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 5.v),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    getMessageForTransactionType(transaction.transactionType),
+                    style: theme.textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis, // Handle overflow by ellipsis
+                    maxLines: 2, // Limit the maximum number of lines
+                  ),
+                  SizedBox(height: 8.v),
+                  Text(
+                    transaction.points.toString(),
+                    style: CustomTextStyles.titleSmallBahijTheSansArabicRed700,
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        SizedBox(width: 16.h), 
-        CustomIconButton(
-          height: 44.adaptSize,
-          width: 44.adaptSize,
-          margin: EdgeInsets.only(top: 1.v),
-          padding: EdgeInsets.all(11.h),
-          child: CustomImageView(svgPath: getIconPathBasedOnTransactionType(transaction.transactionType)),
-        ),
-      ],
+          SizedBox(width: 16.h),
+          CustomIconButton(
+            height: 44.adaptSize,
+            width: 44.adaptSize,
+            margin: EdgeInsets.only(top: 1.v),
+            padding: EdgeInsets.all(11.h),
+            child: CustomImageView(svgPath: getIconPathBasedOnTransactionType(transaction.transactionType)),
+          ),
+        ],
+      ),
     ),
-     ) );
+  );
 }
 
 

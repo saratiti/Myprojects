@@ -1,9 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/screen/splash_screen/splash_screen_two.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
+
+import 'package:my_eco_print/core/app_export.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -40,7 +39,7 @@ void initState() {
       backgroundColor: appTheme.lightGreen500,
       body: _isLoading
           ? const Center(
-              // Display a loading indicator while content is loading
+             
               child: CircularProgressIndicator(),
             )
           : _buildContent(),

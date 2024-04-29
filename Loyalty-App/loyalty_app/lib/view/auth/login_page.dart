@@ -4,19 +4,8 @@
 // ignore_for_file: library_private_types_in_public_api, unnecessary_string_interpolations, use_build_context_synchronously
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:loyalty_app/controller/auth.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/login.dart';
-import 'package:loyalty_app/view/auth/register_page.dart';
-import 'package:loyalty_app/view/auth/reset_password_page.dart';
-import 'package:loyalty_app/view/home_page/home_page.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:loyalty_app/widgets/custom_text_form_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

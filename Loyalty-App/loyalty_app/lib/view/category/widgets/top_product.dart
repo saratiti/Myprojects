@@ -2,13 +2,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:loyalty_app/controller/review.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/model/product.dart';
-import 'package:loyalty_app/widgets/custom_icon_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 class TopRatedProducts extends StatefulWidget {
 

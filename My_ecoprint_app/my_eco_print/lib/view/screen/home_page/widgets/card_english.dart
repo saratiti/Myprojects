@@ -1,10 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
-import 'package:provider/provider.dart';
+
 class CardContainerEnglish extends StatelessWidget {
   const CardContainerEnglish({super.key});
 
@@ -61,8 +59,8 @@ class _CardContentEnglishState extends State<CardContentEnglish > {
             borderRadius: BorderRadiusStyle.roundedBorder40,
           ),
           child: Container(
-            height: 180.v,
-            width: 300.h,
+           height: 190.v,
+            width: 350.h,
             decoration: AppDecoration.gradientLightGreenToLightGreen.copyWith(
               borderRadius: BorderRadiusStyle.roundedBorder40,
             ),

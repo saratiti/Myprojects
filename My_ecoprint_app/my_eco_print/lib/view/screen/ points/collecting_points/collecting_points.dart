@@ -1,18 +1,7 @@
-
 // ignore_for_file: overridden_fields, use_key_in_widget_constructors, use_build_context_synchronously, library_private_types_in_public_api
 
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:my_eco_print/controller/barcodes_controller.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/view/screen/%20points/collecting_points/widgets/cleander_widget.dart';
-import 'package:my_eco_print/view/widgets/app_bar/appbar.dart';
-import 'package:provider/provider.dart';
-
 
 class CollectingPointScreen extends StatefulWidget {
   const CollectingPointScreen({super.key});
@@ -62,84 +51,77 @@ class _CollectingPointScreenState extends State<CollectingPointScreen> {
   }
 
   Future<int> collectPointsFromBarcode(String barcode) async {
-  try {
-    final response = await BarcodeController().collectPointsFromBarcode(barcode);
+    try {
+      final response =
+          await BarcodeController().collectPointsFromBarcode(barcode);
 
-    if (response != null && response['collectedPoints'] != null) {
-      int pointsCollected = response['collectedPoints'];
+      if (response != null && response['collectedPoints'] != null) {
+        int pointsCollected = response['collectedPoints'];
 
-      Provider.of<UserProfileModel>(context, listen: false).updateTotalPoints(pointsCollected);
+        Provider.of<UserProfileModel>(context, listen: false)
+            .updateTotalPoints(pointsCollected);
 
-      return pointsCollected;
-    } else {
+        return pointsCollected;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error collecting points from barcode: $e');
+      }
       return 0;
     }
-  } catch (e) {
-    if (kDebugMode) {
-      print('Error collecting points from barcode: $e');
-    }
-    return 0;
   }
-}
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
     return Directionality(
-      textDirection: textDirection,
-    
-   child: SafeArea(
-      child: Scaffold(
-        
-        appBar:buildAppBar(context,"lbl21"),
-        body:
-        SizedBox(
-          width: mediaQueryData.size.width,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: Column(
-                children: [
-                   const SizedBox(height: 35,),
-                  const CalendarWidget(),
+        textDirection: textDirection,
+        child: SafeArea(
+          child: Scaffold(
+            appBar: buildAppBar(context, "lbl21"),
+            body: SizedBox(
+              width: mediaQueryData.size.width,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 50.0),
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 35,
+                      ),
+                      const CalendarWidget(),
 
-
-
-                  //const RewardsList(), 
-               DividerWidget(text: "lbl34".tr,),
-               const SizedBox(height: 50), 
-                 const SomeStackedWidgets(),
-                ScanElevatedButton(
-              onTap: scanBarcode,
-            
-            ),const SizedBox(height: 35), 
-                  const SomeOtherWidgets(),
-                ],
+                      //const RewardsList(),
+                      DividerWidget(
+                        text: "lbl34".tr,
+                      ),
+                      const SizedBox(height: 50),
+                      const SomeStackedWidgets(),
+                      ScanElevatedButton(
+                        onTap: scanBarcode,
+                      ),
+                      const SizedBox(height: 35),
+                      const SomeOtherWidgets(),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-  
-      ),
-    ));
-
+        ));
   }
-  
+
   void onTapArrowleft(BuildContext context) {
-
-       
     Navigator.pop(context);
-            
-
-
   }
 }
-
-
-
 
 // class RewardsList extends StatelessWidget {
 //   const RewardsList({super.key});
@@ -156,9 +138,8 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
 //   _showPopDialog(context, dailyPoints);
 // }
 
-      
 //       child:
-      
+
 //        RawChip(
 //         padding: const EdgeInsets.symmetric(horizontal: 35, vertical: 10),
 //         showCheckmark: false,
@@ -203,11 +184,8 @@ Future<int> collectDailyPoints() async {
   }
 }
 
-
 void showPopDialog(BuildContext context, int dailyPoints) {
-  String messageText = dailyPoints > 0
-      ? "msg37".tr 
-      : "msg36".tr;
+  String messageText = dailyPoints > 0 ? "msg37".tr : "msg36".tr;
 
   showDialog(
     context: context,
@@ -233,17 +211,16 @@ void showPopDialog(BuildContext context, int dailyPoints) {
                   onTapImgCloseone(context);
                 },
               ),
-             Align(
-  alignment: Alignment.centerRight,
-  child: Padding(
-    padding: EdgeInsets.only(top: 24.v, right: 59.h),
-    child: Text(
-      dailyPoints > 0 ? "lbl37".tr : "msg_36".tr,
-      style: theme.textTheme.displaySmall,
-    ),
-  ),
-),
-
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 24.v, right: 59.h),
+                  child: Text(
+                    dailyPoints > 0 ? "lbl37".tr : "msg_36".tr,
+                    style: theme.textTheme.displaySmall,
+                  ),
+                ),
+              ),
               SizedBox(height: 46.v),
               Align(
                 alignment: Alignment.center,
@@ -275,14 +252,16 @@ void showPopDialog(BuildContext context, int dailyPoints) {
   );
 }
 
- void onTapImgCloseone(BuildContext context) {
-    Navigator.pop(context);
-  }
+void onTapImgCloseone(BuildContext context) {
+  Navigator.pop(context);
+}
+
 class RewardCard extends StatelessWidget {
   final String labelText;
   final String subLabelText;
 
-  const RewardCard({super.key, required this.labelText, required this.subLabelText});
+  const RewardCard(
+      {super.key, required this.labelText, required this.subLabelText});
 
   @override
   Widget build(BuildContext context) {
@@ -319,28 +298,26 @@ class DividerWidget extends StatelessWidget {
   final Key? key;
   final String text;
 
-  const DividerWidget({ required this.text, this.key});
+  const DividerWidget({required this.text, this.key});
 
   @override
   Widget build(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
- final isRtl = localization.locale.languageCode == 'ar';
-  return Directionality(
-    textDirection: textDirection,child: 
-        Align(alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
-                         
-                              child: Padding(
-                                  padding:
-                                      EdgeInsets.only(top: 40.v, left: 30.h,right: 20.h),
-                                  child: Text("lbl34".tr,
-                                      style: CustomTextStyles
-                                          .titleSmallBahijTheSansArabic15))),
-      
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
+    final isRtl = localization.locale.languageCode == 'ar';
+    return Directionality(
+      textDirection: textDirection,
+      child: Align(
+          alignment: isRtl ? Alignment.centerRight : Alignment.centerLeft,
+          child: Padding(
+              padding: EdgeInsets.only(top: 40.v, left: 30.h, right: 20.h),
+              child: Text("lbl34".tr,
+                  style: CustomTextStyles.titleSmallBahijTheSansArabic15))),
     );
   }
 }
-
 
 class SomeStackedWidgets extends StatelessWidget {
   const SomeStackedWidgets({super.key});
@@ -351,60 +328,48 @@ class SomeStackedWidgets extends StatelessWidget {
       height: 200.v,
       width: 200.h,
       child: Stack(
-      
         children: [
-     
-                          SizedBox(height: 19.v),
-                          SizedBox(
-                              height: 200.v,
-                              width: 200.h,
-                              child: Stack(
-                                  alignment: Alignment.topCenter,
-                                  children: [
-                                    CustomImageView(
-                                        imagePath: ImageConstant.imgImage1,
-                                        height: 193.v,
-                                        width: 175.h,
-                                        alignment: Alignment.center),
-                                    CustomImageView(
-                                        svgPath: ImageConstant.imgMinimize,
-                                        height: 40.adaptSize,
-                                        width: 40.adaptSize,
-                                        alignment: Alignment.topRight),
-                                    CustomImageView(
-                                        svgPath:
-                                            ImageConstant.imgSignalOnprimary,
-                                        height: 40.adaptSize,
-                                        width: 40.adaptSize,
-                                        alignment: Alignment.bottomRight),
-                                    CustomImageView(
-                                        svgPath: ImageConstant.imgLaptop,
-                                        height: 40.adaptSize,
-                                        width: 40.adaptSize,
-                                        alignment: Alignment.topLeft),
-                                    CustomImageView(
-                                        svgPath: ImageConstant.imgSignalonPrimaryLeft,
-                                        height: 40.adaptSize,
-                                        width: 40.adaptSize,
-                                        alignment: Alignment.bottomLeft),
-                                    Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Padding(
-                                            padding:
-                                                EdgeInsets.only(bottom: 26.v),
-                                            child: SizedBox(
-                                                width: 188.h,
-                                                child: const Divider()))),
-                                    Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Padding(
-                                            padding:
-                                                EdgeInsets.only(bottom: 26.v),
-                                            child: SizedBox(
-                                                width: 188.h,
-                                                child: const Divider())))
-                                  ])),
-         
+          SizedBox(height: 19.v),
+          SizedBox(
+              height: 200.v,
+              width: 200.h,
+              child: Stack(alignment: Alignment.topCenter, children: [
+                CustomImageView(
+                    imagePath: ImageConstant.imgImage1,
+                    height: 193.v,
+                    width: 175.h,
+                    alignment: Alignment.center),
+                CustomImageView(
+                    svgPath: ImageConstant.imgMinimize,
+                    height: 40.adaptSize,
+                    width: 40.adaptSize,
+                    alignment: Alignment.topRight),
+                CustomImageView(
+                    svgPath: ImageConstant.imgSignalOnprimary,
+                    height: 40.adaptSize,
+                    width: 40.adaptSize,
+                    alignment: Alignment.bottomRight),
+                CustomImageView(
+                    svgPath: ImageConstant.imgLaptop,
+                    height: 40.adaptSize,
+                    width: 40.adaptSize,
+                    alignment: Alignment.topLeft),
+                CustomImageView(
+                    svgPath: ImageConstant.imgSignalonPrimaryLeft,
+                    height: 40.adaptSize,
+                    width: 40.adaptSize,
+                    alignment: Alignment.bottomLeft),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: EdgeInsets.only(bottom: 26.v),
+                        child: SizedBox(width: 188.h, child: const Divider()))),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                        padding: EdgeInsets.only(bottom: 26.v),
+                        child: SizedBox(width: 188.h, child: const Divider())))
+              ])),
         ],
       ),
     );
@@ -454,7 +419,6 @@ class SomeOtherWidgets extends StatelessWidget {
             width: 9.adaptSize,
             margin: EdgeInsets.only(top: 8.v, bottom: 7.v),
           ),
-     
         ],
       ),
     );

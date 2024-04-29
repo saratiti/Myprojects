@@ -1,15 +1,11 @@
 
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:loyalty_app/controller/user.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/user.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-import 'package:loyalty_app/widgets/custom_text_form_field.dart';
+
+
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -23,10 +19,9 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController fullNameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
-  TextEditingController usernameController=TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController usernameController = TextEditingController();
+  final GlobalKey<FormState> _registerformKey = GlobalKey<FormState>(); // Moved inside _RegisterPageState
   bool _obscureText = true;
-
   void _handleSignUpAction(BuildContext context) async {
   EasyLoading.show(status: "Loading");
 
@@ -75,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Form(
-              key: _formKey,
+             key: _registerformKey,
               child: Container(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(
@@ -205,7 +200,6 @@ Widget _buildFullName(BuildContext context) {
 }
 
 
-  /// Section Widget
   Widget _buildEmail(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(

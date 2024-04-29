@@ -1,14 +1,9 @@
 // ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
 
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
-import 'package:my_eco_print/controller/user_profile_provider.dart';
-import 'package:provider/provider.dart';
 import 'core/app_export.dart';
-import 'view/screen/ points/replace_points/widgets/discountcoupon_item_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

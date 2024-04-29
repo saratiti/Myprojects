@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
 import 'package:my_eco_print/core/app_export.dart';
 
 class SplashScreenTwo extends StatelessWidget {
@@ -112,7 +112,7 @@ Widget _buildContent(BuildContext context) {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 0.0), // Adjusted top padding to 0
+                padding: const EdgeInsets.only(top: 0.0),
                 child: CustomImageView(
                   svgPath: ImageConstant.imgFingerprintWhiteA700,
                   height: 200.v, 
@@ -121,9 +121,9 @@ Widget _buildContent(BuildContext context) {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0), // Added horizontal padding
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: SizedBox(
-                  width: 250.h, // Adjusted width
+                  width: 250.h, 
                   child: Text(
                     "msg".tr,
                     maxLines: 2,
@@ -139,9 +139,9 @@ Widget _buildContent(BuildContext context) {
       ),
       const SizedBox(height: 100.0),
       Padding(
-        padding: const EdgeInsets.only(bottom: 50.0), // Increased padding
+        padding: const EdgeInsets.only(bottom: 50.0), 
         child: CustomOutlinedButton(
-          width: 300.h, // Adjusted width
+          width: 300.h,
           text: "lbl".tr,
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.loginScreen);

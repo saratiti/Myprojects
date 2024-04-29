@@ -1,16 +1,9 @@
 //ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, unnecessary_string_interpolations
 
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:my_eco_print/controller/auth.dart';
-import 'package:my_eco_print/controller/text_controller.dart';
+
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/core/services/auth_service.dart';
-import 'package:my_eco_print/data/module/login.dart';
-import 'package:my_eco_print/view/screen/home_page/home_page_screen.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -513,7 +506,12 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
       padding: const EdgeInsets.only(top: 20, bottom: 20, left: 15),
       child: Align(
         alignment: Alignment.bottomLeft,
-        child: FloatingActionButton(
+        child:
+         SizedBox(
+        width: 40, // Adjust the width of the button
+        height: 40,
+        
+       child:  FloatingActionButton(
           onPressed: () {
             final localization = AppLocalizationController.to;
             if (localization.locale.languageCode == 'en') {
@@ -531,12 +529,12 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
             children: const [
               Icon(
                 Icons.language,
-                size: 30,
+                size: 25,
               ),
             ],
           ),
         ),
       ),
-    );
+     ) );
   }
 }

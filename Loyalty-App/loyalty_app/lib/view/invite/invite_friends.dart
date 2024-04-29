@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
+
 
 class InviteFriendsPage extends StatelessWidget {
   const InviteFriendsPage({Key? key}) : super(key: key);
@@ -14,22 +14,22 @@ class InviteFriendsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Header Section
+           
             const Text(
               'Invite your friends to join!',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            // Invite Form
+            
             const TextField(
               decoration: InputDecoration(
                 labelText: 'Friend\'s Email',
                 border: OutlineInputBorder(),
-                // Add more form fields for phone number, message, etc.
+               
               ),
             ),
             const SizedBox(height: 20),
-            // Share Options
+           
             const Text(
               'Share invitation via:',
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -39,17 +39,17 @@ class InviteFriendsPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildShareIconButton(Icons.email, 'Email', () {
-                  // Implement sharing via email
+                  
                 }),
                 _buildShareIconButton(Icons.message, 'SMS', () {
-                  // Implement sharing via SMS
+                 
                 }),
                 _buildShareIconButton(Icons.share, 'Other', () {
-                  // Implement sharing via other social media platforms
+                  
                 }),
               ],
             ),
-            // Send Invitation Button
+            
             const SizedBox(height: 20),
             _buildUploadButton(context)
           ],

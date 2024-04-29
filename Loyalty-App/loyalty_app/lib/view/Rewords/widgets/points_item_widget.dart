@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/transaction.dart'; // Import your Transaction model
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 class PointsItemWidget extends StatelessWidget {
   final Transaction transaction; // Define a named parameter for the Transaction object

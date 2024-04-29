@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/core/utils/theme/theme_helper.dart';
-import 'package:loyalty_app/view/home_page/home_page.dart';
-import 'package:loyalty_app/widgets/app_bar/custom_bottom_bar.dart';
+import 'package:loyalty_app/core/app_export.dart';
+
 
 // ignore: must_be_immutable
 class Bottombar extends StatelessWidget {

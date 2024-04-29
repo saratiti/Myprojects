@@ -118,20 +118,21 @@ Future<List<Offer>> getStoresWithOffers(int typeId) async {
 
 
 Future<List<Offer>> getAllStoresWithOffers() async {
-    try {
-      dynamic jsonObject = await ApiHelper().getRequest("/api/stores/typeByoffer");
-      if (jsonObject == null) {
-        return [];
-      }
-      List<Offer> result = [];
-      jsonObject.forEach((json) {
-        result.add(Offer.fromJson(json));
-      });
-      return result;
-    } catch (ex) {
-      print(ex);
-      rethrow;
+  try {
+    dynamic jsonObject = await ApiHelper().getRequest("/api/stores/typeByoffer");
+    if (jsonObject == null) {
+      return [];
     }
+    List<Offer> result = [];
+    if (jsonObject is List) {
+      result = jsonObject.map((json) => Offer.fromJson(json)).toList();
+    }
+    return result;
+  } catch (ex) {
+    print(ex);
+    rethrow;
+  }
+
   }
     Stream<List<Offer>> getAllStoresWithOffersStream() {
     return Stream.fromFuture(getAllStoresWithOffers());
@@ -155,7 +156,7 @@ Future<List<Offer>> getOfferByStoreAndOfferId(int storeId, int offerId) async {
         return offer;
       }).toList();
     } else {
-      // If jsonObject is a single offer, include company information
+      
       final offer = Offer.fromJson(jsonObject);
       if (jsonObject.containsKey('companies')) {
         offer.company = Company.fromJson(jsonObject['companies']);

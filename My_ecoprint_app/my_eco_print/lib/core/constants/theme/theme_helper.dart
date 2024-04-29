@@ -142,7 +142,7 @@ class TextThemes {
         ),
         headlineSmall: TextStyle(
           color: appTheme.red700,
-          fontSize: 24.fSize,
+          fontSize: 12.fSize,
           fontFamily: 'Bahij TheSansArabic',
           fontWeight: FontWeight.w500,
         ),

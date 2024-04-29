@@ -1,18 +1,10 @@
 // ignore_for_file: unused_local_variable, library_private_types_in_public_api, use_key_in_widget_constructors, unused_import
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/point_controller.dart';
-import 'package:my_eco_print/controller/type_controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/type.dart';
-import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/coffee_screen.dart';
-import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/discountcoupon_item_widget.dart';
-import 'package:my_eco_print/view/screen/%20points/replace_points/widgets/resturant_screen.dart';
 
 class ReplacePointScreen extends StatelessWidget {
   const ReplacePointScreen({Key? key});
- 
+
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
@@ -20,8 +12,7 @@ class ReplacePointScreen extends StatelessWidget {
         ? TextDirection.rtl
         : TextDirection.ltr;
 
-    mediaQueryData = MediaQuery.of(context);
-
+    final mediaQueryData = MediaQuery.of(context);
     final screenWidth = mediaQueryData.size.width;
     final screenHeight = mediaQueryData.size.height;
 
@@ -31,9 +22,9 @@ class ReplacePointScreen extends StatelessWidget {
         body: Directionality(
           textDirection: textDirection,
           child: SizedBox(
-            width: screenWidth, 
-            height: screenHeight, 
-            child: const SingleChildScrollView(
+            width: screenWidth,
+            height: screenHeight,
+            child: SingleChildScrollView(
               child: ReplacePointContent(),
             ),
           ),
@@ -50,8 +41,9 @@ class ReplacePointContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    const double verticalSpacing = 6.0;
-    const double horizontalSpacing = 16.0;
+    final Size screenSize = MediaQuery.of(context).size;
+    final bool isSmallScreen =
+        screenSize.width < 600; // Define your threshold for small screens
 
     final localization = AppLocalizationController.to;
     final textDirection = localization.locale.languageCode == 'ar'
@@ -59,50 +51,54 @@ class ReplacePointContent extends StatelessWidget {
         : TextDirection.ltr;
 
     return Directionality(
-        textDirection: textDirection,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const ReplacePointHeader(),
-              SizedBox(height: 10.h),
-              const ReplacePointRichText(),
-              SizedBox(height: 10.h),
-              const ReplacePointButtons(),
-              SizedBox(height: 10.v),
-              // GestureDetector(
-              //   onTap: () {
-              //     if (kDebugMode) {
-              //       print("Tapped on CustomHeaderRow");
-              //     }
-              //     navigateToReplaceScreen(context);
-              //   },
-              //   child: CustomHeaderRow(
-              //     context: context,
-              //   ),
-              // ),
+      textDirection: textDirection,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 5.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ReplacePointHeader(),
+            SizedBox(
+                height: isSmallScreen
+                    ? 5.0
+                    : 10.0), // Adjust spacing based on screen size
+            const ReplacePointRichText(),
+            SizedBox(
+                height: isSmallScreen
+                    ? 5.0
+                    : 10.0), // Adjust spacing based on screen size
+            const ReplacePointButtons(),
+            SizedBox(
+                height: isSmallScreen
+                    ? 5.0
+                    : 10.0), // Adjust spacing based on screen size
+            if (!isSmallScreen) ...[
+              SizedBox(
+                  height: 10.0), // Add additional spacing for larger screens
 
-              // const ReplacePointListCoffee(),
-              SizedBox(height: 2.v),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children:
-
-              // [
-              //   Padding(
-              //   padding: EdgeInsets.only(top: 35.h, bottom: 3.h, right: 20.h),
-              //   child: Text(
-              //     "msg43".tr,
-              //     style: CustomTextStyles
-              //         .titleSmallBahijTheSansArabicOnPrimaryContainer,
-              //   ),
-              // )],)
+              SizedBox(
+                  height: 10.0), // Add additional spacing for larger screens
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.only(top: 35.0, bottom: 3.0, right: 20.0),
+                    child: Text(
+                      "msg43".tr,
+                      style: CustomTextStyles
+                          .titleSmallBahijTheSansArabicOnPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
             ],
-          ),
-        ));
+          ],
+        ),
+      ),
+    );
   }
 
   void navigateToReplaceScreen(BuildContext context) {
@@ -165,6 +161,7 @@ class ReplacePointContent extends StatelessWidget {
 
 class ReplacePointHeader extends StatelessWidget {
   const ReplacePointHeader({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -172,6 +169,10 @@ class ReplacePointHeader extends StatelessWidget {
     final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
+
+    final Size screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width;
+    final double screenHeight = screenSize.height;
 
     return Directionality(
       textDirection: textDirection,
@@ -186,50 +187,52 @@ class ReplacePointHeader extends StatelessWidget {
                   : ImageConstant.imgArrowleftOnprimary,
               height: 24.0,
               width: 24.0,
-              margin: const EdgeInsets.only(top: 30.0, bottom: 4.0),
+              margin: EdgeInsets.only(
+                  top: screenHeight * 0.04,
+                  bottom: 4.0), // Adjust based on screen height
               onTap: () => onTapImgArrowLeft(context),
             ),
-            const Spacer(),
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 30.0, bottom: 4.0, right: 10.0, left: 30),
-              child: Text(
-                "lbl20".tr,
-                style: theme.textTheme.titleLarge,
+            SizedBox(width: screenWidth * 0.02), // Adjust based on screen width
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(top: screenHeight * 0.04, bottom: 4.0),
+                child: Text(
+                  "lbl20".tr,
+                  style: theme.textTheme.titleLarge,
+                ),
               ),
             ),
+            SizedBox(width: screenWidth * 0.02), // Adjust based on screen width
             Container(
-              margin: const EdgeInsets.only(left: 20.0, top: 30.0, bottom: 4.0),
-              padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 1.0),
+              margin: EdgeInsets.only(top: screenHeight * 0.04, bottom: 4.0),
+              width: screenWidth * 0.3, // Adjust based on screen width
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 17.0, vertical: 1.0),
               decoration: AppDecoration.fillLightGreen.copyWith(
                 borderRadius: BorderRadius.circular(13.0),
               ),
-             child: FutureBuilder<int>(
-  future: PointController().getTotalPointsByUserId(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const CircularProgressIndicator();
-    } else if (snapshot.hasError) {
-      return Text("Error: ${snapshot.error}");
-    } else {
-     
-      final totalPoints = snapshot.data ?? 0;
-      return Text(
-        "Total Points: $totalPoints",
-        style: theme.textTheme.labelLarge,
-      );
-    }
-  },
-),
-
+              child: FutureBuilder<int>(
+                future: PointController().getTotalPointsByUserId(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else {
+                    final totalPoints = snapshot.data ?? 0;
+                    return Text(
+                      "Total Points: $totalPoints",
+                      style: theme.textTheme.labelLarge,
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),
       ),
     );
   }
-
-
 
   void onTapImgArrowLeft(BuildContext context) {
     Navigator.pop(context);
@@ -239,7 +242,8 @@ class ReplacePointHeader extends StatelessWidget {
 class ReplacePointListCoffee extends StatelessWidget {
   final int typeId;
 
-  const ReplacePointListCoffee({Key? key, required this.typeId}) : super(key: key);
+  const ReplacePointListCoffee({Key? key, required this.typeId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +260,7 @@ class ReplacePointListCoffee extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 600.v, 
+                    height: 600.v,
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,
@@ -279,11 +283,10 @@ class ReplacePointListCoffee extends StatelessWidget {
   }
 }
 
-
 class ReplacePointListResturant extends StatelessWidget {
   const ReplacePointListResturant({super.key});
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 800.v,
@@ -298,7 +301,7 @@ class ReplacePointListResturant extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 600.v, 
+                    height: 600.v,
                     child: ListView.separated(
                       physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,

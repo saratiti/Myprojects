@@ -34,7 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/invite_person', invitePersonRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/optionMenue', optionMenueRoutes);
-app.use('/api/order', orderRoutes );
+app.use('/api/orders', orderRoutes );
 app.use('/api/product', productRoutes );
 app.use('/api/orderProduct',orderProductRoutes);
 app.use('/api/reviews',reviewRoutes);

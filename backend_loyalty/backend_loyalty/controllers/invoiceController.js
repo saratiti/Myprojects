@@ -5,6 +5,7 @@ const Loyalty = require('../models/loyalty');
 const Transaction = require('../models/transaction');
 const fs = require('fs');
 const Tesseract = require('tesseract.js');
+const qrcode = require('qrcode');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -289,3 +290,39 @@ async function hasUserScannedInvoice(userId, invoiceId) {
 async function markInvoiceAsScanned(userId, invoiceId) {
   await ScannedInvoices.create({ user_id: userId, invoice_id: invoiceId });
 }
+
+
+exports.generateBarcodeInvoice = async (req, res) => {
+  try {
+    const { invoice_id, total_amount } = req.body; 
+
+    const barcodeValue = generateBarcodeValue(invoice_id, total_amount); 
+
+    const barcodeData = {
+      invoice_id,
+      total_amount,
+    };
+
+  
+
+    qrcode.toDataURL(barcodeValue, barcodeData, (err, qrCodeData) => {
+      if (err) {
+        res.status(500).send('Error generating QR code');
+      } else {
+        res.setHeader('Content-Type', 'image/png');
+        res.setHeader('Content-Disposition', 'attachment; filename="qr-code.png"');
+        const dataUri = `data:image/png;base64,${qrCodeData.split(',')[1]}`;
+        const imageBuffer = Buffer.from(dataUri.split(',')[1], 'base64');
+        res.setHeader('Content-Length', imageBuffer.length);
+        res.send(imageBuffer);
+      }
+    });
+  } catch (error) {
+    console.error('Error generating barcode and QR code:', error);
+    res.status(500).json({ message: 'Error generating barcode and QR code' });
+  }
+};
+
+const generateBarcodeValue = (invoice_id, total_amount) => {
+  return `invoice_id:${invoice_id}-total_amount:${total_amount}`;
+};

@@ -1,10 +1,8 @@
 // ignore_for_file: file_names
 
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/category.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/category.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
+
 
 // ignore: must_be_immutable
 // class SubCategoryWidget extends StatelessWidget {

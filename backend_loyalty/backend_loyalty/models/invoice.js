@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const User = require('./user'); 
-
+const Order = require('./Order'); 
 const Invoice = sequelize.define('Invoice', {
   invoice_id: {
     type: DataTypes.BIGINT,
@@ -15,7 +15,7 @@ const Invoice = sequelize.define('Invoice', {
   },
   file_path: {
     type: DataTypes.STRING,
-    allowNull: false,
+  
   },
   total_amount: {
     type: DataTypes.DOUBLE,
@@ -24,6 +24,9 @@ const Invoice = sequelize.define('Invoice', {
   user_id: {
     type: DataTypes.BIGINT,
     
+  },
+  order_id:{
+    type: DataTypes.BIGINT,
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -43,6 +46,7 @@ const Invoice = sequelize.define('Invoice', {
   tableName: 'invoices',
   
   });
+  Invoice.belongsTo(Order, { foreignKey: 'order_id', as: 'orders', onDelete: 'CASCADE' });
 Invoice.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
 
 module.exports = Invoice;

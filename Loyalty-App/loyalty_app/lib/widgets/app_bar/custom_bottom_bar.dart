@@ -1,8 +1,6 @@
 // ignore_for_file: must_be_immutable, constant_identifier_names
 
-import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
 
 class CustomBottomBar extends StatefulWidget {
   CustomBottomBar({super.key, this.onChanged});

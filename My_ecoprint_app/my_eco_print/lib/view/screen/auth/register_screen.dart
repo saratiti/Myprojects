@@ -2,15 +2,7 @@
 
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
-
-
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/text_controller.dart';
-import 'package:my_eco_print/controller/user.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/user.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -46,8 +38,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-final localization = AppLocalizationController.to;
-final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+        ? TextDirection.rtl
+        : TextDirection.ltr;
 
     return SafeArea(
       child: Scaffold(
@@ -73,7 +67,7 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
-         Opacity(
+          Opacity(
             opacity: 0.1,
             child: CustomImageView(
               imagePath: ImageConstant.imgGroup70252,
@@ -93,38 +87,43 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
                   buildTextFormField(
                     controller: textControllers.personalnameController,
                     hintText: "msg7".tr,
-                    suffix: buildUserIcon(), onTap: () {  },
+                    suffix: buildUserIcon(),
+                    onTap: () {},
                   ),
                   buildTextFormField(
                     controller: textControllers.emailaddressController,
                     hintText: "msg3".tr,
-                    suffix: buildCheckmarkIcon(), onTap: () {  },
+                    suffix: buildCheckmarkIcon(),
+                    onTap: () {},
                   ),
                   buildTextFormField(
                     controller: textControllers.phonenumberoneController,
                     hintText: "lbl6".tr,
-                    suffix: buildCallIcon(), onTap: () {  },
+                    suffix: buildCallIcon(),
+                    onTap: () {},
                   ),
-                 buildTextFormField(
-          controller: textControllers.passwordplacehoController,
-          hintText: "lbl2".tr,
-          textInputAction: TextInputAction.done,
-          textInputType: TextInputType.visiblePassword,
-          prefix: buildVisibilityIcon(toggleIconEye, isVisiblePassword1), 
-          suffix: buildLockIcon(),
-          isVisiblePassword: isVisiblePassword1, 
-          onTap: toggleIconEye, 
-        ),
-                 buildTextFormField(
-          controller: textControllers.confirmpasswordController,
-          hintText: "lbl2".tr,
-          textInputAction: TextInputAction.done,
-          textInputType: TextInputType.visiblePassword,
-          prefix: buildVisibilityIcon(toggleIVisibleEye, isVisiblePassword2), 
-          suffix: buildLockIcon(),
-          isVisiblePassword: isVisiblePassword2, 
-          onTap: toggleIVisibleEye,
-        ),
+                  buildTextFormField(
+                    controller: textControllers.passwordplacehoController,
+                    hintText: "lbl2".tr,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.visiblePassword,
+                    prefix:
+                        buildVisibilityIcon(toggleIconEye, isVisiblePassword1),
+                    suffix: buildLockIcon(),
+                    isVisiblePassword: isVisiblePassword1,
+                    onTap: toggleIconEye,
+                  ),
+                  buildTextFormField(
+                    controller: textControllers.confirmpasswordController,
+                    hintText: "lbl2".tr,
+                    textInputAction: TextInputAction.done,
+                    textInputType: TextInputType.visiblePassword,
+                    prefix: buildVisibilityIcon(
+                        toggleIVisibleEye, isVisiblePassword2),
+                    suffix: buildLockIcon(),
+                    isVisiblePassword: isVisiblePassword2,
+                    onTap: toggleIVisibleEye,
+                  ),
                   buildTermsAndConditionsRow(),
                   buildElevatedButton(context),
                   buildLoginPrompt(),
@@ -145,42 +144,42 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
- Widget buildTextFormField({
-  required TextEditingController controller,
-  required String hintText,
-  Widget? prefix,
-  Widget? suffix,
-  TextInputAction? textInputAction,
-  TextInputType? textInputType,
-  bool isVisiblePassword = false,
-  required VoidCallback onTap, 
-}) {
-  return Column(
-    children: [
-      Align(
-        alignment: Alignment.centerRight,
-        child: Padding(
-          padding: EdgeInsets.only(top: 22.v, right: 28.h),
-          child: Text(
-            hintText,
-            style: CustomTextStyles.titleSmallBahijTheSansArabicPrimary,
+  Widget buildTextFormField({
+    required TextEditingController controller,
+    required String hintText,
+    Widget? prefix,
+    Widget? suffix,
+    TextInputAction? textInputAction,
+    TextInputType? textInputType,
+    bool isVisiblePassword = false,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.only(top: 22.v, right: 28.h),
+            child: Text(
+              hintText,
+              style: CustomTextStyles.titleSmallBahijTheSansArabicPrimary,
+            ),
           ),
         ),
-      ),
-      CustomTextFormField(
-        controller: controller,
-        margin: EdgeInsets.only(left: 7.h, top: 3.v, right: 8.h),
-        hintText: hintText,
-        prefix: prefix,
-        suffix: suffix,
-        contentPadding: EdgeInsets.only(left: 30.h, top: 11.v, bottom: 11.v),
-        obscureText: textInputType == TextInputType.visiblePassword ? !isVisiblePassword : false,
-       
-      ),
-    ],
-  );
-}
-
+        CustomTextFormField(
+          controller: controller,
+          margin: EdgeInsets.only(left: 7.h, top: 3.v, right: 8.h),
+          hintText: hintText,
+          prefix: prefix,
+          suffix: suffix,
+          contentPadding: EdgeInsets.only(left: 30.h, top: 11.v, bottom: 11.v),
+          obscureText: textInputType == TextInputType.visiblePassword
+              ? !isVisiblePassword
+              : false,
+        ),
+      ],
+    );
+  }
 
   Widget buildUserIcon() {
     return Container(
@@ -270,7 +269,9 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
             ),
             textAlign: TextAlign.left,
           ),
-          const SizedBox(width: 10,),
+          const SizedBox(
+            width: 10,
+          ),
           GestureDetector(
             onTap: toggleCheckmark,
             child: buildCheckmarkContainer(),
@@ -316,41 +317,35 @@ final textDirection = localization.locale.languageCode == 'ar' ? TextDirection.r
     );
   }
 
+  Widget buildElevatedButton(BuildContext context) {
+    return CustomElevatedButton(
+      text: "lbl11".tr,
+      margin: EdgeInsets.only(left: 26.h, top: 56.v, right: 27.h),
+      onTap: () async {
+        UserController userController = UserController();
+        User user = User(
+          username: textControllers.personalnameController.text,
+          email: textControllers.emailaddressController.text,
+          image: '',
+          fullName: textControllers.personalnameController.text,
+          phone: textControllers.phonenumberoneController.text,
+          password: textControllers.passwordplacehoController.text,
+        );
 
-Widget buildElevatedButton(BuildContext context) {
-  return CustomElevatedButton(
-    text: "lbl11".tr,
-    margin: EdgeInsets.only(left: 26.h, top: 56.v, right: 27.h),
-    onTap: () async {
-     
-      UserController userController = UserController();
-      User user = User(
-        username: textControllers.personalnameController.text,
-        email: textControllers.emailaddressController.text,
-        image: '', 
-        fullName: textControllers.personalnameController.text,
-        phone: textControllers.phonenumberoneController.text,
-        password: textControllers.passwordplacehoController.text,
-      );
+        try {
+          var result = await userController.create(user);
 
-      try {
-       
-        var result = await userController.create(user);
-
-      
-        if (result != null) {
-          Navigator.pushReplacementNamed(context, '/login_screen');
+          if (result != null) {
+            Navigator.pushReplacementNamed(context, '/login_screen');
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print("Error creating user: $e");
+          }
         }
-
-      } catch (e) {
-       
-        if (kDebugMode) {
-          print("Error creating user: $e");
-        }
-      }
-    },
-  );
-}
+      },
+    );
+  }
 
   Widget buildLoginPrompt() {
     return Column(
@@ -391,15 +386,3 @@ Widget buildElevatedButton(BuildContext context) {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

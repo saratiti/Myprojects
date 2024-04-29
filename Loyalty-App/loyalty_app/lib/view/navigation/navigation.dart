@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
+
 class CircularNavigationMenu extends StatelessWidget {
   final VoidCallback? onProfilePressed;
   final VoidCallback? onInvitePressed;
@@ -20,11 +21,13 @@ class CircularNavigationMenu extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildMenuItem(
-            icon: Icons.account_circle,
-            label: 'Your Profile',
-            onPressed: onProfilePressed,
-          ),
+         _buildMenuItem(
+  icon: Icons.account_circle,
+  label: 'Your Profile',
+  onPressed: () {
+    Navigator.pushNamed(context, AppRoutes.editScreen);
+  },
+),
           const SizedBox(height: 16),
           _buildMenuItem(
             icon: Icons.person_add,
@@ -35,7 +38,9 @@ class CircularNavigationMenu extends StatelessWidget {
           _buildMenuItem(
             icon: Icons.logout,
             label: 'Logout',
-            onPressed: onLogoutPressed,
+            onPressed: () {
+    Navigator.pushNamed(context, AppRoutes.loginScreen);
+  },
           ),
         ],
       ),

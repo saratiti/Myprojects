@@ -1,17 +1,10 @@
 // ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
 
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
-import 'package:loyalty_app/controller/product_provider.dart';
+
+
+import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-import 'package:loyalty_app/core/routes/app_routes.dart';
-import 'package:loyalty_app/core/utils/theme/theme_helper.dart';
-import 'package:provider/provider.dart';
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 EasyLoading.instance
@@ -47,6 +40,7 @@ class MyApp extends StatelessWidget {
         theme: theme,
         builder: EasyLoading.init(),
         locale: Get.locale,
+        
         fallbackLocale: const Locale('en', ''),
         title: 'Loyality_app',
         debugShowCheckedModeBanner: false,

@@ -1,16 +1,6 @@
 // ignore_for_file: camel_case_types, unnecessary_null_comparison, library_private_types_in_public_api, empty_catches
 
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/api_helper.dart';
-import 'package:my_eco_print/controller/store._controller.dart';
 import 'package:my_eco_print/core/app_export.dart';
-import 'package:my_eco_print/data/module/offer.dart';
-
-
-
-import 'package:provider/provider.dart';
 
 class ClothesScreen extends StatefulWidget {
   final int? offerId;
@@ -31,7 +21,8 @@ class _ClothesScreenState extends State<ClothesScreen> {
     offerProvider = OfferProvider();
     fetchData();
   }
-final ApiHelper _apiHelper=ApiHelper();
+
+  final ApiHelper _apiHelper = ApiHelper();
   Future<void> fetchData() async {
     await offerProvider.fetchData(widget.storeId, widget.offerId);
 
@@ -47,152 +38,158 @@ final ApiHelper _apiHelper=ApiHelper();
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  final localization = AppLocalizationController.to;
-  final textDirection = localization.locale.languageCode == 'ar'
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
 
     return Directionality(
       textDirection: textDirection,
       child: ChangeNotifierProvider<OfferProvider>(
-    create: (context) => offerProvider,
-    child: Consumer<OfferProvider>(
-      builder: (context, offerProvider, child) {
-        if (offerProvider.offers.isEmpty) {
-          return const Center(
-            child: Text("No data available"),
-          );
-        }
+        create: (context) => offerProvider,
+        child: Consumer<OfferProvider>(
+          builder: (context, offerProvider, child) {
+            if (offerProvider.offers.isEmpty) {
+              return const Center(
+                child: Text("No data available"),
+              );
+            }
 
-        final offer = offerProvider.offers[0];
+            final offer = offerProvider.offers[0];
 
-        return Center(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20.v),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.h,
-                          vertical: 5.v,
-                        ),
-                        decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
-                          borderRadius: BorderRadiusStyle.roundedBorder24,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return Center(
+              child: Container(
+                margin: EdgeInsets.only(top: 20.v),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.h,
+                  vertical: 5.v,
+                ),
+                decoration: AppDecoration.outlineOnPrimaryContainer3.copyWith(
+                  borderRadius: BorderRadiusStyle.roundedBorder24,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 10),
-                                          child: SizedBox(
-                                            height: 40.adaptSize,
-                                            width: 40.adaptSize,
-                                            child: Container(
-                                              height: 40.adaptSize,
-                                              width: 40.adaptSize,
-                                              padding: EdgeInsets.all(5.h),
-                                              decoration: AppDecoration.fillGray.copyWith(
-                                                borderRadius: BorderRadiusStyle.roundedBorder17,
-                                              ),
-                                              child: Padding(
-                padding: const EdgeInsets.only(left: 8.0), 
-                child: FutureBuilder(
-  future: _apiHelper.getProfilePictureCompany(offer.companyId.toString()),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const CircularProgressIndicator();
-    } else if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else if (snapshot.hasData) {
-      Uint8List? imageData = snapshot.data;
-      if (imageData != null) {
-        return Image.memory(
-          imageData,
-          width: 150,
-          height: 150,
-          fit: BoxFit.cover,
-        );
-      } else {
-        // Handle the case when imageData is null
-        return const Text('No image available');
-      }
-    } else {
-      return const CircularProgressIndicator();
-    }
-  },
-),
-
-              ),
-
-
-                                            ),
-                                          ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 10.v),
+                                  child: SizedBox(
+                                    height: 40.v,
+                                    width: 40.v,
+                                    child: Container(
+                                      height: 40.v,
+                                      width: 40.v,
+                                      padding: EdgeInsets.all(5.h),
+                                      decoration:
+                                          AppDecoration.fillGray.copyWith(
+                                        borderRadius:
+                                            BorderRadiusStyle.roundedBorder17,
+                                      ),
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: FutureBuilder(
+                                          future: _apiHelper
+                                              .getProfilePictureCompany(
+                                                  offer.companyId.toString()),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const CircularProgressIndicator();
+                                            } else if (snapshot.hasError) {
+                                              return Text(
+                                                  'Error: ${snapshot.error}');
+                                            } else if (snapshot.hasData) {
+                                              Uint8List? imageData =
+                                                  snapshot.data;
+                                              if (imageData != null) {
+                                                return Image.memory(
+                                                  imageData,
+                                                  width: 150.h,
+                                                  height: 150.v,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              } else {
+                                                // Handle the case when imageData is null
+                                                return const Text(
+                                                    'No image available');
+                                              }
+                                            } else {
+                                              return const CircularProgressIndicator();
+                                            }
+                                          },
                                         ),
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left: 40, bottom: 40),
-                                            child: Flex(
-                                              direction:  Axis.horizontal,
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    '${offer.numberDiscount.toString()}%',
-                                                    style: theme.textTheme.headlineSmall,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 40, bottom: 40),
+                                    child: Flex(
+                                      direction: Axis.horizontal,
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            '${offer.numberDiscount.toString()}%',
+                                            style:
+                                                theme.textTheme.headlineSmall,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                            Text(
-                              offer.offerDescription != null ? offer.offerDescription.toString() : 'No description available',
-                              style: theme.textTheme.labelMedium,
-                              textAlign: TextAlign.center,
-                            ),
-                            if (offer.numberPoint != null)
-                              Expanded(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topLeft,
-                                      child: paint(
-                                        textDirection: textDirection,
-                                        additionalText: offer.numberPoint.toString(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
                           ],
                         ),
                       ),
-                    );
-      },
-    ),
-      )  );
-}
-
-
-
-     
+                    ),
+                    Text(
+                      offer.offerDescription != null
+                          ? offer.offerDescription.toString()
+                          : 'No description available',
+                      style: theme.textTheme.labelMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    if (offer.numberPoint != null)
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: paint(
+                                textDirection: textDirection,
+                                additionalText: offer.numberPoint.toString(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
-
-
+}
 
 class OfferProvider with ChangeNotifier {
   List<Offer> _offers = [];
@@ -200,158 +197,20 @@ class OfferProvider with ChangeNotifier {
   List<Offer> get offers => _offers;
 
   Future<void> fetchData(int? storeId, int? offerId) async {
-  if (storeId == null || offerId == null) {
-    if (kDebugMode) {
-      print('Error: storeId or offerId is null');
-    }
-    return;
-  }
-
-  try {
-    if (kDebugMode) {
-      print('storeId: $storeId, offerId: $offerId');
-    }
-    _offers = await StoreController().getOfferByStoreAndOfferId(storeId, offerId);
-    notifyListeners();
-  } catch (e) {
-   
-  }
-}
-
-}
-
-
-class paint extends StatelessWidget {
-  final TextDirection textDirection;
-  final String additionalText; 
-
-  const paint({
-    Key? key,
-    required this.textDirection,
-    required this.additionalText, 
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: SizedBox(
-        height: 47.v,
-        width: 40.h,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Align(
-              alignment: textDirection == TextDirection.rtl
-                  ? Alignment.topLeft
-                  : Alignment.topRight,
-              child: SizedBox(
-                height: 47,
-                width: 40,
-                child: OverflowBox(
-                  maxHeight: double.infinity,
-                  maxWidth: double.infinity,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 50.v,
-                    ),
-                    child: CustomPaint(
-                      painter: MyPainter(textDirection: textDirection),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                         
-                          Padding(
-                            padding: EdgeInsets.only(right: 2.h),
-                            child: Text(
-                              additionalText,
-                              style: CustomTextStyles.titleMediumWhiteA700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-class MyPainter extends CustomPainter {
-  final TextDirection textDirection;
-
-  MyPainter({required this.textDirection});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-    Path path = Path();
-    paint.color = const Color(0xff99CA3C);
-    path = Path();
-
-    if (textDirection == TextDirection.ltr) {
-      // English text direction, align the shape to the left
-      path.lineTo(size.width * 0.78, 0);
-      path.cubicTo(
-          size.width * 0.78, 0, size.width * 0.22, 0, size.width * 0.22, 0);
-      path.cubicTo(
-          size.width * 0.1, 0, 0, size.height * 0.09, 0, size.height * 0.19);
-      path.cubicTo(
-          0, size.height * 0.19, 0, size.height * 0.9, 0, size.height * 0.9);
-      path.cubicTo(0, size.height, size.width * 0.07, size.height * 1.03,
-          size.width * 0.16, size.height * 0.98);
-      path.cubicTo(size.width * 0.16, size.height * 0.98, size.width * 0.45,
-          size.height * 0.85, size.width * 0.45, size.height * 0.85);
-      path.cubicTo(size.width * 0.48, size.height * 0.83, size.width * 0.52,
-          size.height * 0.83, size.width * 0.55, size.height * 0.85);
-      path.cubicTo(size.width * 0.55, size.height * 0.85, size.width * 0.83,
-          size.height * 0.98, size.width * 0.83, size.height * 0.98);
-      path.cubicTo(size.width * 0.93, size.height * 1.03, size.width,
-          size.height, size.width, size.height * 0.9);
-      path.cubicTo(size.width, size.height * 0.9, size.width,
-          size.height * 0.19, size.width, size.height * 0.19);
-      path.cubicTo(size.width, size.height * 0.09, size.width * 0.9, 0,
-          size.width * 0.78, 0);
-    } else {
-      path.lineTo(size.width * 0.22, 0);
-      path.cubicTo(
-          size.width * 0.22, 0, size.width * 0.78, 0, size.width * 0.78, 0);
-      path.cubicTo(size.width * 0.83, 0, size.width, size.height * 0.09,
-          size.width, size.height * 0.19);
-      path.cubicTo(size.width, size.height * 0.19, size.width,
-          size.height * 0.9, size.width, size.height * 0.9);
-      path.cubicTo(size.width, size.height, size.width * 0.93,
-          size.height * 1.03, size.width * 0.83, size.height * 0.98);
-      path.cubicTo(size.width * 0.83, size.height * 0.98, size.width * 0.55,
-          size.height * 0.85, size.width * 0.55, size.height * 0.85);
-      path.cubicTo(size.width * 0.52, size.height * 0.83, size.width * 0.48,
-          size.height * 0.83, size.width * 0.45, size.height * 0.85);
-      path.cubicTo(size.width * 0.45, size.height * 0.85, size.width * 0.16,
-          size.height * 0.98, size.width * 0.16, size.height * 0.98);
-      path.cubicTo(size.width * 0.07, size.height * 1.03, 0, size.height, 0,
-          size.height * 0.9);
-      path.cubicTo(
-          0, size.height * 0.9, 0, size.height * 0.19, 0, size.height * 0.19);
-      path.cubicTo(
-          0, size.height * 0.09, size.width * 0.1, 0, size.width * 0.22, 0);
+    if (storeId == null || offerId == null) {
+      if (kDebugMode) {
+        print('Error: storeId or offerId is null');
+      }
+      return;
     }
 
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
+    try {
+      if (kDebugMode) {
+        print('storeId: $storeId, offerId: $offerId');
+      }
+      _offers =
+          await StoreController().getOfferByStoreAndOfferId(storeId, offerId);
+      notifyListeners();
+    } catch (e) {}
   }
 }
-
-
-
-
-

@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/controller/challenge.dart';
+
 
 import 'package:loyalty_app/core/app_export.dart';
-import 'package:loyalty_app/model/user_challenge.dart';
-import 'package:loyalty_app/widgets/custom_elevated_button.dart';
-import 'package:loyalty_app/widgets/custom_image_view.dart';
-
 class ChallengePage extends StatelessWidget {
   const ChallengePage({Key? key}) : super(key: key);
 

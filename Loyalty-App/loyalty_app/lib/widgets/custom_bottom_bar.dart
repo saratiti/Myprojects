@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 import 'package:loyalty_app/core/app_export.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

@@ -54,6 +54,7 @@ tableName: 'orders',
 
 });
 
-Order.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
+
+Order.belongsTo(User, { foreignKey: 'user_id', as: 'users', key: 'id', onDelete: 'CASCADE' });
 
 module.exports = Order;

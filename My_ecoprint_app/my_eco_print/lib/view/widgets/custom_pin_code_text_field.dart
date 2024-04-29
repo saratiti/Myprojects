@@ -1,8 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class CustomPinCodeTextField extends StatelessWidget {
@@ -20,7 +17,7 @@ class CustomPinCodeTextField extends StatelessWidget {
   }) : super(
           key: key,
         );
-final Function(String) onPinFilled;
+  final Function(String) onPinFilled;
   final Alignment? alignment;
 
   final EdgeInsetsGeometry? margin;
@@ -52,7 +49,7 @@ final Function(String) onPinFilled;
         child: PinCodeTextField(
           appContext: context,
           controller: controller,
-          length:6,
+          length: 6,
           keyboardType: TextInputType.number,
           textStyle: textStyle,
           hintStyle: hintStyle,
@@ -72,7 +69,7 @@ final Function(String) onPinFilled;
             selectedColor: Colors.transparent,
           ),
           onChanged: (value) => onChanged(value),
-         onCompleted: (pin) {
+          onCompleted: (pin) {
             // Trigger the callback when the PIN code is filled
             onPinFilled(pin);
           },
