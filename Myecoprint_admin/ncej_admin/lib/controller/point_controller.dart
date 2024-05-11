@@ -2,9 +2,7 @@
 // ignore_for_file: avoid_print, non_constant_identifier_names, unused_local_variable
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:ncej_admin/data/module/point.dart';
-import 'package:ncej_admin/data/module/transaction.dart';
 
 
 import 'api_helper.dart';

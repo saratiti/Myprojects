@@ -1,10 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
 
-
-
-
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 EasyLoading.instance
@@ -31,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ProductProvider()),
-       
+        
          
       ],
       child:

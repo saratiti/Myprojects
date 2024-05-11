@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
@@ -41,10 +42,10 @@ class ProductReview extends StatelessWidget {
                 'Rating: ${review.rating.toStringAsFixed(1)}',
                 style: const TextStyle(fontWeight: FontWeight.w200),
               ),
-              // Text(
-              //   'By: ${review.user?.username?? 'Unknown User'}',
-              //   style: const TextStyle(fontWeight: FontWeight.bold),
-              // ),
+              Text(
+                'By: ${review.user?.fullName?? 'Unknown User'}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
           const SizedBox(height: 5),

@@ -1,5 +1,7 @@
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
 
 
 
@@ -12,7 +14,15 @@ class SliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+         mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child:Align(
       alignment: Alignment.center,
       child: 
       
@@ -25,6 +35,6 @@ class SliderWidget extends StatelessWidget {
           15.h,
         ),
       ),
-    );
+   ) );
   }
 }

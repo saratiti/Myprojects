@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable, constant_identifier_names
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 class CustomBottomBar extends StatefulWidget {

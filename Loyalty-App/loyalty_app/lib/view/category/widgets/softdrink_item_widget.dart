@@ -1,31 +1,33 @@
-// ignore_for_file: library_private_types_in_public_api, must_be_immutable
 
-
-import 'package:flutter/material.dart';
 
 import 'package:loyalty_app/core/app_export.dart';
-
-
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 class SoftdrinkItemWidget extends StatelessWidget {
   final List<Catalog> categories;
   final int? selectedCategoryId;
   final Function(int) onSelectCategory;
 
-  SoftdrinkItemWidget({super.key, 
+  SoftdrinkItemWidget({
+    Key? key,
     required this.categories,
     required this.selectedCategoryId,
     required this.onSelectCategory,
-  });
-  Map<int, String> categoryImageMap = {
-    1: "assets/images/img_rectangle_39.png",
-    2: "assets/images/img_rectangle_44.png",
-    3: "assets/images/img_rectangle_24.png",
-    
-  };
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    final localization = AppLocalizationController.to;
+    final isEnglish = localization.locale.languageCode == 'en';
+      mediaQueryData = MediaQuery.of(context);
+  
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,34 +52,13 @@ class SoftdrinkItemWidget extends StatelessWidget {
                       decoration: AppDecoration.outlineBlueGrayAd.copyWith(
                         borderRadius: BorderRadiusStyle.roundedBorder24,
                       ),
-//                     child: Row(
-//   children: [
-//     for (var category in categories)
-//       Expanded(
-//         child: ClipRRect(
-//           borderRadius: const BorderRadius.horizontal(left: Radius.circular(6)),
-//           child: Image.memory(
-//             category.imageBytesList as Uint8List,
-//             width: 100,
-//             height: 100,
-//             fit: BoxFit.cover,
-//             errorBuilder: (context, error, stackTrace) {
-//               return const Text('Error loading image');
-//             },
-//           ),
-//         ),
-//       ),
-//   ],
-// ),
-
-
                     ),
                     SizedBox(height: 20.v),
                     Padding(
                       padding: const EdgeInsets.only(left: 30, right: 30, top: 10),
                       child: Center(
                         child: Text(
-                          category.nameEnglish,
+                          isEnglish ? category.nameEnglish.localized : category.nameArabic.localized,
                           style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
                             color: appTheme.blueGray90001,
                           ),
@@ -90,7 +71,6 @@ class SoftdrinkItemWidget extends StatelessWidget {
             ),
         ],
       ),
-    );
+   ) );
   }
 }
-

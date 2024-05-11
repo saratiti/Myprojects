@@ -46,7 +46,7 @@ tableName: 'order_products',
 
 });
 
-OrderProduct.belongsTo(Order, { foreignKey: 'order_id', as: 'orders', onDelete: 'CASCADE' });
-OrderProduct.belongsTo(Product, { foreignKey: 'product_id', as: 'products', onDelete: 'CASCADE' });
+OrderProduct.belongsTo(Order, { foreignKey: 'order_id', as: 'orders',key: 'order_id', onDelete: 'CASCADE' });
+OrderProduct.belongsTo(Product, { foreignKey: 'product_id', as: 'products',key: 'id', onDelete: 'CASCADE' });
 
 module.exports = OrderProduct;

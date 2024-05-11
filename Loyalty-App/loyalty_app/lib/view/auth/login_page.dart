@@ -1,12 +1,10 @@
-
-
-
 // ignore_for_file: library_private_types_in_public_api, unnecessary_string_interpolations, use_build_context_synchronously
 
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/core/app_export.dart';
 
+import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -14,12 +12,31 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-   TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
- GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
-
+class _LoginPageState extends State<LoginPage> {
+    late TextEditingController emailController;
+  late TextEditingController passwordController;
+  GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  late FocusNode _emailFocusNode;
+  late FocusNode _passwordFocusNode;
   bool _obscureText = true;
 
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    _emailFocusNode = FocusNode();
+    _passwordFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
   void _handleSignInAction(BuildContext context) async {
     EasyLoading.show(status: "Loading");
 
@@ -30,14 +47,14 @@ class LoginPage extends StatefulWidget {
         .login(enteredEmail, enteredPassword)
         .then((Login? value) async {
       EasyLoading.dismiss();
-      await const FlutterSecureStorage().write(key: "token", value: "${value!.accessToken}");
+      await const FlutterSecureStorage().write(
+          key: "token", value: "${value!.accessToken}");
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()), // Replace HomeScreen with your actual home screen widget
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
-    })
-    .catchError((ex) {
+    }).catchError((ex) {
       EasyLoading.dismiss();
 
       if (ex is SocketException) {
@@ -54,12 +71,17 @@ class LoginPage extends StatefulWidget {
     });
   }
 
-
-class _LoginPageState extends State<LoginPage> {
-  
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+      mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: SizedBox(
@@ -69,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
               bottom: MediaQuery.of(context).viewInsets.bottom,
             ),
             child: Form(
-              key:_loginFormKey,
+              key: _loginFormKey,
               child: Container(
                 width: double.maxFinite,
                 padding: EdgeInsets.symmetric(
@@ -112,7 +134,6 @@ class _LoginPageState extends State<LoginPage> {
                                         style: CustomTextStyles.titleMediumMulishffd1512d,
                                       ),
                                       SizedBox(height: 22.v),
-                                     
                                     ],
                                   ),
                                 ),
@@ -126,28 +147,37 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 29.v),
                       _buildPassword(context),
                       SizedBox(height: 31.v),
-                     Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector( // Wrap the text with GestureDetector
-                          onTap: () {
-                            Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => ResetPassowrdEmailScreen(),
- 
-  ),
-);
+                       
 
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 39.h),
-                            child: Text(
-                              "Forgot your password?",
-                              style: CustomTextStyles.titleMediumMulishffd1512d,
-                            ),
-                          ),
-                        ),
-                      ),
+Align(
+  alignment: localization.locale.languageCode == 'ar'
+      ? Alignment.centerRight 
+      : Alignment.centerLeft,
+  child: GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResetPassowrdEmailScreen(),
+        ),
+      );
+    },
+    child: Padding(
+      padding: EdgeInsets.only(
+      
+        right: localization.locale.languageCode == 'en' ? 40.h : 20.h,
+        left: localization.locale.languageCode == 'ar' ? 40.h : 20.h,
+      ),
+      child: Text(
+        "msg5".localized,
+        style: CustomTextStyles.titleMediumMulishffd1512d,
+        textDirection: TextDirection.ltr, 
+      ),
+    ),
+  ),
+),
+
+
                       SizedBox(height: 28.v),
                       _buildSignIn(context),
                       SizedBox(height: 30.v),
@@ -217,98 +247,144 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                       SizedBox(height: 20.v),
+                       _buildLanguageSwitchButton(localization),
                     ],
                   ),
                 ),
+               
               ),
             ),
           ),
         ),
       ),
+  ));
+  }
+
+
+  Widget _buildEmail(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 32.h,
+        right: 39.h,
+      ),
+      child: CustomTextFormField(
+        controller: emailController,
+         focusNode: _emailFocusNode,
+        hintText:"msg2".localized,
+        textInputType: TextInputType.emailAddress,
+        prefix: const Icon(Icons.email,color: Colors.grey,), 
+        cursorColor:appTheme.deepOrange800
+      ),
     );
   }
 
-  /// Section Widget
-Widget _buildEmail(BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.only(
-      left: 32.h,
-      right: 39.h,
-    ),
-    child: CustomTextFormField(
-      controller: emailController,
-      hintText: "Email",
-      textInputType: TextInputType.emailAddress,
-      prefix: const Icon(Icons.email,color: Colors.grey,), 
-    ),
-  );
-}
-
-/// Section Widget
-Widget _buildPassword(BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.only(
-      left: 32.h,
-      right: 39.h,
-    ),
-    child: CustomTextFormField(
-      controller: passwordController,
-      hintText: "Password",
-      textInputAction: TextInputAction.done,
-      textInputType: TextInputType.visiblePassword,
-      obscureText: _obscureText, 
-      prefix: IconButton(
-        icon: Icon(
-          _obscureText ? Icons.visibility_off : Icons.visibility,
-          color: Colors.grey,
+ 
+  Widget _buildPassword(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 32.h,
+        right: 39.h,
+      ),
+      child: CustomTextFormField(
+        controller: passwordController,
+         focusNode: _passwordFocusNode,
+        hintText: "lbl2".localized,
+        textInputAction: TextInputAction.done,
+        textInputType: TextInputType.visiblePassword,
+        obscureText: _obscureText, 
+        cursorColor:appTheme.deepOrange800,
+        prefix: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
         ),
-        onPressed: () {
-          setState(() {
-            _obscureText = !_obscureText;
-          });
-        },
+      ),
+    );
+  }
+
+  Widget _buildSignIn(BuildContext context) {
+    return CustomElevatedButton(
+      onPressed: () {
+        _handleSignInAction(context);
+      },
+      height: 60.v,
+      text: "lbl3".localized,
+      margin: EdgeInsets.only(
+        left: 32.h,
+        right: 39.h,
+      ),
+      buttonStyle: CustomButtonStyles.outlineBlue,
+      buttonTextStyle: CustomTextStyles.titleLargeWhiteA700,
+    );
+  }
+
+  Widget _buildCreateNewAccount(BuildContext context) {
+    return CustomElevatedButton(
+      height: 41.v,
+      text: "lbl4".localized,
+      margin: EdgeInsets.only(
+        left: 32.h,
+        right: 39.h,
+      ),
+      buttonStyle: CustomButtonStyles.fillWhiteA,
+      buttonTextStyle: CustomTextStyles.titleSmallPoppinsGray800,
+      onPressed: () {
+      
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RegisterPage()),
+        );
+      },
+    );
+  }
+Widget _buildLanguageSwitchButton(AppLocalizationController? localization) {
+    final textDirection = localization!.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+    child:Padding(
+    padding: const EdgeInsets.only( bottom: 20, left: 15),
+    child: Align(
+      alignment: Alignment.bottomLeft,
+      child: SizedBox(
+        width: 40,
+        height: 40,
+        child: FloatingActionButton(
+          onPressed: () {
+            final localization = AppLocalizationController.to;
+            if (localization.locale.languageCode == 'en') {
+              localization.locale = const Locale('ar');
+            } else {
+              localization.locale = const Locale('en');
+            }
+            setState(() {});
+          },
+          backgroundColor: appTheme.deepOrange800, // Set background color
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            textDirection: localization?.locale.languageCode == 'ar'
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            children:  [
+              Icon(
+                Icons.language,
+                color: appTheme.whiteA700,
+                size: 25,
+              ),
+            ],
+          ),
+        ),
       ),
     ),
-  );
+   ) );
 }
 
-
- 
-Widget _buildSignIn(BuildContext context) {
-  return CustomElevatedButton(
-    onPressed: () {
-      _handleSignInAction(context);
-     
-    },
-    height: 60.v,
-    text: "Sign in",
-    margin: EdgeInsets.only(
-      left: 32.h,
-      right: 39.h,
-    ),
-    buttonStyle: CustomButtonStyles.outlineBlue,
-    buttonTextStyle: CustomTextStyles.titleLargeWhiteA700,
-  );
-}
-
-
-Widget _buildCreateNewAccount(BuildContext context) {
-  return CustomElevatedButton(
-    height: 41.v,
-    text: "Create new account",
-    margin: EdgeInsets.only(
-      left: 32.h,
-      right: 39.h,
-    ),
-    buttonStyle: CustomButtonStyles.fillWhiteA,
-    buttonTextStyle: CustomTextStyles.titleSmallPoppinsGray800,
-    onPressed: () {
-      // Navigate to the register page
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const RegisterPage()),
-      );
-    },
-  );
-}
 }

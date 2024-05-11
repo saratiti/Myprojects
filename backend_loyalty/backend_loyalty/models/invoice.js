@@ -46,7 +46,7 @@ const Invoice = sequelize.define('Invoice', {
   tableName: 'invoices',
   
   });
-  Invoice.belongsTo(Order, { foreignKey: 'order_id', as: 'orders', onDelete: 'CASCADE' });
-Invoice.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
+  Invoice.belongsTo(Order, { foreignKey: 'order_id', as: 'orders',key: 'order_id', onDelete: 'CASCADE' });
+  Invoice.belongsTo(User, { foreignKey: 'user_id', as: 'users',key: 'id', onDelete: 'CASCADE' });
 
 module.exports = Invoice;

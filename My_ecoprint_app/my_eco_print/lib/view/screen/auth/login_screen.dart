@@ -508,7 +508,7 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
         alignment: Alignment.bottomLeft,
         child:
          SizedBox(
-        width: 40, // Adjust the width of the button
+        width: 40, 
         height: 40,
         
        child:  FloatingActionButton(

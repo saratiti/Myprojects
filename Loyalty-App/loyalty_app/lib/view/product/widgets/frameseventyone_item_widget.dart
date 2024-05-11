@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
 
 // ignore: must_be_immutable
 class FrameseventyoneItemWidget extends StatefulWidget {
@@ -16,7 +17,15 @@ class _FrameseventyoneItemWidgetState extends State<FrameseventyoneItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+         mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: GestureDetector(
       onTap: () {
         setState(() {
           isSelected = !isSelected;
@@ -41,6 +50,6 @@ class _FrameseventyoneItemWidgetState extends State<FrameseventyoneItemWidget> {
           ),
         ),
       ),
-    );
+   ) );
   }
 }

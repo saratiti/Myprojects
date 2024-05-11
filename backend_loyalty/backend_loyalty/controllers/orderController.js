@@ -2,19 +2,34 @@
 const Order = require('../models/order');
 const OrderProduct = require('../models/orderProduct');
 const Invoice=require('../models/invoice');
-exports.getOrder = async (req, res) => {
+const User=require('../models/user');
+const Product=require('../models/product');
+
+
+exports.getAllorder = async (req, res) => {
   try {
-    const user = req.user;
-    const orders = await Order.query()
-      .where('user_id', user.id)
-      .with('order_products', (query) => {
-        query.with('product');
-      })
-      .orderBy('created_at', 'desc');
-    return res.status(200).json({ data: orders });
+
+
+    const orders = await Order.findAll();
+
+   
+    const orderIds = orders.map(order => order.order_id);
+
+    const orderProducts = await OrderProduct.findAll({
+      where: { order_id: orderIds },
+      include: { model: Product, as: 'products' }, 
+    });
+
+
+    const responseData = orders.map(order => {
+      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.order_id);
+      return { ...order.toJSON(), orderProducts: associatedOrderProducts };
+    });
+
+    return res.status(200).json({ data: responseData });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Failed to retrieve orders' });
+    return res.status(500).json({ error: 'Failed to retrieve order products' });
   }
 };
 
@@ -86,25 +101,113 @@ exports.create = async (req, res) => {
   }
 };
 
-
-
 exports.destroy = async (req, res) => {
   try {
-    const user = req.user; 
-    const orderId = req.params.id;
+    const userId = req.user_id;
+    const orderId = req.params.orderId;
 
-    let order = await Order.find(orderId);
-
+    let order = await Order.findOne({
+      where: { order_id: orderId },
+    });
     if (!order) {
-      throw new Error('The Order does not exist.');
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found.',
+      });
     }
 
-    if (order.userId !== user.id) {
-      throw new Error('Unauthorized');
+    if (order.user_id !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized to delete this order.',
+      });
     }
 
-    await OrderProduct.query().where('order_id', order.id).delete();
-    await order.delete();
+    try {
+      
+      await OrderProduct.destroy({ where: { order_id: orderId } });
+
+  
+      await Invoice.destroy({ where: { order_id: orderId } });
+
+     
+      await order.destroy();
+    } catch (error) {
+      console.error('Error deleting related records:', error);
+      return res.status(500).json({ message: 'Failed to delete order and related records.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: [],
+      message: 'Order deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+exports.getAllorderProductByUserId = async (req, res) => {
+  try {
+    const userId = req.user_id;
+
+    const orders = await Order.findAll({ where: { user_id: userId } });
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ error: 'No orders found for the user' });
+    }
+
+    const orderIds = orders.map(order => order.order_id);
+
+    const orderProducts = await OrderProduct.findAll({
+      where: { order_id: orderIds },
+      include: { model: Product, as: 'products' }, 
+    });
+
+
+    const responseData = orders.map(order => {
+      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.order_id);
+      return { ...order.toJSON(), orderProducts: associatedOrderProducts };
+    });
+
+    return res.status(200).json({ data: responseData });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to retrieve order products' });
+  }
+};
+
+
+
+exports.destroyOrderCashier = async (req, res) => {
+  try {
+  
+    const orderId = req.params.orderId;
+
+    let order = await Order.findOne({
+      where: { order_id: orderId },
+    });
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found.',
+      });
+    }
+
+    try {
+      
+      await OrderProduct.destroy({ where: { order_id: orderId } });
+
+  
+      await Invoice.destroy({ where: { order_id: orderId } });
+
+     
+      await order.destroy();
+    } catch (error) {
+      console.error('Error deleting related records:', error);
+      return res.status(500).json({ message: 'Failed to delete order and related records.' });
+    }
 
     return res.status(200).json({
       success: true,

@@ -1,9 +1,10 @@
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 
 class PointsItemWidget extends StatelessWidget {
-  final Transaction transaction; // Define a named parameter for the Transaction object
+  final Transaction transaction; 
   const PointsItemWidget({Key? key, required this.transaction}) : super(key: key);
 
   @override
@@ -45,13 +46,13 @@ class PointsItemWidget extends StatelessWidget {
                           Padding(
                             padding: EdgeInsets.only(left: 4.h),
                             child: Text(
-                              transaction.transactionType, // Access properties of the Transaction object
+                              transaction.transactionType,
                               style: CustomTextStyles.labelLargeBlack900,
                             ),
                           ),
                           SizedBox(height: 14.v),
                           Text(
-                            "You just earned ${transaction.points} points!", // Access properties of the Transaction object
+                            "You just earned ${transaction.points} points!",
                             style: CustomTextStyles.labelLargeGray600,
                           ),
                         ],
@@ -66,7 +67,7 @@ class PointsItemWidget extends StatelessWidget {
               right: 0,
               child: CustomElevatedButton(
                 width: 160.h,
-                text: "+${transaction.points} points", // Access properties of the Transaction object
+                text: "+${transaction.points} points", 
                 alignment: Alignment.topRight,
               ),
             ),

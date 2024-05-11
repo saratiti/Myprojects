@@ -5,16 +5,16 @@ const sequelize = require('../config/database');
 const Category = require('./Category');
 
 const Product = sequelize.define('Product', {
-  product_id: {
+  id: {
     type: DataTypes.BIGINT,
     primaryKey: true,
     autoIncrement: true
   },
-  name_arabic: {
+  name_ar: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  name_english: {
+  name_eng: {
     type: DataTypes.STRING,
     allowNull: true,
   },

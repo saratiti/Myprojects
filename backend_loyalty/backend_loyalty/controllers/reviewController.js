@@ -41,11 +41,12 @@ exports.getTopRatedProducts = async (req, res) => {
       order: [[sequelize.literal('averageRating'), 'DESC']],
       limit: 10
     });
+    
 
     const productIds = topProducts.map(item => item.product_id);
 
     const products = await Product.findAll({
-      where: { product_id: { [sequelize.Op.in]: productIds } }
+      where: { id: { [sequelize.Op.in]: productIds } }
     });
 
     return res.status(200).json(products);
@@ -58,13 +59,13 @@ exports.getTopRatedProducts = async (req, res) => {
 
 exports.getProductReviews = async (req, res) => {
   try {
-    const product = await Product.findOne({ where: { product_id: req.params.id } }); 
+    const product = await Product.findOne({ where: { id: req.params.id } }); // Use `id` instead of `product_id`
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
     const reviews = await Review.findAll({ 
-      where: { product_id: product.product_id },
+      where: { product_id: product.id }, // Use `product.id` instead of `product.product_id`
       include: [{ model: User, as: 'users' }]
     });
 

@@ -1,7 +1,10 @@
 // ignore_for_file: must_be_immutable
 
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:share/share.dart';
 
 
 
@@ -13,7 +16,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+        mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child:SafeArea(
       child: Scaffold(
         backgroundColor: appTheme.gray100,
         body: SingleChildScrollView(
@@ -85,7 +96,7 @@ class HomePage extends StatelessWidget {
         ),
         bottomNavigationBar: CustomBottomBar(onChanged: (selectedType) => handleBottomNavChange(context, selectedType)),
       ),
-    );
+  ));
   }
 
 Widget _buildAppBar(BuildContext context) {
@@ -326,8 +337,8 @@ Widget _buildAppBar(BuildContext context) {
               icon: Icons.group,
               text: 'Invite Persons',
               onTap: () {
-                 Navigator.pushNamed(context, AppRoutes.inviteFriendsScreen);
-              },
+            _shareInviteLink(context);
+          },
             ),
           ],
         ),
@@ -418,5 +429,11 @@ Widget _buildAppBar(BuildContext context) {
 
   void navigateToOrderScreen(BuildContext context) {
     Navigator.of(context).pushNamed(AppRoutes.orderScreen);
+  }
+    void _shareInviteLink(BuildContext context) {
+
+    final String text = 'https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en_US';
+
+    Share.share(text);
   }
 }

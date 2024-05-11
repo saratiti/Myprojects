@@ -1,15 +1,15 @@
-
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 class TransactionPage extends StatelessWidget {
   final TransactionController _transactionController = TransactionController();
 
-  TransactionPage({super.key}); 
+  TransactionPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Transaction>>(
-      future: _transactionController.getAllTransactions(), // Use the method from your TransactionController to fetch transactions
+      future: _transactionController.getAllTransactions(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -17,25 +17,20 @@ class TransactionPage extends StatelessWidget {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           List<Transaction> transactions = snapshot.data ?? [];
-          return Container(
-            constraints: const BoxConstraints(maxHeight: 900),
+          return SingleChildScrollView(
+            physics: ClampingScrollPhysics(), // Limit the scrollable area
             child: Column(
+              mainAxisSize: MainAxisSize.min, // Limit the scrollable area
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                    left: 16.h,
-                    right: 73.h,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 16.h),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 1.v),
-                        child: Text(
-                          "Today",
-                          style: CustomTextStyles.labelLargeGray600,
-                        ),
+                      Text(
+                        "Today",
+                        style: CustomTextStyles.labelLargeGray600,
                       ),
                       Text(
                         "Clear All",
@@ -55,7 +50,7 @@ class TransactionPage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 5.v),
-               // _buildPoints1(context, transactions),
+                // _buildPoints1(context, transactions),
               ],
             ),
           );
@@ -65,28 +60,16 @@ class TransactionPage extends StatelessWidget {
   }
 
   Widget _buildPoints(BuildContext context, List<Transaction> transactions) {
-    return Align(
-      alignment: Alignment.center,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 15.h),
-        child: ListView.separated(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          separatorBuilder: (
-            context,
-            index,
-          ) {
-            return SizedBox(
-              height: 42.v,
-            );
-          },
-          itemCount: transactions.length,
-          itemBuilder: (context, index) {
-            return PointsItemWidget(transaction: transactions[index]);
-          },
-        ),
-      ),
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      separatorBuilder: (context, index) {
+        return SizedBox(height: 42.v);
+      },
+      itemCount: transactions.length,
+      itemBuilder: (context, index) {
+        return PointsItemWidget(transaction: transactions[index]);
+      },
     );
   }
-
 }

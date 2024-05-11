@@ -15,11 +15,9 @@ Future<Map<String, dynamic>> getProductWithOptionalMenu(int productId) async {
 
     if (response != null) {
       final Map<String, dynamic> parsed = response;
-
-      // Check if the parsed response contains the expected fields
       if (parsed.containsKey('product') && parsed.containsKey('optionalMenuItems')) {
         final Product product = Product.fromJson(parsed['product']);
-        final List<OptionalMenu> optionalMenuItems = List<OptionalMenu>.from(parsed['optionalMenuItems'].map((item) => OptionalMenu.fromJson(item['options']))); // Updated
+        final List<OptionalMenu> optionalMenuItems = List<OptionalMenu>.from(parsed['optionalMenuItems'].map((item) => OptionalMenu.fromJson(item['options']))); 
 
         return {
           'product': product,

@@ -25,8 +25,8 @@ class Catalog {
       categoryId: json["id"] as int? ?? 0,
       nameEnglish: json["name_english"] ?? "",
       nameArabic: json["name_arabic"] ?? "",
-     // logo: json["image"] as String?,
-      logo: json["logo"] as String?,
+      logo: json["image"] as String?,
+      
     );
   }
 }

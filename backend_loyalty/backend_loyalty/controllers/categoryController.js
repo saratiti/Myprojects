@@ -75,17 +75,17 @@ exports.getCategoryImages = async (req, res) => {
       const category = categories[i];
       const imagePath = category.image;
 
-      console.log(`Checking image path: ${imagePath}`); // Debug print
+      console.log(`Checking image path: ${imagePath}`); 
 
       if (!imagePath || !fs.existsSync(imagePath)) {
-        console.log(`Image not found: ${imagePath}`); // Debug print
+        console.log(`Image not found: ${imagePath}`); 
         continue;
       }
 
       const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
       const ext = path.extname(imagePath).toLowerCase();
       if (!imageExtensions.includes(ext)) {
-        console.log(`Skipping non-image file: ${imagePath}`); // Debug print
+        console.log(`Skipping non-image file: ${imagePath}`); 
         continue;
       }
 

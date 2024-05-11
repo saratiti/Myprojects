@@ -4,6 +4,7 @@
 
 
 import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 class ReceiptScannerPage extends StatefulWidget {

@@ -1,9 +1,9 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:loyalty_app/core/app_export.dart';
 
+import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 
 class Softdrink1ItemWidget extends StatefulWidget {
   final int categoryId;
@@ -39,8 +39,7 @@ class _Softdrink1ItemWidgetState extends State<Softdrink1ItemWidget> {
         _productsFuture = Future.value(products);
       });
     } else {
-      // Handle case where products list is empty
-      // You can display a message or take appropriate action
+     
     }
   } catch (ex) {
     if (kDebugMode) {
@@ -53,7 +52,17 @@ class _Softdrink1ItemWidgetState extends State<Softdrink1ItemWidget> {
 
    @override
 Widget build(BuildContext context) {
-  return FutureBuilder<List<Product>>(
+    final localization = AppLocalizationController.to;
+    final isEnglish = localization.locale.languageCode == 'en';
+      mediaQueryData = MediaQuery.of(context);
+  
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: FutureBuilder<List<Product>>(
     future: _productsFuture,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -82,10 +91,12 @@ Widget build(BuildContext context) {
 
       }
     },
-  );
+  ));
 }
 
  Widget _buildProduct(BuildContext context, Product product) {
+    final localization = AppLocalizationController.to;
+    final isEnglish = localization.locale.languageCode == 'en';
   return GestureDetector(
     onTap: () {
       _navigateToProductDetails(context, product.id);
@@ -121,14 +132,14 @@ Widget build(BuildContext context) {
                 children: [
                   const SizedBox(height: 39.0),
                   Text(
-                    product.nameEnglish ?? '', // Add null check here
+                     isEnglish ? product.nameEnglish.localized : product.nameArabic.localized,
                     style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
                       color: appTheme.blueGray90001,
                     ),
                   ),
                   const SizedBox(height: 5.0),
                   Text(
-                    product.description ?? '', // Add null check here
+                    product.description ?? '',
                     style: theme.textTheme.bodyMedium!.copyWith(
                       color: appTheme.blueGray600,
                     ),
@@ -141,7 +152,7 @@ Widget build(BuildContext context) {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         RatingBar.builder(
-                          initialRating: product.price ?? 0, // Add null check here
+                          initialRating: product.price,
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,

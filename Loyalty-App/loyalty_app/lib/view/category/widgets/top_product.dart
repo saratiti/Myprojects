@@ -1,9 +1,8 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
-
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 
 class TopRatedProducts extends StatefulWidget {
 
@@ -40,7 +39,15 @@ class _TopRatedProductsState extends State<TopRatedProducts> {
 
    @override
 Widget build(BuildContext context) {
-  return FutureBuilder<List<Product>>(
+       mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: FutureBuilder<List<Product>>(
     future: _productsFuture,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -69,10 +76,12 @@ Widget build(BuildContext context) {
 
       }
     },
-  );
+   ) );
 }
 
   Widget _buildProduct(BuildContext context, Product product) {
+                   final localization = AppLocalizationController.to;
+    final isEnglish = localization.locale.languageCode == 'en';
     return  GestureDetector(
     onTap: () {
       _navigateToProductDetails(context,product.id);
@@ -111,7 +120,7 @@ Widget build(BuildContext context) {
                 children: [
                   const SizedBox(height: 39.0),
                   Text(
-                    product.nameEnglish,
+                    isEnglish ? product.nameEnglish.localized : product.nameArabic.localized,
                     style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
                       color: appTheme.blueGray90001,
                     ),

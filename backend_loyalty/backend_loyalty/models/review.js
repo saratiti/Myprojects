@@ -46,7 +46,7 @@ const Review = sequelize.define('Review', {
   
   });
 
-Review.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
-Review.belongsTo(Product, { foreignKey: 'product_id', as: 'products', onDelete: 'CASCADE'  });
+Review.belongsTo(User, { foreignKey: 'user_id', as: 'users',key: 'id', onDelete: 'CASCADE' });
+Review.belongsTo(Product, { foreignKey: 'product_id', as: 'products',key: 'id', onDelete: 'CASCADE'  });
 
 module.exports = Review;

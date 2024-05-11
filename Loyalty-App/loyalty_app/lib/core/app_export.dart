@@ -1,3 +1,5 @@
+// ignore_for_file: duplicate_export
+
 export 'package:loyalty_app/core/utils/date_time_utils.dart';
 export 'package:loyalty_app/core/utils/image_constant.dart';
 export 'package:loyalty_app/core/utils/size_utils.dart';
@@ -38,8 +40,8 @@ export 'package:loyalty_app/core/app_export.dart';
 export 'package:barcode_widget/barcode_widget.dart';
 export 'package:loyalty_app/controller/user_profile_provider.dart';
 export 'package:loyalty_app/controller/order.dart';
-export 'package:flutter/material.dart';
 
+export 'package:flutter/foundation.dart';
 
 export 'package:get/get.dart';
 export 'package:intl/date_symbol_data_local.dart';
@@ -72,8 +74,8 @@ export 'package:smooth_page_indicator/smooth_page_indicator.dart';
 export 'package:loyalty_app/controller/invoice.dart';
 export 'package:loyalty_app/model/invoice.dart';
 export 'package:dotted_border/dotted_border.dart';
-export 'package:flutter/foundation.dart';
-export 'package:flutter/material.dart';
+
+
 export 'package:image_picker/image_picker.dart';
 export 'package:loyalty_app/controller/api_helper.dart';
 export 'package:loyalty_app/model/transaction.dart';

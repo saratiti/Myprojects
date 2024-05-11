@@ -6,14 +6,11 @@ import 'package:loyalty_app/controller/api_helper.dart';
 import 'package:loyalty_app/model/order.dart';
 
 
+
 class OrderController {
-
-
-
-
   Future<List<Order>> getUserOrders() async {
     try {
-      var result = await ApiHelper().getRequest("/api/orders");
+      var result = await ApiHelper().getRequest("/api/orders/orderByUser");
       List<dynamic> data = result['data'];
       List<Order> orders = data.map((item) => Order.fromJson(item)).toList();
       return orders;
@@ -58,6 +55,12 @@ Future<dynamic> deleteOrder(int orderId) async {
     rethrow;
   }
 }
+
+
+
+
+
+
 
 
 

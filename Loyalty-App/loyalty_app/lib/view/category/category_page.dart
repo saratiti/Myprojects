@@ -2,7 +2,8 @@
 // ignore_for_file: library_private_types_in_public_api, unnecessary_null_comparison
 
 import 'package:loyalty_app/core/app_export.dart';
-
+import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:flutter/material.dart';
 
 class CategoryPage extends StatefulWidget {
   const CategoryPage({Key? key}) : super(key: key);
@@ -45,13 +46,21 @@ class _CategoryPageState extends State<CategoryPage> {
   void onSelectCategory(int categoryId) {
     setState(() {
       _selectedCategoryId = categoryId;
-      showTopProducts = false; // Hide TopRatedProducts
+      showTopProducts = false; 
     });
   }
 
   @override
 Widget build(BuildContext context) {
-  return SafeArea(
+       mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: SafeArea(
     child: Scaffold(
       backgroundColor: appTheme.gray100,
       appBar: _buildAppBar(context),
@@ -78,7 +87,7 @@ Widget build(BuildContext context) {
         ),
       ),
     ),
-  );
+  ));
 }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {

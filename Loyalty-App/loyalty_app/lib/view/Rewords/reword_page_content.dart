@@ -4,6 +4,7 @@
 // ignore_for_file: must_be_immutable, unused_local_variable
 
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 

@@ -1,106 +1,223 @@
+
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/model/order.dart';
+import 'package:loyalty_app/model/order_product.dart';
 
-class OrderPage extends StatelessWidget {
-  const OrderPage({Key? key}) : super(key: key);
+
+class OrderPage extends StatefulWidget {
+  @override
+  _OrderPageState createState() => _OrderPageState();
+}
+
+class _OrderPageState extends State<OrderPage> {
+ List<Order> orders = [];
+  bool isLoading = false;
+  int? orderId;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchOrders();
+  }
+
+  Future<void> fetchOrders() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      List<Order> fetchedOrders = await OrderController().getUserOrders();
+      setState(() {
+        orders = fetchedOrders;
+      });
+    } catch (error) {
+      print('Error fetching orders: $error');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Failed to fetch orders. Please try again later.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+ Future<void> deleteOrder(int index) async {
+  try {
+    await OrderController().deleteOrder(orders[index].id!); 
+    setState(() {
+      orders.removeAt(index);
+    });
+    print('Order deleted successfully.');
+    
+    // Show success message in AlertDialog
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text('Order deleted successfully.',style: TextStyle(color:appTheme.deepOrange800),),
+        
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  } catch (error) {
+    print('Error deleting order: $error');
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('Failed to delete order. Please try again later.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Header Section
-            const Text(
-              'Your Order Details',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            
-            _buildOrderCard(),
-           
-         
-          ],
-        ),
-      ),
-    );
-  }
+    final screenSize = MediaQuery.of(context).size;
+    final availableHeight = screenSize.height - kToolbarHeight - 100;
 
-  Widget _buildOrderCard() {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return SafeArea(
+      child: Scaffold(
+        //backgroundColor: ColorConstant.whiteA700,
+        body: Column(
           children: [
-            const Text(
-              'Product Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Price: \$10.99',
-              style: TextStyle(fontSize: 16),
-            ),
-            const Text(
-              'Quantity: 1',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Implement logic to delete the order
-                  },
-                  icon: const Icon(Icons.delete),
-                  label: const Text('Delete'),
+   
+Expanded(
+  child: Padding(
+    padding: EdgeInsets.symmetric(horizontal: 20),
+    child: isLoading
+      ? Center(child: CircularProgressIndicator())
+      : orders.isEmpty
+        ? Center(child: Text('No Orders found'))
+        : ListView.builder(
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              Order order = orders[index];
+
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: SizedBox(
+                  height: 120,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    elevation: 2.0,
+                    child: ListTile(
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order #${order.id}',
+                            style: TextStyle(color: Colors.black), // Set text color to black
+                          ),
+                          SizedBox(height: 5),
+                          if (order.orderProducts != null) // Add null check
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: order.orderProducts!.length,
+                                itemBuilder: (context, productIndex) {
+                                  OrderProduct orderProduct = order.orderProducts![productIndex];
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '${orderProduct.product.nameEnglish}',
+                                        style: TextStyle(color: Colors.black), // Set text color to black
+                                      ),
+                                      Text(
+                                        '\$${orderProduct.price.toStringAsFixed(2)}',
+                                        style: TextStyle(color: Colors.black), // Set text color to black
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '\$${order.total_price.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black, // Set text color to black
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete_outline),
+                            color: Colors.black, // Set icon color to black
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Remove Order'),
+                                  content: Text('Are you sure you want to remove this order?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        deleteOrder(index);
+                                      },
+                                      child: Text('Remove'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              );
+            },
+          ),
+  ),
+),
+
+
           ],
         ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: AppBar(
-        elevation: 0,
-        leadingWidth: 40.0,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-          child: Container(
-            width: 40.0,
-            height: 40.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: appTheme.deepOrange800,
-            ),
-            child: const Center(
-              child: Icon(
-                Icons.arrow_back,
-                color: Colors.white,
-                size: 24,
-              ),
-            ),
-          ),
-        ),
-        title: const Text(
-          "My Orders",
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
       ),
     );
   }

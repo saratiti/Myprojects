@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-
+import 'package:flutter/material.dart';
 class PinCodePasswordScreen extends StatefulWidget {
   const PinCodePasswordScreen({Key? key}) : super(key: key);
 
@@ -135,6 +135,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                         CustomPinCodeTextField(
                                           controller: pinController,
                                           context: context,
+                                          cursorColor:appTheme.deepOrange800,
                                           margin: EdgeInsets.only(
                                             top: 41.v,
                                             right: 1.h,

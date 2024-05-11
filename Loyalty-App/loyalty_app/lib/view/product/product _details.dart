@@ -2,10 +2,9 @@
 
 // ignore_for_file: file_names, library_private_types_in_public_api
 
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/core/localization/app_localization.dart';
 
 
 class ProductDetailsPage extends StatefulWidget {
@@ -19,6 +18,7 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
     late Future<Map<String, dynamic>> _productDetailsFuture;
+    
   late int productId;
 String ?selectedSize;
 int quantity = 0; 
@@ -26,39 +26,76 @@ int quantity = 0;
  late double totalOptionalMenuPrice;
    String comment = '';
   double starRating = 0.0;
+  bool isLoading = false; 
+bool showLoadingIndicator = false;
+late FocusNode _commentFocusNode;
+final TextEditingController _commentController=TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _productDetailsFuture = Future.value({});
      selectedItems = {};
     totalOptionalMenuPrice = 0.0;
+    _commentFocusNode = FocusNode();
+    showLoadingIndicator = false;
     
   }
-  void _submitReview() async {
-    if (comment.isEmpty) {
-      EasyLoading.showError('Please enter a comment');
-      return;
-    }
-    if (starRating == 0.0) {
-      EasyLoading.showError('Please select a star rating');
-      return;
-    }
 
-    final review = Review(
-      comment: comment,
-      rating: starRating,
-      productId: productId,
-    );
+void _submitReview(BuildContext context) async {
+  if (_commentFocusNode.hasFocus) {
+    _commentFocusNode.unfocus(); 
+  }
 
+  if (isLoading) return;
+  if (comment.isEmpty) {
+    EasyLoading.showError('Please enter a comment');
+    return;
+  }
+  if (starRating == 0.0) {
+    EasyLoading.showError('Please select a star rating');
+    return;
+  }
+
+  setState(() {
+    isLoading = true;
+  });
+
+  EasyLoading.show(status: 'Submitting review...');
+
+  final review = Review(
+    comment: comment,
+    rating: starRating,
+    productId: productId,
+  );
+
+  try {
     await ReviewController().create(review);
 
+    EasyLoading.dismiss(); 
     EasyLoading.showSuccess('Review submitted successfully');
 
-    setState(() {
-      comment = '';
-      starRating = 0.0;
-    });
+    // Clear the text field after submitting the review
+    _commentController.clear();
+  } catch (error) {
+    EasyLoading.dismiss(); 
+    EasyLoading.showError('Failed to submit review');
   }
+
+  setState(() {
+    isLoading = false;
+    comment = '';
+    starRating = 0.0;
+  });
+}
+
+
+@override
+void dispose() {
+  _commentFocusNode.dispose();
+  super.dispose();
+}
+
 
   @override
   void didChangeDependencies() {
@@ -101,7 +138,15 @@ void _fetchAndSetProductDetails(int productId) async {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+          mediaQueryData = MediaQuery.of(context);
+    final localization = AppLocalizationController.to;
+    final textDirection = localization.locale.languageCode == 'ar'
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+
+  return Directionality(
+    textDirection: textDirection,
+   child: SafeArea(
       child: Scaffold(
         body:
         
@@ -110,9 +155,7 @@ void _fetchAndSetProductDetails(int productId) async {
           child: FutureBuilder<Map<String, dynamic>>(
             future: _productDetailsFuture,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
+               if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
                 final dynamic productData = snapshot.data!['product'];
@@ -138,11 +181,14 @@ void _fetchAndSetProductDetails(int productId) async {
           ),
         ),
       ),
-    );
+   ) );
   }
 
   Widget _buildProductDetails(
+    
   Product product, List<OptionalMenu> optionalMenuItems) {
+     final localization = AppLocalizationController.to;
+    final isEnglish = localization.locale.languageCode == 'en';
   return Consumer<ProductProvider>(
     builder: (context, productProvider, _) {
   return Column(
@@ -155,7 +201,7 @@ void _fetchAndSetProductDetails(int productId) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              product.nameEnglish,
+                isEnglish ? product.nameEnglish.localized : product.nameArabic.localized,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -277,6 +323,7 @@ void _fetchAndSetProductDetails(int productId) async {
               ],
             ),
             const SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               'Product Reviews',
               style: CustomTextStyles.titleSmallGray80001,
@@ -285,11 +332,7 @@ void _fetchAndSetProductDetails(int productId) async {
             FutureBuilder<List<Review>>(
               future: ReviewController().getProductReviews(productId),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
+                 if (snapshot.hasError) {
                   return Center(
                     child: Text('Error: ${snapshot.error}'),
                   );
@@ -310,70 +353,79 @@ void _fetchAndSetProductDetails(int productId) async {
                 }
               },
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Leave a Review',
-              style: CustomTextStyles.bodySmallInterGray80001,
-            ),
-            const SizedBox(height: 10),
-            RatingBar.builder(
-              initialRating: starRating,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemSize: 30,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {
-                setState(() {
-                  starRating = rating;
-                });
-              },
-            ),
-            const SizedBox(height: 10),
-            GestureDetector(
-              onTap: () {
-                _submitReview();
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    width: 1,
-                    color: const Color.fromARGB(255, 211, 210, 210),
-                  ),
-                  color: const Color.fromARGB(255, 204, 203, 203),
-                ),
-                child: TextFormField(
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                    labelText: 'Comment',
-                    labelStyle: const TextStyle(color: Colors.grey),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    suffixIcon: GestureDetector(
-                      onTap: () {
-                        _submitReview();
-                      },
-                      child: const Icon(Icons.send, color: Colors.white),
-                    ),
-                  ),
-                  style: const TextStyle(color: Colors.grey),
-                  onChanged: (value) {
-                    setState(() {
-                      comment = value;
-                    });
-                  },
-                ),
-              ),
-            ),
+const SizedBox(height: 20),
+Text(
+  'Leave a Review',
+  style: CustomTextStyles.bodySmallInterGray80001,
+),
+const SizedBox(height: 10),
+RatingBar.builder(
+  initialRating: starRating,
+  minRating: 1,
+  direction: Axis.horizontal,
+  allowHalfRating: true,
+  itemCount: 5,
+  itemSize: 30,
+  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+  itemBuilder: (context, _) => const Icon(
+    Icons.star,
+    color: Colors.amber,
+  ),
+  onRatingUpdate: (rating) {
+    setState(() {
+      starRating = rating;
+    });
+  },
+),
+const SizedBox(height: 10),
+
+Container(
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(50),
+    border: Border.all(
+      width: 1,
+      color: const Color.fromARGB(255, 211, 210, 210),
+    ),
+    color: const Color.fromARGB(255, 204, 203, 203),
+  ),
+  child: TextFormField(
+    focusNode: _commentFocusNode,
+    maxLines: 1,
+    controller: _commentController, // Add this line
+    decoration: InputDecoration(
+      labelText: 'Comment',
+      labelStyle: const TextStyle(color: Colors.grey),
+      border: InputBorder.none,
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 16,
+      ),
+      suffixIcon: showLoadingIndicator
+        ? CircularProgressIndicator()
+        : IconButton(
+            onPressed: () {
+              _submitReview(context);
+            },
+            icon: Icon(Icons.send, color: Colors.white),
+          ),
+    ),
+    style: const TextStyle(color: Colors.grey),
+    // Set cursor color here
+    cursorColor: appTheme.deepOrange800,
+    onTap: () {
+    
+      if (EasyLoading.isShow) {
+        EasyLoading.dismiss();
+      }
+    },
+    onChanged: (value) {
+      comment = value;
+    },
+  ),
+),
+
+
+
             const SizedBox(height: 20),
             SizedBox(height: 25.v),
             Padding(
@@ -825,6 +877,9 @@ Widget _buildQuantitySelector(BuildContext context, Product product) {
       ),
     );
   }
+  
+
+
 void _addToCart(BuildContext context, Product product, List<OptionalMenu> selectedOptions) {
   final productProvider = Provider.of<ProductProvider>(context, listen: false);
   productProvider.addToCart(product, selectedOptions);
@@ -837,3 +892,5 @@ void _addToCart(BuildContext context, Product product, List<OptionalMenu> select
 
 
 }
+
+

@@ -1,16 +1,13 @@
 // ignore_for_file: unnecessary_type_check, use_build_context_synchronously
-
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-
+import 'package:flutter/material.dart';
 
 class ResetPassowrdEmailScreen extends StatelessWidget {
   ResetPassowrdEmailScreen({Key? key}) : super(key: key);
 
   final TextEditingController emailController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Unique GlobalKey for form
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(); 
 
   Future<bool> checkIfEmailExists(String enteredEmail) async {
     try {
@@ -32,7 +29,6 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
         return false;
       }
     } catch (error) {
-      // Handle errors, e.g., print an error message
       if (kDebugMode) {
         print('Error checking email existence: $error');
       }
@@ -79,7 +75,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                                   right: 47.h,
                                 ),
                                 child: Form(
-                                  key: _formKey, // Assigning the unique GlobalKey to Form widget
+                                  key: _formKey, 
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -124,7 +120,7 @@ class ResetPassowrdEmailScreen extends StatelessWidget {
                                       ),
                                       CustomTextFormField(
                                         controller: emailController,
-                                     
+                                      cursorColor:appTheme.deepOrange800,
                                         hintText: "msg3".localized,
                                         suffix: Container(
                                           margin: EdgeInsets.fromLTRB(10.h, 12.v, 20.h, 13.v),

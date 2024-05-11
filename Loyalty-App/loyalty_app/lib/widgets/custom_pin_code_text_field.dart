@@ -3,6 +3,7 @@
 
 
 
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 
 class CustomPinCodeTextField extends StatelessWidget {
@@ -16,6 +17,7 @@ class CustomPinCodeTextField extends StatelessWidget {
     this.textStyle,
     this.hintStyle,
     this.validator,
+   this.cursorColor, 
     required this.onPinFilled,
   }) : super(key: key);
 
@@ -28,6 +30,7 @@ class CustomPinCodeTextField extends StatelessWidget {
   final TextStyle? hintStyle;
   Function(String) onChanged;
   final FormFieldValidator<String>? validator;
+    final Color? cursorColor; 
 
   @override
   Widget build(BuildContext context) {
@@ -56,8 +59,8 @@ class CustomPinCodeTextField extends StatelessWidget {
   fieldHeight: 42.h,
   fieldWidth: 38.h,
   shape: PinCodeFieldShape.box,
-  borderRadius: BorderRadius.circular(8.h), // Set border radius
-  borderWidth: 2.0, // Set the width of the border
+  borderRadius: BorderRadius.circular(8.h), 
+  borderWidth: 2.0,
   inactiveColor: appTheme.deepOrange800,
   activeColor: appTheme.deepOrange800,
   inactiveFillColor: appTheme.gray100,

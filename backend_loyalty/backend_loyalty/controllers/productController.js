@@ -13,9 +13,11 @@ exports.getAllProducts = async (req, res) => {
 exports.getProductsByCategory = async (req, res) => {
   const id = req.params.id; 
   try {
+    console.log('Generated Sequelize Query:', { where: { category_id: id } });
     const products = await Product.findAll({
       where: { category_id: id }, 
     });
+    
     if (products.length === 0) {
       return res.status(404).json({ message: 'No products found for this category' });
     }

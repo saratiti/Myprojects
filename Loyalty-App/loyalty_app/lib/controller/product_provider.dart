@@ -1,7 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:loyalty_app/model/cart.dart';
+
 import 'package:loyalty_app/model/option_menu.dart';
 import 'package:loyalty_app/model/product.dart';
 

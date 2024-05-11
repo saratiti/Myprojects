@@ -46,28 +46,30 @@ class Order {
       };
 
   // Factory method to create an Order object from JSON data
-  factory Order.fromJson(Map<String, dynamic> json) {
-    List<dynamic> orderProductData = json['order_products'] ?? [];
-    List<OrderProduct>? orderProducts = orderProductData
-        .map((item) => OrderProduct.fromJson(item, item))
-        .toList();
+factory Order.fromJson(Map<String, dynamic> json) {
+  List<dynamic> orderProductData = json['orderProducts'] ?? [];
+  List<OrderProduct>? orderProducts = orderProductData
+      .map((item) => OrderProduct.fromJson(item))
+      .toList();
 
-    return Order(
-      id: json['id'] as int?,
-      orderProducts: orderProducts,
-      products: (json['products'] != null)
-          ? List<Product>.from(json['products'].map((e) => Product.fromJson(e)))
-          : [],
-     
-      product: json['product'] != null
-          ? Product.fromJson(json['product'] as Map<String, dynamic>)
-          : null,
-    
-      total: (json['total'] as num?)?.toDouble() ?? 0.0,
-      total_price: (json['total_price'] as num?)?.toDouble() ?? 0.0,
-    
-    // sub_total: (json['sub_total'] as num?)?.toDouble() ?? 0.0,
-      status_id: (json['status_id'] as num?)?.toInt() ?? 0,
-    );
-  }
+  return Order(
+    id: json['order_id'] as int?,
+    orderProducts: orderProducts,
+    products: (json['products'] != null)
+        ? List<Product>.from(json['products'].map((e) => Product.fromJson(e)))
+        : [],
+   
+    total: (json['total'] is String)
+        ? double.tryParse(json['total'] ?? '0') ?? 0
+        : (json['total'] as num?)?.toDouble() ?? 0,
+    total_price: (json['total_price'] is String)
+        ? double.tryParse(json['total_price'] ?? '0') ?? 0
+        : (json['total_price'] as num?)?.toDouble() ?? 0,
+    status_id: (json['status_id'] is String)
+        ? int.tryParse(json['status_id'] ?? '0') ?? 0
+        : (json['status_id'] as num?)?.toInt() ?? 0,
+  );
+}
+
+
 }

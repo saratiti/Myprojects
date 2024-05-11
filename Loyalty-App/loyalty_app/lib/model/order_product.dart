@@ -39,18 +39,19 @@ class OrderProduct {
     };
   }
 
-  factory OrderProduct.fromJson(Map<String, dynamic> productJson, Map<String, dynamic> json) {
-    return OrderProduct(
-      id: json['id'] as int? ?? 0,
-      orderId: json['order_id'] as int? ?? 0,
-      productId: json['product_id'] as int? ?? 0,
-      sizeId: json['size_id'] as int? ?? 0,
-      colorId: json['color_id'] as int? ?? 0,
-      qty: json['qty'] as int?,
-      price: (json['price'] as num?)?.toDouble() ?? 0.0,
-      createdAt: json['created_at'] as String? ?? '',
-      updatedAt: json['updated_at'] as String? ?? '',
-      product: Product.fromJson(productJson),
-    );
-  }
+  factory OrderProduct.fromJson(Map<String, dynamic> json) {
+  return OrderProduct(
+    id: json['order_product_id'] as int? ?? 0,
+    orderId: json['order_id'] as int? ?? 0,
+    productId: json['product_id'] as int? ?? 0,
+    sizeId: json['size_id'] as int? ?? 0,
+    colorId: json['color_id'] as int? ?? 0,
+    qty: json['qty'] as int?,
+    price: (json['price'] as num?)?.toDouble() ?? 0.0,
+    createdAt: json['created_at'] as String? ?? '',
+    updatedAt: json['updated_at'] as String? ?? '',
+    product: Product.fromJson(json['products']),
+  );
+}
+
 }

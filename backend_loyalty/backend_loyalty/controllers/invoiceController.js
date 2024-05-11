@@ -4,7 +4,7 @@ const ScannedInvoices=require('../models/scan_invoice')
 const Loyalty = require('../models/loyalty');
 const Transaction = require('../models/transaction');
 const fs = require('fs');
-const Tesseract = require('tesseract.js');
+//const Tesseract = require('tesseract.js');
 const qrcode = require('qrcode');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -84,6 +84,29 @@ exports.getAllInvoicesByUserId = async (req, res) => {
   } catch (error) {
     console.error('Error fetching invoices:', error.message);
     res.status(500).json({ error: 'Database query error', message: error.message });
+  }
+};
+
+exports.getAllInvoices = async (req, res) => {
+  try {
+    const invoices = await Invoice.findAll();
+    res.json(invoices);
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+exports.getInvoicesById = async (req, res) => {
+  const invoiceId = req.params.invoiceId; 
+  try {
+    const invoices = await Invoice.findOne({ where: { invoice_id: invoiceId } });
+    res.json(invoices);
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 

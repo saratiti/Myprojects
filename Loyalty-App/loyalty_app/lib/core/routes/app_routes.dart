@@ -38,7 +38,7 @@ class AppRoutes {
     GetPage(name: productDetailsScreen, page: () =>  const ProductDetailsPage()),
     GetPage(name: inviteFriendsScreen, page: () => const InviteFriendsPage()),
      GetPage(name: scannerScreen , page: () => const ReceiptScannerPage ()),
-     GetPage(name: orderScreen , page: () => const OrderPage ()),
+     GetPage(name: orderScreen , page: () =>  OrderPage ()),
     GetPage(name: pinCodePassword , page: () => const PinCodePasswordScreen ()),
      GetPage(name:resetPassowrd , page:() =>ResetPassowrdEmailScreen()),
       GetPage(name: editScreen , page: () =>  const EditUserPage ()),
