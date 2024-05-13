@@ -1,5 +1,4 @@
-import 'dart:ui';
-
+import 'package:flutter/material.dart';
 import 'package:my_eco_print/core/app_export.dart';
 
 class SplashScreenTwo extends StatelessWidget {
@@ -7,151 +6,77 @@ class SplashScreenTwo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          Container(
-            color: Colors.lightGreen,
-          ),
-          Positioned(
-            left: 0,
-            top: 150,
-            right: 150,
-            child: SizedBox(
-              height: 800.h,
-              width: 350.h,
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(
-                  sigmaX: 3.5,
-                  sigmaY: 3.5,
-                ),
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgStem,
-                  height: 800.h,
-                  width: 350.h,
-                  alignment: Alignment.center,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            top: 150,
-            right: 150,
-            child: SizedBox(
-              width: 722,
-              height: 722,
-              child: ImageFiltered(
-                imageFilter: ImageFilter.blur(
-                  sigmaX: 3.5,
-                  sigmaY: 3.5,
-                ),
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgLeaf,
-                  height: 823,
-                  width: 393,
-                  alignment: Alignment.topRight,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 140,
-            top: 169,
-            child: SizedBox(
-              height: 800.h,
-              width: 350.h,
-              child: CustomImageView(
-                imagePath: ImageConstant.imgStem,
-                height: 800.h,
-                width: 350.h,
-                alignment: Alignment.center,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 200,
-            top: 400,
-            bottom: 100,
-            child: SizedBox(
-              width: 200,
-              height: 150,
-              child: Transform.scale(
-                scale: 3.0,
-                child: CustomImageView(
-                  imagePath: ImageConstant.imgLeaf,
-                  height: 823,
-                  width: 393,
-                  alignment: Alignment.center,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(285, 127.19, 501, 221),
-            child: CustomImageView(
-              imagePath: ImageConstant.imgLeaf,
-              height: 1022,
-              width: 1022,
-            ),
-          ),
-          _buildContent(context),
-        ],
-      ),
-    );
-  }
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
-Widget _buildContent(BuildContext context) {
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Expanded(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    double desiredHeightRatio = 1.8;
+    double desiredWidthRatio = 1.7;
+
+    double imageTopPadding = 190.0;
+
+    return Scaffold(
+      backgroundColor: appTheme.lightGreen500,
+      body: Center(
+        child: SizedBox(
+          height: screenHeight,
+          width: screenWidth,
+          child: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 0.0),
-                child: CustomImageView(
-                  svgPath: ImageConstant.imgFingerprintWhiteA700,
-                  height: 200.v, 
-                  width: 300.h, 
-                  alignment: Alignment.topCenter,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: SizedBox(
-                  width: 250.h, 
-                  child: Text(
-                    "msg".tr,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: CustomTextStyles.titleLargeWhiteA700.copyWith(height: 1.84),
+                padding: EdgeInsets.only(top: imageTopPadding.h),
+                child: Transform.scale(
+                  scale: desiredWidthRatio,
+                  alignment: Alignment.centerRight,
+                  child: CustomImageView(
+                    imagePath: ImageConstant.imgsplashScreen,
+                    fit: BoxFit.contain,
+                    height: screenHeight * desiredHeightRatio,
+                    width: screenWidth * desiredWidthRatio,
                   ),
                 ),
+              ),
+              Positioned(
+                top: 200,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: _buildContent(context), // Show the content immediately
               ),
             ],
           ),
         ),
       ),
-      const SizedBox(height: 100.0),
-      Padding(
-        padding: const EdgeInsets.only(bottom: 50.0), 
-        child: CustomOutlinedButton(
-          width: 300.h,
+    );
+  }
+
+  Widget _buildContent(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SizedBox(height: 270),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: Text(
+              "msg".tr,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: CustomTextStyles.titleLargeWhiteA700.copyWith(height: 1.84),
+            ),
+          ),
+        ),
+        SizedBox(height: 160),
+        CustomOutlinedButton(
+          width: MediaQuery.of(context).size.width * 0.6,
           text: "lbl".tr,
           onTap: () {
             Navigator.of(context).pushNamed(AppRoutes.loginScreen);
           },
         ),
-      ),
-    ],
-  );
-}
-
-
-
+      ],
+    );
+  }
 }

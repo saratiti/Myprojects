@@ -314,11 +314,11 @@ async function getBarcodeInformation(scannedBarcode, offerId, storeId) {
     throw error;
   }
 }
-exports.generateBarcodeOfferStore = async (req, res) => {
+xports.generateBarcodeOfferStore = async (req, res) => {
   try {
     const { storeId, offerId } = req.body;
     const user = req.user;
-    const userId = req.user.user_id;
+    const userId = user.user_id;
     if (!storeId || !offerId) {
       return res.status(400).json({ message: 'Store ID and offer ID are required' });
     }
@@ -384,10 +384,10 @@ exports.generateBarcodeOfferStore = async (req, res) => {
     const imageDirectory = path.join(__dirname, '../barcode_images');
     fs.mkdirSync(imageDirectory, { recursive: true });
 
-
+    // Write QR code buffer to file system
     fs.writeFileSync(barcodeImagePath, qrCodeBuffer);
 
-  
+    // Load the barcode image using jimp
     const barcodeImage = await jimp.read(barcodeImagePath);
 
   

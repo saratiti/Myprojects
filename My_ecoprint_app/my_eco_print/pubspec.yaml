@@ -45,7 +45,6 @@ dependencies:
   flutter_svg_provider: ^1.0.6
   http: ^1.1.0
   dotted_border: ^2.0.0
-  flutter_camera_qrcode_scanner: ^2.0.0
   shared_preferences: ^2.2.1
   get: ^4.6.1
   flutter_secure_storage: ^9.0.0

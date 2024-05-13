@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:my_eco_print/core/app_export.dart';
 
 class paint extends StatelessWidget {

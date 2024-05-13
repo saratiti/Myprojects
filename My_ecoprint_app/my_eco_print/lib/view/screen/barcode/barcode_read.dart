@@ -314,7 +314,7 @@ class _ScanCodeScreenRefState extends State<ScanCodeScreenRef>
                                 ConnectionState.waiting) {
                               return const CircularProgressIndicator();
                             } else if (snapshot.hasError) {
-                              // If an error occurs while fetching the image, display an error message
+                           
                               return Text('Error: ${snapshot.error}');
                             } else {
                               final barcodeData = snapshot.data;
@@ -480,11 +480,11 @@ class _ScanCodeScreenRefState extends State<ScanCodeScreenRef>
                                   buttonStyle: buttonStyle,
                                   buttonTextStyle: theme.textTheme.labelLarge,
                                   onTap: () {
-                                    // Handle onTap if needed
+                                
                                   },
                                 );
                               } else {
-                                // If no barcodes are found, display a message
+                               
                                 return const Text(
                                     "No barcode found for the given store ID and offer ID");
                               }

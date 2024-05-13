@@ -1,7 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
-
 import 'package:my_eco_print/core/app_export.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -47,55 +45,39 @@ void initState() {
   }
 
   Widget _buildContent() {
-    return SafeArea(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(top: 116.v),
-          child: SizedBox(
-            height: 702.v,
-            width: double.maxFinite,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CustomImageView(
-                  svgPath: ImageConstant.imgFingerprintWhiteA700,
-                  height: 200.v,
-                  width: 289.h,
-                  alignment: Alignment.topCenter,
-                  margin: EdgeInsets.only(top: 171.v),
-                ),
-                Opacity(
-                  opacity: 0.03,
+   double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    double desiredHeightRatio = 1.1;
+    double desiredWidthRatio = 2.3;
+
+    return Scaffold(
+      backgroundColor: appTheme.lightGreen500,
+      body: Center(
+        child: SizedBox(
+          height: screenHeight,
+          width: screenWidth,
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 30.h),
+                child: Transform.scale(
+                  scale: desiredWidthRatio,
+                  alignment: Alignment.centerRight, 
                   child: CustomImageView(
-                    imagePath: ImageConstant.imgGroup70252,
-                    height: 702.v,
-                    width: 393.h,
-                    alignment: Alignment.center,
-                    color: Colors.amber,
+                    imagePath: ImageConstant.imgsplashScreen1,
+                    fit: BoxFit.contain,
+                    height: screenHeight * desiredHeightRatio,
+                    width: screenWidth * desiredWidthRatio,
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  child: Container(
-                    width: 702.v,
-                    height: 702.v,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: fs.Svg(
-                          ImageConstant.imgGroup11,
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+             
+            ],
           ),
         ),
       ),
     );
   }
+
 }

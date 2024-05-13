@@ -79,4 +79,10 @@ class ImageConstant {
   static String imageMac = 'assets/images/mac.png';
   static String imageCard = '$imagePath/image_group_right_card.svg';
   static String imgArrowright = '$imagePath/img_arrow_right.svg';
+  static String imgsplashScreen='$imagePath/splash_screen.png';
+ static String imgsplashScreen1='$imagePath/splash_screen1.png';
+
+
+
+
 }

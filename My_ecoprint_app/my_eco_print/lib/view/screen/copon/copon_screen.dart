@@ -247,7 +247,7 @@ Widget buildCouponContainer(Transaction transaction) {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Expanded( // Wrap the text in an Expanded widget
+          Expanded( 
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 5.v),
               child: Column(
@@ -256,8 +256,8 @@ Widget buildCouponContainer(Transaction transaction) {
                   Text(
                     getMessageForTransactionType(transaction.transactionType),
                     style: theme.textTheme.titleMedium,
-                    overflow: TextOverflow.ellipsis, // Handle overflow by ellipsis
-                    maxLines: 2, // Limit the maximum number of lines
+                    overflow: TextOverflow.ellipsis, 
+                    maxLines: 2, 
                   ),
                   SizedBox(height: 8.v),
                   Text(
@@ -284,8 +284,6 @@ Widget buildCouponContainer(Transaction transaction) {
 
 
 
-  /// Navigates back to the previous screen.
-  ///
   /// This function takes a [BuildContext] object as a parameter, which is used
   /// to navigate back to the previous screen.
   onTapImgArrowleft(BuildContext context) {

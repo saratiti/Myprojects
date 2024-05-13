@@ -1,10 +1,10 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const Store= require('./store');
-const User=require('./user');
-const Offer=require('./offer');
-const Branch=require('./branche')
+const Store = require('./store');
+const User = require('./user');
+const Offer = require('./offer');
+const Branch = require('./branche')
 const Barcode = sequelize.define('Barcode', {
 
   barcode_id: {
@@ -31,7 +31,7 @@ const Barcode = sequelize.define('Barcode', {
   // branch_id: {
   //   type: DataTypes.INTEGER,
   //   allowNull: true,
-    
+
   // },
   user_id: {
     type: DataTypes.INTEGER,
@@ -41,11 +41,14 @@ const Barcode = sequelize.define('Barcode', {
     type: DataTypes.DATE,
     allowNull: false,
   },
-},);
-
-Barcode.belongsTo(Store, { foreignKey: 'store_id', as: 'stores',onDelete: 'CASCADE' });
-Barcode.belongsTo(Offer, { foreignKey: 'offer_id', as: 'offers',onDelete: 'CASCADE' });
+}, {
+  timestamps: false,
+  paranoid: true,
+  tableName: 'barcodes',
+});
+Barcode.belongsTo(Store, { foreignKey: 'store_id', as: 'stores', onDelete: 'CASCADE' });
+Barcode.belongsTo(Offer, { foreignKey: 'offer_id', as: 'offers', onDelete: 'CASCADE' });
 //Barcode.belongsTo(Branch, { foreignKey: 'branch_id', as: 'branches',onDelete: 'CASCADE' });
-Barcode.belongsTo(User, { foreignKey: 'user_id', as: 'users',onDelete: 'CASCADE' });
+Barcode.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
 
 module.exports = Barcode;

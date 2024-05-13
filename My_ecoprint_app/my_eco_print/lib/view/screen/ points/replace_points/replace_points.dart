@@ -24,7 +24,7 @@ class ReplacePointScreen extends StatelessWidget {
           child: SizedBox(
             width: screenWidth,
             height: screenHeight,
-            child: SingleChildScrollView(
+            child: const SingleChildScrollView(
               child: ReplacePointContent(),
             ),
           ),
@@ -43,7 +43,7 @@ class ReplacePointContent extends StatelessWidget {
 
     final Size screenSize = MediaQuery.of(context).size;
     final bool isSmallScreen =
-        screenSize.width < 600; // Define your threshold for small screens
+        screenSize.width < 600;  
 
     final localization = AppLocalizationController.to;
     final textDirection = localization.locale.languageCode == 'ar'
@@ -63,29 +63,29 @@ class ReplacePointContent extends StatelessWidget {
             SizedBox(
                 height: isSmallScreen
                     ? 5.0
-                    : 10.0), // Adjust spacing based on screen size
+                    : 10.0),  
             const ReplacePointRichText(),
             SizedBox(
                 height: isSmallScreen
                     ? 5.0
-                    : 10.0), // Adjust spacing based on screen size
+                    : 10.0),
             const ReplacePointButtons(),
             SizedBox(
                 height: isSmallScreen
                     ? 5.0
-                    : 10.0), // Adjust spacing based on screen size
+                    : 10.0),
             if (!isSmallScreen) ...[
-              SizedBox(
-                  height: 10.0), // Add additional spacing for larger screens
+              const SizedBox(
+                  height: 10.0), 
 
-              SizedBox(
-                  height: 10.0), // Add additional spacing for larger screens
+              const SizedBox(
+                  height: 10.0), 
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding:
-                        EdgeInsets.only(top: 35.0, bottom: 3.0, right: 20.0),
+                        const EdgeInsets.only(top: 35.0, bottom: 3.0, right: 20.0),
                     child: Text(
                       "msg43".tr,
                       style: CustomTextStyles
@@ -189,10 +189,10 @@ class ReplacePointHeader extends StatelessWidget {
               width: 24.0,
               margin: EdgeInsets.only(
                   top: screenHeight * 0.04,
-                  bottom: 4.0), // Adjust based on screen height
+                  bottom: 4.0), 
               onTap: () => onTapImgArrowLeft(context),
             ),
-            SizedBox(width: screenWidth * 0.02), // Adjust based on screen width
+            SizedBox(width: screenWidth * 0.02), 
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(top: screenHeight * 0.04, bottom: 4.0),
@@ -202,10 +202,10 @@ class ReplacePointHeader extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(width: screenWidth * 0.02), // Adjust based on screen width
+            SizedBox(width: screenWidth * 0.02), 
             Container(
               margin: EdgeInsets.only(top: screenHeight * 0.04, bottom: 4.0),
-              width: screenWidth * 0.3, // Adjust based on screen width
+              width: screenWidth * 0.3, 
               padding:
                   const EdgeInsets.symmetric(horizontal: 17.0, vertical: 1.0),
               decoration: AppDecoration.fillLightGreen.copyWith(

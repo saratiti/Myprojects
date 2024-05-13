@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/core/utils/size_utils.dart';
-import '../../../../core/app_export.dart';
+
+import 'package:my_eco_print/core/app_export.dart';
 
 String _appTheme = "primary";
 

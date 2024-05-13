@@ -1,10 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
-import 'package:flutter/material.dart';
-import 'package:my_eco_print/controller/user_profile_provider.dart';
 import 'package:my_eco_print/core/app_export.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as fs;
-import 'package:provider/provider.dart';
 class CardContainerArabic extends StatelessWidget {
   const CardContainerArabic({super.key});
 

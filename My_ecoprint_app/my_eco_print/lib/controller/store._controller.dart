@@ -112,31 +112,62 @@ Future<List<Offer>> getStoresWithOffers(int typeId) async {
   }
 }
 
-
-
-
-
-
-Future<List<Offer>> getAllStoresWithOffers() async {
+Future<List<Offer>> getAllStoresWithOffers()async {
   try {
-    dynamic jsonObject = await ApiHelper().getRequest("/api/stores/typeByoffer");
-    if (jsonObject == null) {
+    final response = await ApiHelper().getRequest("/api/stores/typeByoffer");
+
+    if (response == null || response['data'] == null) {
+      print('Invalid response or no data found.');
       return [];
     }
-    List<Offer> result = [];
-    if (jsonObject is List) {
-      result = jsonObject.map((json) => Offer.fromJson(json)).toList();
-    }
+
+    List<Offer> result = (response['data'] as List<dynamic>?)
+        ?.map((json) {
+          final offerJson = json['offer'];
+
+          final offer = Offer.fromJson(offerJson);
+
+          if (offerJson.containsKey('stores')) {
+            final storeJson = offerJson['stores'];
+            offer.store = Store.fromJson(storeJson);
+          }
+
+          if (offerJson.containsKey('companies')) {
+            final companyJson = offerJson['companies'];
+            offer.company = Company.fromJson(companyJson);
+          }
+
+          return offer;
+        })
+        .toList() ?? [];
+
     return result;
   } catch (ex) {
-    print(ex);
-    rethrow;
+    print('Error: $ex');
+    return [];
   }
+}
 
-  }
-    Stream<List<Offer>> getAllStoresWithOffersStream() {
-    return Stream.fromFuture(getAllStoresWithOffers());
-  }
+// Future<List<Offer>> getAllStoresWithOffers() async {
+//   try {
+//     dynamic jsonObject = await ApiHelper().getRequest("/api/stores/typeByoffer");
+//     if (jsonObject == null) {
+//       return [];
+//     }
+//     List<Offer> result = [];
+//     if (jsonObject is List) {
+//       result = jsonObject.map((json) => Offer.fromJson(json)).toList();
+//     }
+//     return result;
+//   } catch (ex) {
+//     print(ex);
+//     rethrow;
+//   }
+
+//   }
+//     Stream<List<Offer>> getAllStoresWithOffersStream() {
+//     return Stream.fromFuture(getAllStoresWithOffers());
+//   }
 Future<List<Offer>> getOfferByStoreAndOfferId(int storeId, int offerId) async {
   try {
     dynamic jsonObject = await ApiHelper().getRequest("/api/stores/$storeId/$offerId");

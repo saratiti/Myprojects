@@ -10,7 +10,6 @@ export 'package:my_eco_print/view/widgets/custom_image_view.dart';
 export 'constants/theme/custom_button_style.dart';
 export 'package:my_eco_print/core/utils/date_time_utils.dart';
 export 'package:my_eco_print/core/localization/app_localization.dart';
-export 'package:my_eco_print/view/screen/scan_code/scan_code_screen.dart';
 export 'package:my_eco_print/view/widgets/app_bar/appbar_image_1.dart';
 export 'package:my_eco_print/view/widgets/app_bar/appbar_title.dart';
 export 'package:my_eco_print/view/widgets/app_bar/custom_app_bar.dart';
@@ -29,8 +28,8 @@ export 'package:my_eco_print/view/widgets/custom_bottom_app_bar.dart';
 export 'package:my_eco_print/view/screen/copon/copon_screen.dart';
 
 export 'package:my_eco_print/view/widgets/custom_pin_code_text_field.dart';
-export 'package:flutter_camera_qrcode_scanner/dynamsoft_barcode.dart';
-export 'package:flutter_camera_qrcode_scanner/flutter_camera_qrcode_scanner.dart';
+// export 'package:flutter_camera_qrcode_scanner/dynamsoft_barcode.dart';
+// export 'package:flutter_camera_qrcode_scanner/flutter_camera_qrcode_scanner.dart';
 
 export 'package:flutter/foundation.dart';
 export 'package:flutter/material.dart';
@@ -66,7 +65,7 @@ export 'package:my_eco_print/controller/type_controller.dart';
 export 'package:my_eco_print/data/module/type.dart';
 export 'package:my_eco_print/view/screen/%20points/replace_points/widgets/coffee_screen.dart';
 export 'package:my_eco_print/view/screen/%20points/replace_points/widgets/discountcoupon_item_widget.dart';
-export 'package:my_eco_print/view/screen/%20points/replace_points/widgets/resturant_screen.dart';
+export 'package:my_eco_print/view/screen/%20points/replace_points/widgets/all_store_offer_screen.dart';
 export 'package:flutter_easyloading/flutter_easyloading.dart';
 export 'package:flutter_secure_storage/flutter_secure_storage.dart';
 export 'package:my_eco_print/controller/auth.dart';

@@ -1,29 +1,43 @@
-// // ignore_for_file: camel_case_types
-
-// ignore_for_file: library_private_types_in_public_api, camel_case_types, unnecessary_null_comparison
+// ignore_for_file: camel_case_types, use_build_context_synchronously, unnecessary_null_comparison, library_private_types_in_public_api, unnecessary_cast
 
 import 'package:my_eco_print/core/app_export.dart';
 
 class AllStoreScreen extends StatefulWidget {
-  const AllStoreScreen({Key? key}) : super(key: key);
+  const AllStoreScreen({Key? key})
+      : super(key: key);
 
   @override
   _AllStoreScreenState createState() => _AllStoreScreenState();
 }
 
 class _AllStoreScreenState extends State<AllStoreScreen> {
-  late Stream<List<Offer>> _offersStream;
+  late Future<List<Offer>> _offersFuture;
 
   @override
   void initState() {
     super.initState();
-    _offersStream = StoreController().getAllStoresWithOffersStream();
+    _fetchOffers();
+  }
+
+  void _fetchOffers() {
+   
+      _offersFuture = StoreController().getAllStoresWithOffers();
+    
+  }
+
+  @override
+  void didUpdateWidget(covariant AllStoreScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+      _fetchOffers();
+    
   }
 
   final ApiHelper _apiHelper = ApiHelper();
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
+
     final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
@@ -33,20 +47,21 @@ class _AllStoreScreenState extends State<AllStoreScreen> {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: SizedBox(
-          child: buildAllStore(context),
+          child: buildAllStoreOffer(context),
         ),
       ),
     );
   }
 
-  Widget buildAllStore(BuildContext context) {
+  Widget buildAllStoreOffer(BuildContext context) {
+    final theme = Theme.of(context);
     final localization = AppLocalizationController.to;
     final textDirection = localization.locale.languageCode == 'ar'
         ? TextDirection.rtl
         : TextDirection.ltr;
 
-    return StreamBuilder<List<Offer>>(
-      stream: _offersStream,
+    return FutureBuilder<List<Offer>>(
+      future: _offersFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
