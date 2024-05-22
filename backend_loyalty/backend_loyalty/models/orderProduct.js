@@ -6,8 +6,8 @@ const Order = require('./Order');
 const Product = require('./Product'); 
 
 const OrderProduct = sequelize.define('OrderProduct', {
-  order_product_id: {
-    type: DataTypes.BIGINT,
+ id: {
+  type: DataTypes.BIGINT.UNSIGNED,
     primaryKey: true,
     autoIncrement: true
   },
@@ -20,33 +20,33 @@ const OrderProduct = sequelize.define('OrderProduct', {
     allowNull: true,
   },
   product_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     
   },
   order_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     
   },
-createdAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-},
-updatedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-},
-deletedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-}
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+// deletedAt: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// }
 },{
 timestamps: false, 
 paranoid: true,
-tableName: 'order_products',
+tableName: 'order_product',
 
 });
 
-OrderProduct.belongsTo(Order, { foreignKey: 'order_id', as: 'orders',key: 'order_id', onDelete: 'CASCADE' });
+OrderProduct.belongsTo(Order, { foreignKey: 'order_id', as: 'orders',key: 'id', onDelete: 'CASCADE' });
 OrderProduct.belongsTo(Product, { foreignKey: 'product_id', as: 'products',key: 'id', onDelete: 'CASCADE' });
 
 module.exports = OrderProduct;

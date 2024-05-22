@@ -238,7 +238,6 @@ Future<bool> verifyPinCode(BuildContext context, String userEmail, String pinCon
             String? hashedPin = result['hashedPin'];
 
             if (hashedPin != null) {
-              // Print the received hashed PIN
               print('Received Hashed PIN from backend: $hashedPin');
               print('PIN code is correct');
 

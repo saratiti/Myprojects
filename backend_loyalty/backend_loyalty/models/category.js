@@ -6,9 +6,10 @@ const sequelize = require('../config/database');
 
 const Category = sequelize.define('Category', {
   id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   
   name_arabic: {
@@ -24,27 +25,27 @@ const Category = sequelize.define('Category', {
     allowNull: true
   },
 
-  createdAt:{
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
+  // createdAt:{
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
   
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
-  deletedAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  },
-  // created_at: {
+  // updatedAt: {
   //   type: DataTypes.DATE,
   //   allowNull: true,
   // },
-  // updated_at: {
+  // deletedAt: {
   //   type: DataTypes.DATE,
   //   allowNull: true,
   // },
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
   // deleted_At: {
   //   type: DataTypes.DATE,
   //   allowNull: true,

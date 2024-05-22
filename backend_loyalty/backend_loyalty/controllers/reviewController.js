@@ -59,13 +59,13 @@ exports.getTopRatedProducts = async (req, res) => {
 
 exports.getProductReviews = async (req, res) => {
   try {
-    const product = await Product.findOne({ where: { id: req.params.id } }); // Use `id` instead of `product_id`
+    const product = await Product.findOne({ where: { id: req.params.id } });
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
 
     const reviews = await Review.findAll({ 
-      where: { product_id: product.id }, // Use `product.id` instead of `product.product_id`
+      where: { product_id: product.id },
       include: [{ model: User, as: 'users' }]
     });
 

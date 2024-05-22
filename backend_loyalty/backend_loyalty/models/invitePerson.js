@@ -4,10 +4,11 @@ const sequelize = require('../config/database');
 const User = require('./User');
 
 const InvitePerson = sequelize.define('InvitePerson', {
-  invite_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   status: {
     type: DataTypes.STRING,
@@ -22,17 +23,17 @@ const InvitePerson = sequelize.define('InvitePerson', {
     allowNull: false,
   },
   user_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     
   },
-createdAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-},
-updatedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-},
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 deletedAt: {
   type: DataTypes.DATE,
   allowNull: true,

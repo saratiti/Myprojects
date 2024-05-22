@@ -4,7 +4,7 @@ const ScannedInvoices=require('../models/scan_invoice')
 const Loyalty = require('../models/loyalty');
 const Transaction = require('../models/transaction');
 const fs = require('fs');
-//const Tesseract = require('tesseract.js');
+
 const qrcode = require('qrcode');
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

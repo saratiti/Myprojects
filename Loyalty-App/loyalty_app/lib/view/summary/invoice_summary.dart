@@ -189,7 +189,7 @@ void confirmOrder(ProductProvider productProvider) async {
     final List<Map<String, dynamic>> productsWithQty =
         productProvider.selectedProducts
             .map((product) => {
-                  'product_id': product.id,
+                  'id': product.id,
                   'qty': product.selectedQty,
                   'price': product.price,
                 })

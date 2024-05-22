@@ -1,11 +1,12 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const OptionalMenu = sequelize.define('OptionalMenu', {
-  option_id: {
-    type: DataTypes.BIGINT,
+const additionalMenues = sequelize.define('OptionalMenu', {
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   name_arabic: {
     type: DataTypes.STRING,
@@ -21,24 +22,21 @@ const OptionalMenu = sequelize.define('OptionalMenu', {
   
 },
 
-createdAt: {
+
+created_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-updatedAt: {
+updated_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-deletedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-}
 
 },{
 timestamps: false, 
 paranoid: true,
-tableName: 'optinoal_menu',
+tableName: 'additional_menues',
 
 });
 
-module.exports = OptionalMenu;
+module.exports = additionalMenues;

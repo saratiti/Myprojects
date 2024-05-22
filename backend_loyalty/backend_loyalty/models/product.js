@@ -6,9 +6,10 @@ const Category = require('./Category');
 
 const Product = sequelize.define('Product', {
   id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   name_ar: {
     type: DataTypes.STRING,
@@ -23,7 +24,7 @@ const Product = sequelize.define('Product', {
     allowNull: true,
   },
   category_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     allowNull: true,
   },
   quantity: {
@@ -34,18 +35,26 @@ const Product = sequelize.define('Product', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  createdAt: {
+  // createdAt: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
+  // updatedAt: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
+  // deletedAt: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // }
+  created_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  updatedAt: {
+  updated_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  deletedAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  }
   },{
   timestamps: false, 
   paranoid: true,

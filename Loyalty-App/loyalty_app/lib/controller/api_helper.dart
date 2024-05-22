@@ -452,4 +452,63 @@ class ApiHelper {
       return null;
     }
   }
+Future<List<Uint8List>> getCategoryImages(String imagePath) async {
+    try {
+      final dio = Dio();
+      var token = await getToken();
+      var headers = {"Authorization": "Bearer $token"};
+
+      Response response = await dio.get(
+        'http://$DOMAIN/api/categories/images',
+        options: Options(
+          headers: headers,
+          responseType: ResponseType.json,
+        ),
+      );
+
+      switch (response.statusCode) {
+        case 200:
+        case 201:
+          List<Uint8List> imageList = [];
+          Map<String, dynamic> responseData = response.data;
+          if (responseData.containsKey('images')) {
+            List<dynamic> images = responseData['images'];
+            for (var imageData in images) {
+              if (imageData.containsKey('dataUrl')) {
+                String dataUrl = imageData['dataUrl'];
+                String base64Image = dataUrl.split(',').last;
+                Uint8List decodedImage = base64Decode(base64Image);
+                imageList.add(decodedImage);
+              }
+            }
+            return imageList;
+          } else {
+            throw "Invalid response format";
+          }
+        case 400:
+          throw "Bad Request";
+        case 401:
+          throw "Unauthorized";
+        case 402:
+          throw "Payment Required";
+        case 403:
+          throw "Forbidden";
+        case 404:
+          return [];
+        case 500:
+          throw "Server Error :(";
+        default:
+          throw "Server Error :(";
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching Category images: $e');
+      }
+      return [];
+    }
+  }
+
+
+
+
 }

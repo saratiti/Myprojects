@@ -4,10 +4,11 @@ const sequelize = require('../config/database');
 
 const ChallengeType = sequelize.define('ChallengeType ', {
 
-  challengType_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   type_name: {
     type: DataTypes.STRING,
@@ -22,11 +23,11 @@ const ChallengeType = sequelize.define('ChallengeType ', {
     allowNull: false
   },
   
-  createdAt: {
+  created_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  updatedAt: {
+  updated_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },

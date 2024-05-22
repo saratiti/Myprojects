@@ -54,7 +54,7 @@ factory Order.fromJson(Map<String, dynamic> json) {
       .toList();
 
   return Order(
-    id: json['order_id'] as int?,
+    id: json['id'] as int?,
     orderProducts: orderProducts,
     products: (json['products'] != null)
         ? List<Product>.from(json['products'].map((e) => Product.fromJson(e)))

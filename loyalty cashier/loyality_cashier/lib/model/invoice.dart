@@ -19,7 +19,7 @@ class Invoice {
 
   factory Invoice.fromJson(Map<String, dynamic> json) {
     return Invoice(
-      invoiceId: json['invoice_id'] as int? ?? 0,
+      invoiceId: json['id'] as int? ?? 0,
       uploadDate: json['upload_date'] as String? ?? '',
       filePath: json['file_path'] as String? ?? '',
       userId: json['user_id'] as int? ?? 0,

@@ -28,8 +28,8 @@ class OrderProduct {
 
   Map<String, dynamic> toMap() {
     return {
-      'orderId': orderId,
-      'productId': productId,
+      'order_id': orderId,
+      'product_id': productId,
       'sizeId': sizeId,
       'colorId': colorId,
       'qty': qty,
@@ -41,7 +41,7 @@ class OrderProduct {
 
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
   return OrderProduct(
-    id: json['order_product_id'] as int? ?? 0,
+    id: json['id'] as int? ?? 0,
     orderId: json['order_id'] as int? ?? 0,
     productId: json['product_id'] as int? ?? 0,
     sizeId: json['size_id'] as int? ?? 0,

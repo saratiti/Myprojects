@@ -6,18 +6,19 @@ const User = require('./user');
 const Invoice= require('./invoice');
 
 const ScannedInvoice = sequelize.define('ScannedInvoice', {
-  scanned_invoice_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   user_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
   
   },
   invoice_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
   
   },
@@ -25,7 +26,15 @@ const ScannedInvoice = sequelize.define('ScannedInvoice', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
-  }
+  },
+  created_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   timestamps: false,
   paranoid: true,
@@ -33,6 +42,6 @@ const ScannedInvoice = sequelize.define('ScannedInvoice', {
 });
 
 ScannedInvoice.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
-ScannedInvoice.belongsTo(Invoice, { foreignKey: 'invoice_id', as: 'invoices', onDelete: 'CASCADE' });
+//ScannedInvoice.belongsTo(Invoice, { foreignKey: 'invoice_id', as: 'invoices', onDelete: 'CASCADE' });
 
 module.exports = ScannedInvoice;

@@ -42,7 +42,7 @@ class OrderProduct {
 
   factory OrderProduct.fromJson(Map<String, dynamic> json) {
   return OrderProduct(
-    id: json['order_product_id'] as int? ?? 0,
+    id: json['id'] as int? ?? 0,
     orderId: json['order_id'] as int? ?? 0,
     productId: json['product_id'] as int? ?? 0,
     sizeId: json['size_id'] as int? ?? 0,

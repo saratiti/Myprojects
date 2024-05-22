@@ -5,50 +5,73 @@ import 'package:loyalty_app/model/category.dart';
 import 'package:loyalty_app/model/product.dart';
 
 class CategoryController {
-
-  Future<List<Catalog>>getAll() async {
-    try {
-      dynamic jsonObject = await ApiHelper().getRequest("/api/categories");
-      if (jsonObject == null) {
-        return [];
+final ApiHelper _apiHelper = ApiHelper();
+  // Future<List<Catalog>>getAll() async {
+  //   try {
+  //     dynamic jsonObject = await ApiHelper().getRequest("/api/categories");
+  //     if (jsonObject == null) {
+  //       return [];
+  //     }
+  //     List<Catalog> result = [];
+  //     jsonObject.forEach((json) {
+  //       result.add(Catalog.fromJson(json));
+  //     });
+  //     return result;
+  //   } catch (ex) {
+  //     if (kDebugMode) {
+  //       print(ex);
+  //     }
+  //     rethrow;
+  //   }
+  // }
+Future<List<Catalog>> getAllCategory() async {
+  try {
+    var result = await _apiHelper.getRequest("/api/categories");
+    List<dynamic>? data = result['categories'];
+    if (data != null) {
+      List<Catalog> categories = [];
+      
+     
+      for (var item in data) {
+       
+        List<Uint8List> imageList = await _apiHelper.getCategoryImages(item['image']);
+        
+        categories.add(Catalog(
+          categoryId: item['id'],
+          nameArabic: item['name_arabic'],
+          logo:item['image'],
+          nameEnglish: item['name_english'],
+          imageBytesList: imageList,
+        ));
       }
-      List<Catalog> result = [];
-      jsonObject.forEach((json) {
-        result.add(Catalog.fromJson(json));
-      });
-      return result;
-    } catch (ex) {
-      if (kDebugMode) {
-        print(ex);
-      }
-      rethrow;
+      return categories;
+    } else {
+      throw Exception('Failed to fetch categories: No data');
     }
+  } catch (e) {
+    throw Exception('Failed to fetch  categories: $e');
   }
+}
 
- Future<List<Catalog>> getFirstThree() async {
-    try {
-      dynamic jsonObject = await ApiHelper().getRequest("/api/categories");
-      if (jsonObject == null) {
-        return [];
-      }
-      List<Catalog> result = [];
-      int count = 0;
-      jsonObject.forEach((json) {
-        if (count < 3) {
-          result.add(Catalog.fromJson(json));
-          count++;
-        } else {
-          return result; 
-        }
-      });
-      return result;
-    } catch (ex) {
-      if (kDebugMode) {
-        print(ex);
-      }
-      rethrow;
+Future<List<Catalog>> getFirstThree() async {
+  try {
+    dynamic jsonObject = await ApiHelper().getRequest("/api/categories");
+    if (jsonObject == null) {
+      return [];
     }
+    List<Catalog> result = [];
+    for (var category in jsonObject['categories']) {
+      result.add(Catalog.fromJson(category));
+    }
+    return result.take(3).toList();
+  } catch (ex) {
+    if (kDebugMode) {
+      print(ex);
+    }
+    rethrow;
   }
+}
+
 
 Future<List<Product>> getProductsByCategory(int id) async {
   try {

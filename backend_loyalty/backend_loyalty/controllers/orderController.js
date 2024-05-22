@@ -13,7 +13,7 @@ exports.getAllorder = async (req, res) => {
     const orders = await Order.findAll();
 
    
-    const orderIds = orders.map(order => order.order_id);
+    const orderIds = orders.map(order => order.id);
 
     const orderProducts = await OrderProduct.findAll({
       where: { order_id: orderIds },
@@ -22,7 +22,7 @@ exports.getAllorder = async (req, res) => {
 
 
     const responseData = orders.map(order => {
-      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.order_id);
+      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.id);
       return { ...order.toJSON(), orderProducts: associatedOrderProducts };
     });
 
@@ -71,7 +71,7 @@ exports.create = async (req, res) => {
     const invoices = await Promise.all(data.products.map(async (product) => {
       const invoice = await Invoice.create({
         user_id: userId,
-        order_id: newOrder.order_id,  
+        order_id: newOrder.id,  
         upload_date: new Date().toISOString(),
         total_amount: data.total,
       });
@@ -83,14 +83,16 @@ exports.create = async (req, res) => {
 
     const orderProducts = await Promise.all(data.products.map(async (product) => {
       const orderProduct = await OrderProduct.create({
-        order_id: newOrder.order_id,
-        product_id: product.product_id,
+        order_id: newOrder.id,
+        product_id: product.id,
         qty: product.qty,
         price: product.price,
       });
-
+    
       return orderProduct;
     }));
+    
+    
 
     console.log('Order created successfully:', newOrder);
 
@@ -107,7 +109,7 @@ exports.destroy = async (req, res) => {
     const orderId = req.params.orderId;
 
     let order = await Order.findOne({
-      where: { order_id: orderId },
+      where: { id: orderId },
     });
     if (!order) {
       return res.status(404).json({
@@ -158,16 +160,16 @@ exports.getAllorderProductByUserId = async (req, res) => {
       return res.status(404).json({ error: 'No orders found for the user' });
     }
 
-    const orderIds = orders.map(order => order.order_id);
+    const orderIds = orders.map(order => order.id);
 
     const orderProducts = await OrderProduct.findAll({
-      where: { order_id: orderIds },
+      where: { id: orderIds },
       include: { model: Product, as: 'products' }, 
     });
 
 
     const responseData = orders.map(order => {
-      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.order_id);
+      const associatedOrderProducts = orderProducts.filter(op => op.id === order.id);
       return { ...order.toJSON(), orderProducts: associatedOrderProducts };
     });
 
@@ -186,7 +188,7 @@ exports.destroyOrderCashier = async (req, res) => {
     const orderId = req.params.orderId;
 
     let order = await Order.findOne({
-      where: { order_id: orderId },
+      where: { id: orderId },
     });
     if (!order) {
       return res.status(404).json({

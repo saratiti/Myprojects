@@ -227,7 +227,7 @@ class Product {
       description: json["product_descrption"] as String? ?? "",
       category: json.containsKey("category") && json["category"] != null
           ? Catalog.fromJson(json["category"] as Map<String, dynamic>)
-          : Catalog(categoryId: 0, nameArabic: "", nameEnglish: ""),
+          : Catalog(categoryId: 0, nameArabic: "", nameEnglish: "", logo: ''),
       optionalMenuItems: json.containsKey("OptionalMenu") && json["OptionalMenu"] != null
           ? (json['OptionalMenu'] as List<dynamic>)
               .map((item) => OptionalMenu.fromJson(item as Map<String, dynamic>))

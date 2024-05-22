@@ -5,10 +5,11 @@ const sequelize = require('../config/database');
 const User = require('./User'); 
 
 const Order = sequelize.define('Order', {
-  order_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   total_price: {
     type: DataTypes.DOUBLE,
@@ -18,35 +19,25 @@ const Order = sequelize.define('Order', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
-  tax_amount: {
-    type: DataTypes.DOUBLE,
-    allowNull: true,
-  },
-  total: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  payment_method_type: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  
-},
+
+ 
+
 user_id: {
-  type: DataTypes.BIGINT,
+  type: DataTypes.BIGINT.UNSIGNED,
   
 },
-createdAt: {
+created_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-updatedAt: {
+updated_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-deletedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-}
+// deletedAt: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// }
 },{
 timestamps: false, 
 paranoid: true,

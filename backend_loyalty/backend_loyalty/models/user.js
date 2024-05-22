@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 
 const User = sequelize.define('User', {
   id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     allowNull: false,
     primaryKey: true,
     autoIncrement: true,
@@ -41,23 +41,23 @@ const User = sequelize.define('User', {
    
   },
   
-createdAt:{
-  type: DataTypes.DATE,
-  allowNull: true,
-},
+// createdAt:{
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// },
 
-  // created_at: {
-  //   type: DataTypes.DATE,
-  //   allowNull: true,
-  // },
-  // updated_at: {
-  //   type: DataTypes.DATE,
-  //   allowNull: true,
-  // },
-  deletedAt: {
+  created_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
+  updated_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  // deletedAt: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // },
 }, {
   timestamps: false, 
   paranoid: true, 

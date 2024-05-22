@@ -1,15 +1,13 @@
-
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const ChallengeType = require('./challengeType'); 
+const ChallengeType = require('./challengeType');
 
 const Challenge = sequelize.define('Challenge', {
-
-  challenge_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   challenge_name: {
     type: DataTypes.STRING,
@@ -19,15 +17,15 @@ const Challenge = sequelize.define('Challenge', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  challengType_id:{
-    type: DataTypes.BIGINT,
-    allowNull: false, 
+  challengType_id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
   },
-  createdAt: {
+  created_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  updatedAt: {
+  updated_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
@@ -35,13 +33,12 @@ const Challenge = sequelize.define('Challenge', {
     type: DataTypes.DATE,
     allowNull: true,
   }
-
-
 }, {
-  timestamps: false, 
+  timestamps: false,
   paranoid: true,
   tableName: 'challenges',
 });
+
 Challenge.belongsTo(ChallengeType, { foreignKey: 'challengType_id', as: 'challengeTypes', onDelete: 'CASCADE' });
 
 module.exports = Challenge;

@@ -32,7 +32,7 @@ class Order {
     required this.total_price,
   });
 
-  // Convert the object to JSON
+
   Map<String, dynamic> toJson() => {
         "id": id,
      //   "sub_total": sub_total.toDouble(),
@@ -45,7 +45,7 @@ class Order {
         "product": product?.toJson(),
       };
 
-  // Factory method to create an Order object from JSON data
+  
 factory Order.fromJson(Map<String, dynamic> json) {
   List<dynamic> orderProductData = json['orderProducts'] ?? [];
   List<OrderProduct>? orderProducts = orderProductData
@@ -53,7 +53,7 @@ factory Order.fromJson(Map<String, dynamic> json) {
       .toList();
 
   return Order(
-    id: json['order_id'] as int?,
+    id: json['id'] as int?,
     orderProducts: orderProducts,
     products: (json['products'] != null)
         ? List<Product>.from(json['products'].map((e) => Product.fromJson(e)))

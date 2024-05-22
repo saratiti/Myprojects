@@ -5,10 +5,11 @@ const sequelize = require('../config/database');
 const User = require('./User'); 
 
 const Loyalty = sequelize.define('Loyalty', {
-  loyality_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   loyalty_point: {
     type: DataTypes.INTEGER,
@@ -24,40 +25,29 @@ const Loyalty = sequelize.define('Loyalty', {
 
 },
 user_id: {
-  type: DataTypes.BIGINT,
+  type: DataTypes.BIGINT.UNSIGNED,
   
 },
-createdAt: {
+created_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-updatedAt: {
+updated_at: {
   type: DataTypes.DATE,
   allowNull: true,
 },
-deletedAt: {
-  type: DataTypes.DATE,
-  allowNull: true,
-}
-// created_at: {
-//   type: DataTypes.DATE,
-//   allowNull: true,
-// },
-// updated_at: {
-//   type: DataTypes.DATE,
-//   allowNull: true,
-// },
 // deleted_at: {
 //   type: DataTypes.DATE,
 //   allowNull: true,
 // }
+
 },{
 timestamps: false, 
 paranoid: true,
-tableName: 'loyalities',
+tableName: 'loyalty',
 
 });
 
-Loyalty.belongsTo(User, { foreignKey: 'user_id', as: 'users', onDelete: 'CASCADE' });
+Loyalty.belongsTo(User, { foreignKey: 'user_id', as: 'users',key: 'id', onDelete: 'CASCADE' });
 
 module.exports = Loyalty;

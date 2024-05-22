@@ -6,7 +6,11 @@ const app = express();
 const sequelize = require('./config/database');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
+const { Client } = require('ssh2');
 
 const categoriesRoutes = require('./routes/categories');
 const usersRoutes = require('./routes/users');
@@ -49,7 +53,73 @@ sequelize.sync()
     console.error('Error syncing database:', error);
   });
 
+  const uploadDirectory = '/var/www/backend_myecoprint/'; 
 
+// app.get('/api/images/:imageName', async (req, res) => {
+//   try {
+//     const { imageName } = req.params;
+//     const localImagePath = path.join(uploadDirectory, imageName);
+
+//     if (!fs.existsSync(localImagePath)) {
+//       await copyImageFromServer(imageName, localImagePath);
+//     }
+
+//     if (!fs.existsSync(localImagePath)) {
+//       return res.status(404).json({ error: 'Image not found' });
+//     }
+//     const ext = path.extname(localImagePath).toLowerCase();
+//     let contentType;
+//     switch (ext) {
+//       case '.jpg':
+//       case '.jpeg':
+//         contentType = 'image/jpeg';
+//         break;
+//       case '.png':
+//         contentType = 'image/png';
+//         break;
+//       case '.gif':
+//         contentType = 'image/gif';
+//         break;
+//       default:
+//         contentType = 'application/octet-stream';
+//     }
+
+//     res.sendFile(localImagePath, { headers: { 'Content-Type': contentType } });
+//   } catch (error) {
+//     console.error('Error serving image:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
+// async function copyImageFromServer(imageName, localImagePath) {
+//   const sshConfig = {
+//     host: '94.156.35.189',
+//     port: 22,
+//     username: 'root',
+//     password: 'DuC2Gkz58PSyNkC'
+//   };
+
+//   return new Promise((resolve, reject) => {
+//     const conn = new Client();
+//     conn.on('ready', () => {
+//       conn.sftp((err, sftp) => {
+//         if (err) {
+//           reject(err);
+//           return;
+//         }
+//         const remoteImagePath = `/var/www/backend_myecoprint/uploads/${imageName}`;
+//         sftp.fastGet(remoteImagePath, localImagePath, err => {
+//           if (err) {
+//             reject(err);
+//           } else {
+//             resolve();
+//           }
+//           conn.end();
+//         });
+//       });
+//     }).connect(sshConfig);
+//   });
+// }
 
 const port = process.env.PORT || 3000;
 

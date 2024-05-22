@@ -15,7 +15,7 @@ class Loyalty {
 
   factory Loyalty.fromJson(Map<String, dynamic> json) {
     return Loyalty(
-      loyaltyId: json['loyality_id'] as int?,
+      loyaltyId: json['id'] as int?,
       loyaltyPoint: json['loyalty_point'] as int?,
       loyaltyLevel: json['loyalty_level'] as String?,
       lastActivityDate: json['last_activity_date'] != null

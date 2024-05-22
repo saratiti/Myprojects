@@ -26,7 +26,7 @@ class _CategoryPageState extends State<CategoryPage> {
 
   Future<void> _fetchCategories() async {
     try {
-      final categories = await CategoryController().getAll();
+      final categories = await CategoryController().getAllCategory();
       setState(() {
         _categories = categories;
       });

@@ -203,7 +203,7 @@ void savePassword() async {
                             SizedBox(
                               height: 15.h,
                             ),
-                            _buildSignInButtons(),
+                           // _buildSignInButtons(),
                             _buildRegistrationLink(context, localization)
                           ],
                         ),
@@ -446,24 +446,24 @@ Widget _buildEmailInputField(AppLocalizationController? localization) {
     );
   }
 
-  Widget _buildSignInButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SignInButton.mini(
-          buttonType: ButtonType.google,
-          onPressed: () async {
-            AuthService().signInWithGoogle();
-          },
-        ),
-        if (Platform.isIOS)
-          SignInButton.mini(
-            buttonType: ButtonType.apple,
-            onPressed: () {},
-          ),
-      ],
-    );
-  }
+  // Widget _buildSignInButtons() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       SignInButton.mini(
+  //         buttonType: ButtonType.google,
+  //         onPressed: () async {
+  //           AuthService().signInWithGoogle();
+  //         },
+  //       ),
+  //       if (Platform.isIOS)
+  //         SignInButton.mini(
+  //           buttonType: ButtonType.apple,
+  //           onPressed: () {},
+  //         ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildRegistrationLink(
       BuildContext context, AppLocalizationController? localization) {

@@ -1,5 +1,3 @@
-
-
 const UserChallenge = require('../models/userChallenge');
 const  User  = require('../models/user');
 const  ChallengeType  = require('../models/challengeType'); 

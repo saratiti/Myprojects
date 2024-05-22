@@ -1,8 +1,7 @@
-
-
+import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
-import 'package:flutter/material.dart';
+
 class SoftdrinkItemWidget extends StatelessWidget {
   final List<Catalog> categories;
   final int? selectedCategoryId;
@@ -19,21 +18,16 @@ class SoftdrinkItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizationController.to;
     final isEnglish = localization.locale.languageCode == 'en';
-      mediaQueryData = MediaQuery.of(context);
-  
-    final textDirection = localization.locale.languageCode == 'ar'
-      ? TextDirection.rtl
-      : TextDirection.ltr;
 
-  return Directionality(
-    textDirection: textDirection,
-   child: SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var category in categories)
-            Padding(
+    return Directionality(
+      textDirection: isEnglish ? TextDirection.ltr : TextDirection.rtl,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: categories.map((category) {
+            final index = categories.indexOf(category);
+            return Padding(
               padding: EdgeInsets.only(right: 24.h),
               child: GestureDetector(
                 onTap: () {
@@ -52,6 +46,22 @@ class SoftdrinkItemWidget extends StatelessWidget {
                       decoration: AppDecoration.outlineBlueGrayAd.copyWith(
                         borderRadius: BorderRadiusStyle.roundedBorder24,
                       ),
+                      child: category.imageBytesList != null && index < category.imageBytesList!.length
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(6), // Changed to use BorderRadius.circular for all corners
+                              child: Image.memory(
+                                category.imageBytesList![index],
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  // Handle error when loading image
+                                  print('Error loading image: $error');
+                                  return const Text('Error loading image');
+                                },
+                              ),
+                            )
+                          : Container(), // Added empty container when imageBytesList is null or empty
                     ),
                     SizedBox(height: 20.v),
                     Padding(
@@ -68,9 +78,10 @@ class SoftdrinkItemWidget extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-        ],
+            );
+          }).toList(),
+        ),
       ),
-   ) );
+    );
   }
 }

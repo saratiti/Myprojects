@@ -1,8 +1,8 @@
 
 
-const OptionalMenu = require('../models/optionalMenu');
-const Product=require('../models/product');
-const OptionProduct=require('../models/option_product');
+const OptionalMenu = require('../models/additional_menue');
+const Product = require('../models/product');
+const OptionProduct = require('../models/option_product');
 exports.getAllOptionalMenus = async (req, res) => {
   try {
     const optionalMenus = await OptionalMenu.findAll();
@@ -26,7 +26,7 @@ exports.getOptionalMenuByProductId = async (req, res) => {
   const productId = req.params.productId;
 
   try {
- 
+
     const product = await Product.findByPk(productId);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });

@@ -6,10 +6,11 @@ const User = require('./user');
 const Product = require('./product'); 
 
 const Review = sequelize.define('Review', {
-  review_id: {
-    type: DataTypes.BIGINT,
+  id: {
+    type: DataTypes.BIGINT.UNSIGNED,
+    allowNull: false,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   rating: {
     type: DataTypes.DOUBLE,
@@ -20,25 +21,25 @@ const Review = sequelize.define('Review', {
     allowNull: true,
   },
   user_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     
   },
   product_id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.BIGINT.UNSIGNED,
     
   },
-  createdAt: {
+  created_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  updatedAt: {
+  updated_at: {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  deletedAt: {
-    type: DataTypes.DATE,
-    allowNull: true,
-  }
+  // deletedAt: {
+  //   type: DataTypes.DATE,
+  //   allowNull: true,
+  // }
   },{
   timestamps: false, 
   paranoid: true,

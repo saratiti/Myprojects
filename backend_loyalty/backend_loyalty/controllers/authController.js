@@ -24,11 +24,11 @@ exports.login = (req, res) => {
           } else if (result) {
             const payload = {
               user_id: user.id,
-             // username: user.username,
+              // username: user.username,
               email: user.email,
               //full_name: user.full_name,
               phone: user.phone,
-               role: user.role,
+              role: user.role,
               // company_id: user.company_id,
             };
 
@@ -59,7 +59,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcryptUtil.createHash(req.body.password);
     const userData = {
       username: req.body.username,
-      email: req.body.email, 
+      email: req.body.email,
       full_name: req.body.full_name,
       password: hashedPassword,
       phone: req.body.phone,
@@ -67,9 +67,9 @@ exports.register = async (req, res) => {
 
     const user = await AuthService.createUser(userData);
 
-  
+
     await Loyalty.create({
-      loyalty_point: 50, 
+      loyalty_point: 50,
       loyalty_level: 'Bronze',
       user_id: user.user_id
     });
@@ -105,7 +105,7 @@ exports.logout = async (req, res) => {
 
 
 
-const bcrypt = require('bcryptjs'); 
+const bcrypt = require('bcryptjs');
 
 
 const saltRounds = 10;
