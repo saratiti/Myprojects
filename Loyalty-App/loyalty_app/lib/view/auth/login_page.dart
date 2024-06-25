@@ -15,11 +15,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
     late TextEditingController emailController;
   late TextEditingController passwordController;
-  GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _loginFormKey = GlobalKey<FormState>();
   late FocusNode _emailFocusNode;
   late FocusNode _passwordFocusNode;
   bool _obscureText = true;
-
+    bool isCameraEnabled = false;
+  bool isVisiblePassword = false;
+  Color cameraButtonColor = appTheme.gray400;
+  String savedPassword = "";
   @override
   void initState() {
     super.initState();
@@ -27,6 +30,8 @@ class _LoginPageState extends State<LoginPage> {
     passwordController = TextEditingController();
     _emailFocusNode = FocusNode();
     _passwordFocusNode = FocusNode();
+       isCameraEnabled = true;
+    _loadSavedData(); 
   }
 
   @override
@@ -37,24 +42,53 @@ class _LoginPageState extends State<LoginPage> {
     _passwordFocusNode.dispose();
     super.dispose();
   }
+
+
+void _loadSavedData() async {
+  String? savedEmail = await const FlutterSecureStorage().read(key: "saved_email");
+  String? savedPassword = await const FlutterSecureStorage().read(key: "saved_password");
+
+  if (kDebugMode) {
+    print("Saved Email: $savedEmail");
+  }
+  if (kDebugMode) {
+    print("Saved Password: $savedPassword");
+  }
+
+  if (savedEmail != null) {
+    emailController.text = savedEmail;
+  }
+
+  if (isCameraEnabled && savedPassword != null) {
+    passwordController.text = savedPassword;
+  }
+}
+
+
+
   void _handleSignInAction(BuildContext context) async {
     EasyLoading.show(status: "Loading");
 
-    String enteredEmail = emailController.text;
+    String enteredEmail =emailController.text;
     String enteredPassword = passwordController.text;
 
     AuthController()
         .login(enteredEmail, enteredPassword)
         .then((Login? value) async {
       EasyLoading.dismiss();
-      await const FlutterSecureStorage().write(
-          key: "token", value: "${value!.accessToken}");
+      await const FlutterSecureStorage().write(key: "token", value: "${value!.accessToken}");
+
+      
+      if (isCameraEnabled) {
+        await saveCredentials(enteredEmail, enteredPassword);
+      }
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) =>  HomePage()),
       );
-    }).catchError((ex) {
+    })
+    .catchError((ex) {
       EasyLoading.dismiss();
 
       if (ex is SocketException) {
@@ -70,6 +104,50 @@ class _LoginPageState extends State<LoginPage> {
       }
     });
   }
+
+void toggleCamera() {
+  setState(() {
+    isCameraEnabled = !isCameraEnabled;
+    cameraButtonColor = isCameraEnabled ? appTheme.deepOrange800 : appTheme.gray400;
+  });
+
+  if (isCameraEnabled && savedPassword.isEmpty) {
+    savePassword();
+  } else if (!isCameraEnabled) {
+    savedPassword = "";
+  }
+}
+
+
+void savePassword() async {
+  String email = emailController.text;
+  String password = passwordController.text; 
+  savedPassword = password;
+
+ 
+  if (isCameraEnabled) {
+    await saveCredentials(email, password);
+  }
+}
+
+
+ Future<void> saveCredentials(String email, String password) async {
+  await const FlutterSecureStorage().write(key: "saved_email", value: email);
+  await const FlutterSecureStorage().write(key: "saved_password", value: password);
+
+
+  if (kDebugMode) {
+    print('Saved Password: $password');
+  }
+}
+
+
+  void toggleIconEye() {
+    setState(() {
+      isVisiblePassword = !isVisiblePassword;
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -147,35 +225,47 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 29.v),
                       _buildPassword(context),
                       SizedBox(height: 31.v),
-                       
+                       _buildResetPasswordAndCameraButtons(context,localization),
 
-Align(
-  alignment: localization.locale.languageCode == 'ar'
-      ? Alignment.centerRight 
-      : Alignment.centerLeft,
-  child: GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ResetPassowrdEmailScreen(),
-        ),
-      );
-    },
-    child: Padding(
-      padding: EdgeInsets.only(
-      
-        right: localization.locale.languageCode == 'en' ? 40.h : 20.h,
-        left: localization.locale.languageCode == 'ar' ? 40.h : 20.h,
-      ),
-      child: Text(
-        "msg5".localized,
-        style: CustomTextStyles.titleMediumMulishffd1512d,
-        textDirection: TextDirection.ltr, 
-      ),
-    ),
-  ),
-),
+// Align(
+//   alignment: localization.locale.languageCode == 'ar'
+//       ? Alignment.centerRight
+//       : Alignment.centerLeft,
+//   child: Row(
+//     mainAxisSize: MainAxisSize.min, 
+//     children: [
+//       GestureDetector(
+//         onTap: () {
+//           Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (context) => ResetPassowrdEmailScreen(),
+//             ),
+//           );
+//         },
+//         child: Padding(
+//           padding: EdgeInsets.only(
+//             right: localization.locale.languageCode == 'en' ? 40.h : 20.h,
+//             left: localization.locale.languageCode == 'ar' ? 40.h : 20.h,
+//           ),
+//           child: Text(
+//             "msg5".localized,
+//             style: CustomTextStyles.titleMediumMulishffd1512d,
+//             textDirection: TextDirection.ltr,
+//           ),
+//         ),
+//       ),
+//       const Spacer(),
+//       CustomImageView(
+//         svgPath: ImageConstant.imgCamera,
+//         height: 24.adaptSize,
+//         width: 24.adaptSize,
+//         onTap: toggleCamera,
+//         color: cameraButtonColor,
+//       ),
+//     ],
+//   ),
+// ),
 
 
                       SizedBox(height: 28.v),
@@ -188,64 +278,65 @@ Align(
                         style: CustomTextStyles.titleMediumMulishffd1512d,
                       ),
                       SizedBox(height: 20.v),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 44.v,
-                            width: 60.h,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 18.h,
-                              vertical: 10.v,
-                            ),
-                            decoration: AppDecoration.fillGray200.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder8,
-                            ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgPhGoogleLogoBold,
-                              height: 24.adaptSize,
-                              width: 24.adaptSize,
-                              alignment: Alignment.center,
-                            ),
-                          ),
-                          Container(
-                            height: 44.v,
-                            width: 60.h,
-                            margin: EdgeInsets.only(left: 10.h),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 18.h,
-                              vertical: 10.v,
-                            ),
-                            decoration: AppDecoration.fillGray200.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder8,
-                            ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgIcSharpFacebook,
-                              height: 24.adaptSize,
-                              width: 24.adaptSize,
-                              alignment: Alignment.center,
-                            ),
-                          ),
-                          Container(
-                            height: 44.v,
-                            width: 60.h,
-                            margin: EdgeInsets.only(left: 10.h),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 18.h,
-                              vertical: 10.v,
-                            ),
-                            decoration: AppDecoration.fillGray200.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder8,
-                            ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgIcBaselineApple,
-                              height: 24.adaptSize,
-                              width: 24.adaptSize,
-                              alignment: Alignment.center,
-                            ),
-                          ),
-                        ],
-                      ),
+                   Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      height: 44.v,
+      width: 60.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 18.h,
+        vertical: 10.v,
+      ),
+      decoration: AppDecoration.fillGray200.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder8,
+      ),
+      child: CustomImageView(
+        imagePath: ImageConstant.imgPhGoogleLogoBold,
+        height: 24.adaptSize,
+        width: 24.adaptSize,
+        alignment: Alignment.center,
+      ),
+    ),
+    SizedBox(width: 10.h), // Add space between containers
+    Container(
+      height: 44.v,
+      width: 60.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 18.h,
+        vertical: 10.v,
+      ),
+      decoration: AppDecoration.fillGray200.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder8,
+      ),
+      child: CustomImageView(
+        imagePath: ImageConstant.imgIcSharpFacebook,
+        height: 24.adaptSize,
+        width: 24.adaptSize,
+        alignment: Alignment.center,
+      ),
+    ),
+    SizedBox(width: 10.h), // Add space between containers
+    Container(
+      height: 44.v,
+      width: 60.h,
+      padding: EdgeInsets.symmetric(
+        horizontal: 18.h,
+        vertical: 10.v,
+      ),
+      decoration: AppDecoration.fillGray200.copyWith(
+        borderRadius: BorderRadiusStyle.roundedBorder8,
+      ),
+      child: CustomImageView(
+        imagePath: ImageConstant.imgIcBaselineApple,
+        height: 24.adaptSize,
+        width: 24.adaptSize,
+        alignment: Alignment.center,
+      ),
+    ),
+  ],
+),
+
                       SizedBox(height: 20.v),
                        _buildLanguageSwitchButton(localization),
                     ],
@@ -274,6 +365,60 @@ Align(
         textInputType: TextInputType.emailAddress,
         prefix: const Icon(Icons.email,color: Colors.grey,), 
         cursorColor:appTheme.deepOrange800
+      ),
+    );
+  }
+  Widget _buildResetPasswordAndCameraButtons(
+      BuildContext context, AppLocalizationController? localization) {
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 11.h,
+        top: 17.v,
+        right: 11.h,
+      ),
+      child: Directionality(
+        textDirection: localization?.locale.languageCode == 'ar'
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                top: 4.v,
+                bottom: 2.v,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushNamed(AppRoutes.resetPassowrd);
+                },
+                child: Text(
+                  "msg5".localized,
+                  style: CustomTextStyles.titleMediumMulishffd1512d,
+                ),
+              ),
+            ),
+            const Spacer(),
+            CustomImageView(
+              svgPath: ImageConstant.imgCamera,
+              height: 24.adaptSize,
+              width: 24.adaptSize,
+              onTap: toggleCamera,
+              color: cameraButtonColor,
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: 6.h,
+                top: 10.v,
+                bottom: 2.v,
+              ),
+              child: Text(
+                "msg4".localized,
+                style: theme.textTheme.labelMedium,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -367,10 +512,10 @@ Widget _buildLanguageSwitchButton(AppLocalizationController? localization) {
             }
             setState(() {});
           },
-          backgroundColor: appTheme.deepOrange800, // Set background color
+          backgroundColor: appTheme.deepOrange800, 
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            textDirection: localization?.locale.languageCode == 'ar'
+            textDirection: localization.locale.languageCode == 'ar'
                 ? TextDirection.rtl
                 : TextDirection.ltr,
             children:  [

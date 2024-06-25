@@ -18,7 +18,7 @@ final  ChallengeType? challengeType;
 
   factory Challenge.fromJson(Map<String, dynamic> json) {
     return Challenge(
-      id: json['challenge_id'] ?? 0,
+      id: json['id'] ?? 0,
       name: json['challenge_name'] ?? '',
       description: json['challenge_description'] ?? '',
       challengeTypeId: json['challengType_id'] ?? 0,

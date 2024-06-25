@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -13,6 +15,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+   HttpOverrides.global = MyHttpOverrides();
 EasyLoading.instance
     ..indicatorType = EasyLoadingIndicatorType.ring
     ..loadingStyle = EasyLoadingStyle.custom
@@ -30,7 +33,13 @@ EasyLoading.instance
 
   runApp(MyApp());
 }
-
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
 class MyApp extends StatelessWidget {
  @override
   Widget build(BuildContext context) {

@@ -115,6 +115,7 @@ class ImageConstant {
   static String imgVector = '$imagePath/img_vector.svg';
 
   static String imgRectangle39 = '$imagePath/img_rectangle_39.png';
-
+static String imgCamera = '$imagePath/img_camera.svg';
+static String imgScanner = '$imagePath/scanner.png';
   static String imageNotFound = 'assets/images/image_not_found.png';
 }

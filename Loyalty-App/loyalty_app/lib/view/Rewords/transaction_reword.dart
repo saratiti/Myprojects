@@ -18,9 +18,9 @@ class TransactionPage extends StatelessWidget {
         } else {
           List<Transaction> transactions = snapshot.data ?? [];
           return SingleChildScrollView(
-            physics: ClampingScrollPhysics(), // Limit the scrollable area
+            physics: const ClampingScrollPhysics(), 
             child: Column(
-              mainAxisSize: MainAxisSize.min, // Limit the scrollable area
+              mainAxisSize: MainAxisSize.min, 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(

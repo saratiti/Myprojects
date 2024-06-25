@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unused_local_variable
 
 
 import 'package:loyalty_app/core/app_export.dart';
@@ -95,8 +95,9 @@ Widget build(BuildContext context) {
 }
 
  Widget _buildProduct(BuildContext context, Product product) {
-    final localization = AppLocalizationController.to;
-    final isEnglish = localization.locale.languageCode == 'en';
+  final localization = AppLocalizationController.to;
+  final isEnglish = localization.locale.languageCode == 'en';
+
   return GestureDetector(
     onTap: () {
       _navigateToProductDetails(context, product.id);
@@ -114,68 +115,114 @@ Widget build(BuildContext context) {
             offset: const Offset(0, 3),
           ),
         ],
+        color: Colors.white, // Ensure the container has a background color
       ),
       child: Stack(
         alignment: Alignment.topLeft,
         children: [
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 10.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24.0),
-                color: Colors.white,
+          Padding(
+            padding: const EdgeInsets.only(top: 40.0), // Adjust padding as needed
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 10.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24.0),
+                  color: Colors.white,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 39.0),
+                    Text(
+                      isEnglish ? product.nameEnglish.localized : product.nameArabic.localized,
+                      style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
+                        color: appTheme.blueGray90001,
+                      ),
+                    ),
+                    const SizedBox(height: 5.0),
+                    Text(
+                      product.description,
+                      style: theme.textTheme.bodyMedium!.copyWith(
+                        color: appTheme.blueGray600,
+                      ),
+                    ),
+                    const SizedBox(height: 3.0),
+                    Container(
+                      width: 136.0,
+                      margin: const EdgeInsets.only(left: 3.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RatingBar.builder(
+                            initialRating: product.price,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemCount: 5,
+                            itemSize: 20.0,
+                            itemBuilder: (context, _) => const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                            onRatingUpdate: (rating) {},
+                          ),
+                          CustomIconButton(
+                            height: 31.0,
+                            width: 32.0,
+                            padding: const EdgeInsets.all(9.0),
+                            child: CustomImageView(
+                              imagePath: ImageConstant.imgPlusWhiteA700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 39.0),
-                  Text(
-                     isEnglish ? product.nameEnglish.localized : product.nameArabic.localized,
-                    style: CustomTextStyles.titleSmallSenBluegray90001.copyWith(
-                      color: appTheme.blueGray90001,
-                    ),
-                  ),
-                  const SizedBox(height: 5.0),
-                  Text(
-                    product.description ?? '',
-                    style: theme.textTheme.bodyMedium!.copyWith(
-                      color: appTheme.blueGray600,
-                    ),
-                  ),
-                  const SizedBox(height: 3.0),
-                  Container(
-                    width: 136.0,
-                    margin: const EdgeInsets.only(left: 3.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RatingBar.builder(
-                          initialRating: product.price,
-                          minRating: 1,
-                          direction: Axis.horizontal,
-                          allowHalfRating: true,
-                          itemCount: 5,
-                          itemSize: 20.0,
-                          itemBuilder: (context, _) => const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          ),
-                          onRatingUpdate: (rating) {},
-                        ),
-                        CustomIconButton(
-                          height: 31.0,
-                          width: 32.0,
-                          padding: const EdgeInsets.all(9.0),
-                          child: CustomImageView(
-                            imagePath: ImageConstant.imgPlusWhiteA700,
-                          ),
-                        ),
-                      ],
-                    ),
+            ),
+          ),
+          Positioned(
+            top: 10,
+            left: 10,
+            child: Container(
+              height: 80, // Reduce the image size
+              width: 80,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
                   ),
                 ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: product.image != null && product.image!.isNotEmpty
+                    ? Image.network(
+                        product.image!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: Icon(
+                              Icons.error,
+                              color: Colors.red,
+                            ),
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                          size: 50,
+                        ),
+                      ),
               ),
             ),
           ),

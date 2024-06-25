@@ -19,7 +19,7 @@ class ChallengeType {
 
   factory ChallengeType.fromJson(Map<String, dynamic> json) {
     return ChallengeType(
-      id: json['challengType_id'] ?? 0,
+      id: json['id'] ?? 0,
       typeName: json['type_name'] ?? '',
       requiredCount: json['required_count'] ?? 0,
       points: json['points'] ?? 0,

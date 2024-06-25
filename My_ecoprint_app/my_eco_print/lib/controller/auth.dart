@@ -41,24 +41,24 @@ Future<Login?> login(String email, String password) async {
   }
 }
 
-  Future<User> update({
-  required String email,
-  required String password,
-  required String username,
-  required String image,
-}) async {
-  try {
-    var result = await ApiHelper().putRequest("/api/users", {
-      "email": email,
-      "password": password,
-      "username": username,
-      "image": image,
-    });
-    return User.fromJson(result);
-  } catch (e) {
-    rethrow;
-  }
-}
+//   Future<User> update({
+//   required String email,
+//   required String password,
+//   required String username,
+//   required String image,
+// }) async {
+//   try {
+//     var result = await ApiHelper().putRequest("/api/users", {
+//       "email": email,
+//       "password": password,
+//       "username": username,
+//       "image": image,
+//     });
+//     return User.fromJson(result);
+//   } catch (e) {
+//     rethrow;
+//   }
+// }
 
 
   

@@ -73,7 +73,7 @@ Future<void> generateBarcodeAndQRCode() async {
       
     
       Map<String, dynamic> requestBody = {
-        'invoice_id': invoice_id,
+        'id': invoice_id,
         'total_amount': total_amount,
       };
 

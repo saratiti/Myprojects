@@ -77,34 +77,37 @@ Future<List<Product>> getProductsByCategory(int id) async {
   try {
     dynamic jsonObject = await ApiHelper().getRequest("/api/product/$id");
     
-   
-    print('Response Body: $jsonObject');
+    if (kDebugMode) {
+      print('Response Body: $jsonObject');
+    }
     
- 
     if (jsonObject == null) {
       throw Exception('Response body is null');
     }
     
-   
     if (jsonObject is List<dynamic> && jsonObject.isNotEmpty) {
-    
       List<Product> result = [];
       for (var json in jsonObject) {
         if (json is Map<String, dynamic>) {
           try {
-            result.add(Product.fromJson(json));
+            Product product = Product.fromJson(json);
+            // Fetch images for the product
+            List<Uint8List> imageList = await _apiHelper.getProductImages(product.image);
+            product.imageBytesList = imageList;  // Assign the list of images to the images field
+            result.add(product);
           } catch (e) {
-            print('Error parsing product JSON: $e');
+            if (kDebugMode) {
+              print('Error parsing product JSON: $e');
+            }
           }
         } else {
-          print('Invalid product format in the response');
+          if (kDebugMode) {
+            print('Invalid product format in the response');
+          }
         }
       }
       return result;
-    } 
-    
-
-    else {
+    } else {
       throw Exception('Invalid response format or empty response');
     }
   } catch (ex) {
@@ -114,7 +117,6 @@ Future<List<Product>> getProductsByCategory(int id) async {
     rethrow;
   }
 }
-
 
 
 

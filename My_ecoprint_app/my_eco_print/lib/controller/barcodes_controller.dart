@@ -15,8 +15,9 @@ class BarcodeController {
 
   Future<dynamic> createBarcode(Barcodes barcode) async {
     try {
-      var result =
-          await ApiHelper().postRequest("/api/barcodes", barcode.toJson());
+      var barcodeData = barcode.toJson().map((key, value) => MapEntry(key, value.toString()));
+
+    var result = await ApiHelper().postRequest("/api/barcodes", barcodeData);
       print("Response: $result");
       print("JSON Data: ${barcode.toJson()}");
 

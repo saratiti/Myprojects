@@ -38,6 +38,7 @@ Map<String, dynamic> toJson() {
     "password": password ?? '',
     "full_name": fullName,
     "phone": phone,
+    
   
   };
 }

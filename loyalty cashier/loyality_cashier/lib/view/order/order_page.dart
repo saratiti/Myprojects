@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loyality_cashier/controller/order.dart';
 import 'package:loyality_cashier/core/app_export.dart';
 import 'package:loyality_cashier/model/order.dart';
-import 'package:loyality_cashier/model/order_product.dart';
+
 
 class OrderPage extends StatefulWidget {
   @override
@@ -31,7 +31,7 @@ class _OrderPageState extends State<OrderPage> {
       });
     } catch (error) {
       print('Error fetching orders: $error');
-      // Handle error
+     
     } finally {
       setState(() {
         isLoading = false;

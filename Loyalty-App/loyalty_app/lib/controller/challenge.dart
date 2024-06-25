@@ -1,34 +1,25 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:loyalty_app/controller/api_helper.dart';
+import 'package:loyalty_app/model/challenge.dart';
 
 import 'package:loyalty_app/model/user_challenge.dart';
 
 class ChallengeController {
   final ApiHelper apiHelper = ApiHelper();
 
-Future<List<UserChallenge>> getUserChallenge() async {
+Future<List<Challenge>> getUserChallenges() async {
   try {
-    dynamic jsonObject = await apiHelper.getRequest("/api/challenges/challengesProgress");
-    List<UserChallenge> result = [];
+    dynamic response = await apiHelper.getRequest("/api/challenges");
+    List<Challenge> result = [];
 
-   
-    if (jsonObject != null) {
-     
-      if (jsonObject is Map<String, dynamic>) {
-       
-        jsonObject.forEach((key, value) {
-        
-          result.add(UserChallenge.fromJson(value));
-        });
-      } else {
-        if (kDebugMode) {
-          print("API response is not a map");
-        }
+    if (response != null && response['challenges'] is List<dynamic>) {
+      for (var item in response['challenges']) {
+        result.add(Challenge.fromJson(item));
       }
     } else {
       if (kDebugMode) {
-        print("API response is null");
+        print("API response is not a list");
       }
     }
 
@@ -40,9 +31,6 @@ Future<List<UserChallenge>> getUserChallenge() async {
     rethrow;
   }
 }
-
-
-
 
 
 

@@ -163,7 +163,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                                   const Duration(seconds: 2),
                                                   () {
                                                 Navigator.of(context).pushNamed(
-                                                    AppRoutes.resetPassowrd,
+                                                    AppRoutes.updatepasswordScreen,
                                                     arguments: {
                                                       'email': userEmail
                                                     });
@@ -215,7 +215,7 @@ class _PinCodePasswordScreenState extends State<PinCodePasswordScreen> {
                                                   );
                                                 } else {
                                                   return const Text(
-                                                      "Loading..."); // or any other placeholder
+                                                      "Loading..."); 
                                                 }
                                               },
                                             ),

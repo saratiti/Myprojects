@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, deprecated_member_use
 
 import 'dart:io';
 
@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
 import 'package:loyalty_app/core/localization/app_localization.dart';
+import 'package:loyalty_app/view/user/delete_account_form.dart';
 
 
 class EditUserPage extends StatefulWidget {
@@ -61,7 +62,7 @@ Future<void> _updateProfile() async {
     var data = {
       'username': usernameController.text,
       'email': emailController.text,
-      'full_name': fullNameController.text,
+      'name': fullNameController.text,
       'phone': phoneController.text,
     };
 
@@ -203,7 +204,8 @@ void showDeleteAccountDialog(BuildContext context) {
     return Directionality(
       textDirection: textDirection,
       child: Scaffold(
-      //  appBar: buildAppBar(context, "msg34"),
+        appBar: 
+        _buildAppBar(),
         body: isLoading
         ? const Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
@@ -244,14 +246,15 @@ void showDeleteAccountDialog(BuildContext context) {
                                       fit: BoxFit.cover,
                                     );
                                   } else {
-                                    return ClipOval(
-                                      child: SizedBox(
-                                        width: 150,
-                                        height: 150,
-                                       
-                                        
-                                      ),
-                                    );
+                                   return const ClipOval(
+    child: SizedBox(
+      width: 150,
+      height: 150,
+      child: Icon(
+        Icons.person,
+        size: 100,
+        color: Colors.grey, 
+      ),),);
                                   }
                                 },
                               ),
@@ -273,7 +276,9 @@ void showDeleteAccountDialog(BuildContext context) {
                                   children: [
                                     ListTile(
                                       leading: const Icon(Icons.camera_alt),
-                                      title: const Text('Take a photo'),
+                                      title: const Text('Take a photo'
+                                      , style: TextStyle(color: Colors.grey),),
+                                      
                                       onTap: () {
                                         _pickImageFromCamera();
                                         Navigator.pop(context); 
@@ -281,7 +286,7 @@ void showDeleteAccountDialog(BuildContext context) {
                                     ),
                                     ListTile(
                                       leading: const Icon(Icons.photo_library),
-                                      title: const Text('Choose from gallery'),
+                                      title: const Text('Choose from gallery', style: TextStyle(color: Colors.grey),),
                                       onTap: () {
                                         _pickImageFromGallery();
                                         Navigator.pop(context); 
@@ -352,121 +357,186 @@ void showDeleteAccountDialog(BuildContext context) {
     );
   }
 
-  Widget buildForm(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildTextFormField(
-            controller: fullNameController,
-            hintText: "msg7".localized,
-            labelText: "lbl5".localized,
-        
-          ),
-          buildTextFormField(
-            controller: emailController,
-            hintText: "msg2".localized,
-            labelText: "lbl5".localized,
-           // icon: ImageConstant.imgCheckmark,
-          ),
-          buildTextFormField(
-            controller: phoneController,
-            hintText: "lbl6".localized,
-            labelText: "lbl6".localized,
-           // icon: ImageConstant.imgCall,
-          ),
-          buildTextFormField(
-            controller: usernameController,
-            hintText: "lbl6".localized,
-            labelText: "lbl6".localized,
-            //icon: ImageConstant.imgUser,
-          ),
-          buildPasswordFormField(
-            controller: passwordplacehoController,
-            hintText: "lblـ28".localized,
-            labelText: "lblـ28".localized,
-            //icon: ImageConstant.imgLock,
-            toggleIcon: toggleIconEye,
-            isVisible: isVisiblePassword,
-          ),
-          buildPasswordFormField(
-            controller: confirmpasswordController,
-            hintText: "lblـ29".localized,
-            labelText: "lblـ29".localized,
-           // icon: ImageConstant.imgLock,
-            toggleIcon: toggleIVisibleEye,
-            isVisible: isVisiblePassword2,
-          ),
-          CustomElevatedButton(
-            text: "lblـ27".localized,
-            onPressed: _updateProfile,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildTextFormField({
-    required TextEditingController controller,
-    required String hintText,
-    required String labelText,
-   
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: hintText.localized,
-          labelText: labelText.localized,
-        
+ Widget buildForm(BuildContext context) {
+  return Form(
+    key: _formKey,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildTextFormField(
+          controller: fullNameController,
+          hintText: "msg7".localized,
+          labelText: "lbl5".localized,
+            icon: Icons.person,
         ),
-        onChanged: (value) {},
+        buildTextFormField(
+          controller: emailController,
+          hintText: "msg2".localized,
+          labelText: "msg2".localized,
+           icon: Icons.email_outlined,
+        ),
+        buildTextFormField(
+          controller: phoneController,
+          hintText: "lbl6".localized,
+          labelText: "lbl6".localized,
+            icon: Icons.phone_android_rounded,
+        ),
+        buildPasswordFormField(
+          controller: passwordplacehoController,
+          hintText: "lblـ28".localized,
+          labelText: "lblـ28".localized,
+          // icon: ImageConstant.imgLock,
+          toggleIcon: toggleIconEye,
+          isVisible: isVisiblePassword,
+        ),
+        buildPasswordFormField(
+          controller: confirmpasswordController,
+          hintText: "lblـ29".localized,
+          labelText: "lblـ29".localized,
+          // icon: ImageConstant.imgLock,
+          toggleIcon: toggleIVisibleEye,
+          isVisible: isVisiblePassword2,
+        ),
+        SizedBox(height: 20),
+        CustomElevatedButton(
+          text: "lblـ27".localized,
+          onPressed: _updateProfile,
+        ),
+   SizedBox(height: 20),
+        deleteAccount( context)
+      ],
+    ),
+  );
+}
+
+Widget buildTextFormField({
+  required TextEditingController controller,
+  required String hintText,
+  required String labelText,
+  IconData? icon, // Optional icon parameter
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: TextFormField(
+      controller: controller,
+      style: TextStyle(color: Colors.grey[800]),
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+        hintText: hintText.localized,
+        hintStyle: TextStyle(color: Colors.grey[600]),
+        labelText: labelText.localized,
+        labelStyle: TextStyle(color: Colors.grey[800]), 
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: appTheme.deepOrange800),
+        ),
+        prefixIcon: icon != null ? Icon(icon, color: Colors.grey[600]) : null,
       ),
+      onChanged: (value) {},
+    ),
+  );
+}
+Widget buildPasswordFormField({
+  required TextEditingController controller,
+  required String hintText,
+  required String labelText,
+  required VoidCallback toggleIcon,
+  required bool isVisible,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 10),
+    child: TextFormField(
+      controller: controller,
+      obscureText: !isVisible,
+      style: TextStyle(color: Colors.grey[800]), // Text color
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+        hintText: hintText.localized,
+        hintStyle: TextStyle(color: Colors.grey[600]), // Hint text color
+        labelText: labelText.localized,
+        labelStyle: TextStyle(color: Colors.grey[800]), // Label text color
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: appTheme.deepOrange800),
+        ),
+        suffixIcon: GestureDetector(
+          onTap: toggleIcon,
+          child: Icon(
+            isVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey[600],
+          ),
+        ),
+      ),
+      onChanged: (value) {},
+    ),
+  );
+}
+  Widget deleteAccount(BuildContext context) {
+    return CustomElevatedButton(
+      text: "lbl30_".localized,
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DeleteAccountForm()),
+        );
+      },
+      buttonStyle: CustomButtonStyles.fillPrimary,
     );
   }
-
-  Widget buildPasswordFormField({
-    required TextEditingController controller,
-    required String hintText,
-    required String labelText,
-   
-    required VoidCallback toggleIcon,
-    required bool isVisible,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: TextFormField(
-        controller: controller,
-        obscureText: !isVisible,
-        decoration: InputDecoration(
-          hintText: hintText.localized,
-          labelText: labelText.localized,
-          suffixIcon: GestureDetector(
-            onTap: toggleIcon,
-            child: Icon(
-              isVisible ? Icons.visibility : Icons.visibility_off,
-              color: Colors.grey,
+  PreferredSizeWidget _buildAppBar() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: AppBar(
+        elevation: 0,
+        leadingWidth: 40.0,
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Container(
+            width: 40.0,
+            height: 40.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: appTheme.deepOrange800,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+                size: 24,
+              ),
             ),
           ),
-        
         ),
-        onChanged: (value) {},
+        title:  Text(
+        "msg34".localized,
+          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
     );
   }
 
-  // Widget deleteAccount(BuildContext context) {
-  //   return CustomElevatedButton(
-  //     text: "lbl30_".localized,
-  //     onTap: () {
-  //     //   Navigator.push(
-  //     //     context,
-  //     //     MaterialPageRoute(builder: (context) => DeleteAccountForm()),
-  //     //   );
-  //     // },
-  //     buttonStyle: CustomButtonStyles.fillRed,
-  //   );
-  // }
 }

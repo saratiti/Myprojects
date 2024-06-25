@@ -1,13 +1,14 @@
-// ignore_for_file: depend_on_referenced_packages, use_key_in_widget_constructors
-
-
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'core/app_export.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-EasyLoading.instance
+ 
+  HttpOverrides.global = MyHttpOverrides();
+ 
+  EasyLoading.instance
     ..indicatorType = EasyLoadingIndicatorType.ring
     ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 45.0
@@ -22,10 +23,21 @@ EasyLoading.instance
   localizationController.changeLocale(const Locale('ar'));
   initializeDateFormatting();
 
-  runApp(MyApp());
+  runApp(const MyApp());
+}
+
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
  @override
   Widget build(BuildContext context) {
     return MultiProvider(

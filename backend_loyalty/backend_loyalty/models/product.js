@@ -35,6 +35,10 @@ const Product = sequelize.define('Product', {
     type: DataTypes.DOUBLE,
     allowNull: true,
   },
+  image: {
+    type: DataTypes.STRING,
+    allowNull: true
+  },
   // createdAt: {
   //   type: DataTypes.DATE,
   //   allowNull: true,

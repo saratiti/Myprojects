@@ -40,30 +40,30 @@ Future<bool> changePassword(String email, String newPassword, String confirmPass
 }
 
 
-  Future<User> update({
-  required String email,
-  required String password,
-  required String username,
+//   Future<User> update({
+//   required String email,
+//   required String password,
+//   required String username,
  
-  required String fullName,
-  required String profilePicture,
-  required String phone
-}) async {
-  try {
-    var result = await ApiHelper().putRequest("/api/users/update", {
-      "email": email,
-      "password": password,
-      "username": username,
+//   required String fullName,
+//   required String profilePicture,
+//   required String phone
+// }) async {
+//   try {
+//     var result = await ApiHelper().putRequest("/api/users/update", {
+//       "email": email,
+//       "password": password,
+//       "username": username,
       
-      "full_name":fullName,
-      "profile_picture":profilePicture,
-       "phone":phone,
-    });
-    return User.fromJson(result);
-  } catch (e) {
-    rethrow;
-  }
-}
+//       "full_name":fullName,
+//       "profile_picture":profilePicture,
+//        "phone":phone,
+//     });
+//     return User.fromJson(result);
+//   } catch (e) {
+//     rethrow;
+//   }
+// }
 
 
   Future<bool> updateUser(String email, String password, {String username = '', String image = ''}) async {

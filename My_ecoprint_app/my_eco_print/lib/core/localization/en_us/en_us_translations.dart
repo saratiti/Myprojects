@@ -152,6 +152,7 @@ final Map<String, String> enUs = {
   "msg17": "Forgot your password?",
   "msg2": "Email",
   "msg22": "Set a New Password",
+  "msg 19_":"Email not found",
   "msg23":
       "Create a new password, typically, a strong password consists of at least 8 digits. For your information, a strong password is a mix of letters, symbols, and numbers",
   "msg24": "Create a new password, typically, a strong password consists of",

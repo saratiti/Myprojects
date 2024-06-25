@@ -102,7 +102,7 @@ exports.getAllInvoices = async (req, res) => {
 exports.getInvoicesById = async (req, res) => {
   const invoiceId = req.params.invoiceId; 
   try {
-    const invoices = await Invoice.findOne({ where: { invoice_id: invoiceId } });
+    const invoices = await Invoice.findOne({ where: { id: invoiceId } });
     res.json(invoices);
   } catch (error) {
     console.error('Error fetching invoices:', error);
@@ -238,7 +238,7 @@ function getContentType(fileExtension) {
 exports.scanInvoice = async (req, res) => {
   try {
     const userId = req.user.user_id;
-    const { invoice_id } = req.body; 
+    const { invoice_id } = req.body;
 
     if (!invoice_id || isNaN(invoice_id)) {
       return res.status(400).json({ error: 'Invalid Invoice ID' });
@@ -287,11 +287,11 @@ exports.scanInvoice = async (req, res) => {
 };
 
 
+
 // Perform OCR on the scanned image to extract text
 async function getTotalAmountFromInvoiceId(invoiceId) {
   try {
-   
-    const invoice = await Invoice.findOne({ where: { invoice_id: invoiceId } });
+    const invoice = await Invoice.findOne({ where: { id: invoiceId } });
     
     if (invoice) {
       return invoice.total_amount;
@@ -305,15 +305,23 @@ async function getTotalAmountFromInvoiceId(invoiceId) {
 }
 
 async function hasUserScannedInvoice(userId, invoiceId) {
-  const scannedInvoice = await ScannedInvoices.findOne({ where: { user_id: userId, invoice_id: invoiceId } });
-  return !!scannedInvoice;
+  try {
+    const scannedInvoice = await ScannedInvoices.findOne({ where: { user_id: userId, invoice_id: invoiceId } });
+    return !!scannedInvoice;
+  } catch (error) {
+    console.error('Error checking scanned invoice:', error.message);
+    throw error;
+  }
 }
-
 
 async function markInvoiceAsScanned(userId, invoiceId) {
-  await ScannedInvoices.create({ user_id: userId, invoice_id: invoiceId });
+  try {
+    await ScannedInvoices.create({ user_id: userId, invoice_id: invoiceId });
+  } catch (error) {
+    console.error('Error marking invoice as scanned:', error.message);
+    throw error;
+  }
 }
-
 
 exports.generateBarcodeInvoice = async (req, res) => {
   try {

@@ -132,3 +132,20 @@ exports.processChallenges = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' }); 
   }
 };
+
+exports.getAllChallenges = async (req, res) => {
+  try {
+    const challenges = await Challenge.findAll({
+      include: [{
+        model: ChallengeType,
+        as: 'challengeTypes',
+        attributes: ['type_name', 'required_count', 'points']
+      }]
+    });
+
+    res.status(200).json({ challenges });
+  } catch (error) {
+    console.error('Error retrieving challenges:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

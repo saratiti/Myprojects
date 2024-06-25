@@ -154,22 +154,25 @@ exports.getAllorderProductByUserId = async (req, res) => {
   try {
     const userId = req.user_id;
 
+    // Retrieve all orders for the user
     const orders = await Order.findAll({ where: { user_id: userId } });
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({ error: 'No orders found for the user' });
     }
 
+    // Extract all order IDs
     const orderIds = orders.map(order => order.id);
 
+    // Retrieve all OrderProduct entries that match the order IDs
     const orderProducts = await OrderProduct.findAll({
-      where: { id: orderIds },
+      where: { order_id: orderIds },
       include: { model: Product, as: 'products' }, 
     });
 
-
+ 
     const responseData = orders.map(order => {
-      const associatedOrderProducts = orderProducts.filter(op => op.id === order.id);
+      const associatedOrderProducts = orderProducts.filter(op => op.order_id === order.id);
       return { ...order.toJSON(), orderProducts: associatedOrderProducts };
     });
 
@@ -179,7 +182,6 @@ exports.getAllorderProductByUserId = async (req, res) => {
     return res.status(500).json({ error: 'Failed to retrieve order products' });
   }
 };
-
 
 
 exports.destroyOrderCashier = async (req, res) => {

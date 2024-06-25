@@ -55,7 +55,7 @@ Future<bool> changePassword(String email, String newPassword, String confirmPass
       "password": password,
       "username": username,
       
-      "full_name":fullName,
+      "name":fullName,
       "profile_picture":profilePicture,
        "phone":phone,
     });

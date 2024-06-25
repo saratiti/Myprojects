@@ -19,7 +19,8 @@ class OfferController{
 
   Future<dynamic> createOffer(Offer Offer) async {
     try {
-  var result = await ApiHelper().postRequest("/api/Offers", Offer.toJson());
+       var offerData = Offer.toJson().map((key, value) => MapEntry(key, value.toString()));
+  var result = await ApiHelper().postRequest("/api/Offers",offerData);
   print("Response: $result");
      print("JSON Data: ${Offer.toJson()}");
    

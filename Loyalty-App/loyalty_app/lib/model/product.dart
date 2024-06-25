@@ -198,6 +198,7 @@ class Product {
   int selectedQty = 0;
   double additionalCost = 0;
   List<OptionalMenu> optionalMenuItems = [];
+  List<Uint8List>? imageBytesList;
 
   // Constructor
   Product({
@@ -213,6 +214,7 @@ class Product {
     this.selectedQty = 0,
     this.additionalCost = 0,
     this.optionalMenuItems = const [],
+    this.imageBytesList = const [],
   });
 
   // Factory method to create Product from JSON

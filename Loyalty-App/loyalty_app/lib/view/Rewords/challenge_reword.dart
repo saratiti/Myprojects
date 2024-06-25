@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:loyalty_app/core/app_export.dart';
+import 'package:loyalty_app/model/challenge.dart';
 class ChallengePage extends StatelessWidget {
   const ChallengePage({Key? key}) : super(key: key);
 
@@ -20,32 +21,37 @@ class ChallengePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 49.v),
-          FutureBuilder<List<UserChallenge>>(
-            future: ChallengeController().getUserChallenge(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator();
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                List<UserChallenge> challenges = snapshot.data ?? [];
-                return Column(
-                  children: challenges.map((challenge) {
-                    return _buildChallengeCompleted(context, challenge);
-                  }).toList(),
-                );
-              }
-            },
-          ),
+          FutureBuilder<List<Challenge>>(
+  future: ChallengeController().getUserChallenges(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const CircularProgressIndicator();
+    } else if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else {
+      List<Challenge> challenges = snapshot.data ?? [];
+      return Column(
+        children: challenges.map((challenge) {
+          return _buildChallengeCompleted(context, challenge);
+        }).toList(),
+      );
+    }
+  },
+),
+
           SizedBox(height: 5.v),
         ],
       ),
     );
   }
 
-Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
+Widget _buildChallengeCompleted(BuildContext context, Challenge challenge) {
  
-  bool isCompleted = challenge.challenges != null && challenge.completeDate != null;
+ bool isCompleted = true;
+ 
+ //challenge?.challenges != null && challenge?.completeDate != null;
+
+
 
   return Column(
     children: [
@@ -84,13 +90,14 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 22),
-                      child: Text(
-                        challenge.challenges!.name, 
-                        style: CustomTextStyles.titleSmallBluegray90002,
-                      ),
-                    ),
+                   Padding(
+  padding: const EdgeInsets.only(left: 22),
+  child: Text(
+    challenge?.name ?? '', 
+    style: CustomTextStyles.titleSmallBluegray90002,
+  ),
+),
+
                     SizedBox(height: 23.v),
                     Padding(
                       padding: EdgeInsets.only(right: 51.h),
@@ -107,11 +114,12 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                             child: Container(
                               margin: const EdgeInsets.only(left: 12),
                               child: Text(
-                                challenge.challenges!.description,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
-                              ),
+  challenge?.description ?? '',
+  style: const TextStyle(
+    fontSize: 16,
+  ),
+),
+
                             ),
                           ),
                         ],
@@ -127,11 +135,11 @@ Widget _buildChallengeCompleted(BuildContext context, UserChallenge challenge) {
                           color: appTheme.redA100E5,
                           borderRadius: BorderRadius.circular(11.h),
                         ),
-                        child: LinearProgressIndicator(
-                          value: isCompleted ? 1.0 : 0.0,
-                          backgroundColor: Colors.grey[300],
-                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-                        ),
+                        // child: LinearProgressIndicator(
+                        //   value: isCompleted ? 1.0 : 0.0,
+                        //   backgroundColor: Colors.grey[300],
+                        //   valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+                        // ),
                       ),
                     ),
                   ],

@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
                                 top: 2.v,
                               ),
                               child: Text(
-                                "What’s in Today?",
+                                "lbl20".localized,
                                 style: CustomTextStyles.titleMediumPoppinsGray900,
                               ),
                             ),
@@ -253,7 +253,7 @@ Widget _buildAppBar(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
         left: 3.h,
-        right: 34.h,
+        right: 2.h,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +273,7 @@ Widget _buildAppBar(BuildContext context) {
                   top: 3.v,
                 ),
                 child: Text(
-                  "Popular categories",
+                  "lbl_20".localized,
                   style: CustomTextStyles.titleMediumPoppinsGray900,
                 ),
               ),
@@ -289,7 +289,7 @@ Widget _buildAppBar(BuildContext context) {
                 Navigator.pushNamed(context, AppRoutes.categoryScreen);
               },
               child: Text(
-                "See all",
+                "lbl22".localized,
                 style: CustomTextStyles.bodyMediumMerriweatherBlack90001,
               ),
             ),
@@ -326,13 +326,13 @@ Widget _buildAppBar(BuildContext context) {
               text: 'QR Code',
               onTap: () { Navigator.pushNamed(context, AppRoutes.scannerScreen);},
             ),
-            _buildCircleContainer(
-              icon: Icons.receipt,
-              text: 'Receipt Voucher',
-              onTap: () {
-                Navigator.pushNamed(context, AppRoutes.receiptScreen);
-              },
-            ),
+            // _buildCircleContainer(
+            //   icon: Icons.receipt,
+            //   text: 'Receipt Voucher',
+            //   onTap: () {
+            //     Navigator.pushNamed(context, AppRoutes.receiptScreen);
+            //   },
+            // ),
             _buildCircleContainer(
               icon: Icons.group,
               text: 'Invite Persons',
@@ -432,7 +432,7 @@ Widget _buildAppBar(BuildContext context) {
   }
     void _shareInviteLink(BuildContext context) {
 
-    final String text = 'https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en_US';
+    const String text = 'https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en_US';
 
     Share.share(text);
   }

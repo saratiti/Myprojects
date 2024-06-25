@@ -26,7 +26,7 @@ class PointsItemWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     CustomImageView(
-                      imagePath: ImageConstant.imgImg120x120,
+                      imagePath: ImageConstant.imgScanner,
                       height: 92.v,
                       width: 107.h,
                       radius: BorderRadius.circular(

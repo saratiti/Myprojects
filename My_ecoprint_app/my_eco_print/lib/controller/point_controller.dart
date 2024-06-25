@@ -17,20 +17,22 @@ class PointController{
 
 
 
-  Future<dynamic> createPoint(Point Point) async {
-    try {
-  var result = await ApiHelper().postRequest("/api/points", Point.toJson());
-  print("Response: $result");
-     print("JSON Data: ${Point.toJson()}");
-   
+Future<dynamic> createPoint(Point point) async {
+  try {
+    // Convert dynamic map to string map
+    var pointData = point.toJson().map((key, value) => MapEntry(key, value.toString()));
 
-  return result;
-} catch (e) {
-  print("Error creating Point: $e");
-  print("JSON Data: ${Point.toJson()}");
+    var result = await ApiHelper().postRequest("/api/points", pointData);
+    print("Response: $result");
+    print("JSON Data: $pointData");
 
-  rethrow;
-}
+    return result;
+  } catch (e) {
+    print("Error creating Point: $e");
+    print("JSON Data: ${point.toJson()}");
+
+    rethrow;
+  }
 }
 
 Future<Point> getPoint() async {

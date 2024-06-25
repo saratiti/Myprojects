@@ -1,7 +1,6 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 class CustomImageView extends StatelessWidget {
   ///[imagePath] is required parameter for showing image
   String? imagePath;
+  String? svgPath;
 
   double? height;
   double? width;
@@ -21,10 +21,12 @@ class CustomImageView extends StatelessWidget {
   BorderRadius? radius;
   BoxBorder? border;
 
-  ///a [CustomImageView] it can be used for showing any type of images
-  /// it will shows the placeholder image if image is not found on network image
-  CustomImageView({super.key, 
+  /// A [CustomImageView] can be used for showing any type of images.
+  /// It will show the placeholder image if the image is not found on the network.
+  CustomImageView({
+    super.key,
     this.imagePath,
+    this.svgPath,
     this.height,
     this.width,
     this.color,
@@ -57,8 +59,8 @@ class CustomImageView extends StatelessWidget {
     );
   }
 
-  ///build the image with border radius
-  _buildCircleImage() {
+  /// Build the image with border radius
+  Widget _buildCircleImage() {
     if (radius != null) {
       return ClipRRect(
         borderRadius: radius ?? BorderRadius.zero,
@@ -69,8 +71,8 @@ class CustomImageView extends StatelessWidget {
     }
   }
 
-  ///build the image with border and border radius style
-  _buildImageWithBorder() {
+  /// Build the image with border and border radius style
+  Widget _buildImageWithBorder() {
     if (border != null) {
       return Container(
         decoration: BoxDecoration(
@@ -85,14 +87,16 @@ class CustomImageView extends StatelessWidget {
   }
 
   Widget _buildImageView() {
-    if (imagePath != null) {
-      switch (imagePath!.imageType) {
+    String? path = imagePath ?? svgPath;
+
+    if (path != null) {
+      switch (path.imageType) {
         case ImageType.svg:
           return SizedBox(
             height: height,
             width: width,
             child: SvgPicture.asset(
-              imagePath!,
+              path,
               height: height,
               width: width,
               fit: fit ?? BoxFit.contain,
@@ -104,7 +108,7 @@ class CustomImageView extends StatelessWidget {
           );
         case ImageType.file:
           return Image.file(
-            File(imagePath!),
+            File(path),
             height: height,
             width: width,
             fit: fit ?? BoxFit.cover,
@@ -115,7 +119,7 @@ class CustomImageView extends StatelessWidget {
             height: height,
             width: width,
             fit: fit,
-            imageUrl: imagePath!,
+            imageUrl: path,
             color: color,
             placeholder: (context, url) => SizedBox(
               height: 30,
@@ -135,7 +139,7 @@ class CustomImageView extends StatelessWidget {
         case ImageType.png:
         default:
           return Image.asset(
-            imagePath!,
+            path,
             height: height,
             width: width,
             fit: fit ?? BoxFit.cover,

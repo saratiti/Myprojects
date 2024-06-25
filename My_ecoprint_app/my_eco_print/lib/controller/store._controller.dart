@@ -18,23 +18,23 @@ class StoreController{
 
 
 
-  Future<dynamic> createStore(Store store) async {
-    try {
-  var result = await ApiHelper().postRequest("/api/stores", store.toJson());
-  print("Response: $result");
-     print("JSON Data: ${store.toJson()}");
-   
+Future<dynamic> createStore(Store store) async {
+  try {
+    // Convert dynamic map to string map
+    var storeData = store.toJson().map((key, value) => MapEntry(key, value.toString()));
 
-  return result;
-} catch (e) {
-  print("Error creating store: $e");
-  print("JSON Data: ${store.toJson()}");
+    var result = await ApiHelper().postRequest("/api/stores", storeData);
+    print("Response: $result");
+    print("JSON Data: $storeData");
 
-  rethrow;
-}
+    return result;
+  } catch (e) {
+    print("Error creating store: $e");
+    print("JSON Data: ${store.toJson()}");
 
+    rethrow;
   }
-
+}
 Future<Store> getStore() async {
   try {
     var result = await ApiHelper().getRequest("/api/stores");
